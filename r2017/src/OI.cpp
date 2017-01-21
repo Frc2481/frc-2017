@@ -2,5 +2,9 @@
 
 OI::OI()
 {
-	// Process operator interface input here.
+	driverStick = new Joystick(DRIVE_STICK_PORT);
+}
+
+Joystick* OI::GetDriverStick(){
+	return driverStick;
 }
