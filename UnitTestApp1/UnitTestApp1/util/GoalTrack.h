@@ -13,7 +13,7 @@ public:
 	bool tryUpdate(double timestamp, const Translation2D &newObservation);
 	bool isAlive() const;
 	void smooth();
-	const Translation2D getSmoothPosition() const;
+	Translation2D getSmoothedPosition() const;
 	double getLatestTimestamp() const;
 	double getStability() const;
 	int getId() const;

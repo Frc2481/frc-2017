@@ -60,7 +60,7 @@ void GoalTrack::smooth() {
 	}
 }
 
-const Translation2D GoalTrack::getSmoothPosition() const {
+Translation2D GoalTrack::getSmoothedPosition() const {
 	return m_smoothPosition;
 }
 

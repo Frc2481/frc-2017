@@ -21,6 +21,7 @@
     <ClCompile Include="util\RigidTransform2D.cpp" />
     <ClCompile Include="util\InterpolatingDouble.cpp" />
     <ClCompile Include="util\GoalTrack.cpp" />
+    <ClCompile Include="util\GoalTracker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -34,6 +35,7 @@
     <ClInclude Include="util\InterpolatingMap.h" />
     <ClInclude Include="util\GoalTrack.h" />
     <ClInclude Include="util\Constants.h" />
+    <ClInclude Include="util\GoalTracker.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="UnitTestApp.rd.xml" />

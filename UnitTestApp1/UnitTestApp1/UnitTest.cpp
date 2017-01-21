@@ -6,6 +6,7 @@
 #include "util\InterpolatingDouble.h"
 #include "util\InterpolatingMap.h"
 #include "util\GoalTrack.h"
+#include "util\GoalTracker.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -165,7 +166,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 			gt.tryUpdate(10.01, Translation2D(4, 4));	
 			gt.tryUpdate(10.02, Translation2D(5, 5));
 			gt.tryUpdate(10.03, Translation2D(2, 2));
-			Translation2D actual = gt.getSmoothPosition();
+			Translation2D actual = gt.getSmoothedPosition();
 			Assert::AreEqual(3.0, actual.getX());
 			Assert::AreEqual(3.0, actual.getY());
 		}
@@ -185,6 +186,47 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 			Assert::AreEqual(11.0, gt.getLatestTimestamp());
 			gt.tryUpdate(12.0, Translation2D(30, 30));
 			Assert::AreEqual(0.0, gt.getLatestTimestamp());
+		}
+	};
+	TEST_CLASS(testGoalTracker) {
+		TEST_METHOD(updateTest) {
+			GoalTracker goalTracker = GoalTracker();
+			std::list<Translation2D> fieldToGoal;
+			fieldToGoal.push_back(Translation2D(1, 2));
+			fieldToGoal.push_back(Translation2D(1, 3));
+			goalTracker.update(1.0, fieldToGoal);
+			Assert::AreEqual(true,goalTracker.hasTracks());
+		}
+		TEST_METHOD(resetTest) {
+			GoalTracker goalTracker = GoalTracker();
+			std::list<Translation2D> fieldToGoal;
+			fieldToGoal.push_back(Translation2D(1, 2));
+			fieldToGoal.push_back(Translation2D(1, 3));
+			goalTracker.update(1.0, fieldToGoal);
+			goalTracker.reset();
+			Assert::AreEqual(false, goalTracker.hasTracks());
+		}
+		TEST_METHOD(getTracksTest) {
+			GoalTracker goalTracker = GoalTracker();
+			std::list<Translation2D> fieldToGoal;
+			std::list<GoalTracker::TrackReport> trackReports;
+			fieldToGoal.push_back(Translation2D(1, 2));
+			fieldToGoal.push_back(Translation2D(1, 3));
+			goalTracker.update(1.0, fieldToGoal);
+			trackReports = goalTracker.getTracks();
+			Assert::AreEqual(int(trackReports.size()), int(fieldToGoal.size()));
+		}
+	};
+	TEST_CLASS(TrackReport) {
+		TEST_METHOD(scoreTest) {
+			GoalTracker goalTracker = GoalTracker();
+			std::list<Translation2D> fieldToGoal;
+			fieldToGoal.push_back(Translation2D(1, 2));
+			fieldToGoal.push_back(Translation2D(1, 3));
+			goalTracker.update(1.0, fieldToGoal);
+			std::list<GoalTracker::TrackReport> trackReports;
+			trackReports = goalTracker.getTracks();
+			trackReports.begin()->score();
 		}
 	};
 //}

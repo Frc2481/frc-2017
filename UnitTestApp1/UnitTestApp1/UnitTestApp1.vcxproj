@@ -167,6 +167,7 @@
     </ClInclude>
     <ClInclude Include="util\Constants.h" />
     <ClInclude Include="util\GoalTrack.h" />
+    <ClInclude Include="util\GoalTracker.h" />
     <ClInclude Include="util\Interpolable.h" />
     <ClInclude Include="util\InterpolatingDouble.h" />
     <ClInclude Include="util\InterpolatingMap.h" />
@@ -209,6 +210,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="util\GoalTrack.cpp" />
+    <ClCompile Include="util\GoalTracker.cpp" />
     <ClCompile Include="util\InterpolatingDouble.cpp" />
     <ClCompile Include="util\RigidTransform2D.cpp" />
     <ClCompile Include="util\Rotation2D.cpp" />
