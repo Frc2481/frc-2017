@@ -6,20 +6,34 @@ GoalTracker::TrackReport::TrackReport(const GoalTrack &track)
 	: m_fieldToGoal(track.getSmoothedPosition()),
 		m_latestTimestamp(track.getLatestTimestamp()),
 		m_stability(track.getStability()), 
-		m_id(track.getId()),
-		m_CurrentTimestamp(){
+		m_id(track.getId()){
 }
 
-double GoalTracker::TrackReport::score() const {
-	double m_StabilityScore = Constants::kStabilityWeight * m_stability;
-	double m_AgeScore = Constants::kAgeWeight
-		* max(0, Constants::kMaxGoalTrackAge - m_CurrentTimestamp - m_latestTimestamp)
-		/ Constants::kMaxGoalTrackAge;
-	double m_SwitchingScore = (m_id == m_LastTrackId ? Constants::kSwitchingWeight : 0);
-	return m_StabilityScore + m_AgeScore + m_SwitchingScore;
-}
+//double GoalTracker::TrackReport::score() const {
+//	double m_StabilityScore = Constants::kStabilityWeight * m_stability;
+//	double m_AgeScore = Constants::kAgeWeight
+//		* max(0, Constants::kMaxGoalTrackAge - (m_CurrentTimestamp - m_latestTimestamp))
+//		/ Constants::kMaxGoalTrackAge;
+//	double m_SwitchingScore = (m_id == m_LastTrackId ? Constants::kSwitchingWeight : 0);
+//	return m_StabilityScore + m_AgeScore + m_SwitchingScore;
+//}
 
 bool operator<(const GoalTracker::TrackReport &lhs, const GoalTracker::TrackReport &rhs) {
+	double stability = (lhs.m_stability - rhs.m_stability) * Constants::kStabilityWeight;
+	double age = (lhs.m_latestTimestamp - rhs.m_latestTimestamp) * Constants::kAgeWeight;
+	double finalScore = stability + age;
+
+	if (finalScore > 0) {
+		return false;
+	}
+	else if (finalScore < 1e-5) {
+		if (age > 0) {
+			return false;
+		}
+		else if (stability > 0) {
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -28,8 +42,9 @@ void GoalTracker::reset() {
 }
 
 void GoalTracker::update(double timestamp, std::list<Translation2D> &fieldToGoals) {
-	bool hasUpdatedTrack = false; 
-	for (Translation2D target : fieldToGoals) {
+	//bool hasUpdatedTrack = false; 
+	for (Translation2D target : fieldToGoals){
+		bool hasUpdatedTrack = false;
 		for (GoalTrack track : m_currentTracks) {
 			if (!hasUpdatedTrack) {
 				if (track.tryUpdate(timestamp, target)) {
@@ -62,11 +77,11 @@ bool GoalTracker::hasTracks() {
 }
 
 std::list<GoalTracker::TrackReport> GoalTracker::getTracks() {
-	std::list<GoalTracker::TrackReport> m_currentTrackReports;
+	std::list<GoalTracker::TrackReport> currentTrackReports;
 	for (GoalTrack track : m_currentTracks) {
-		m_currentTrackReports.push_back(track);
+		currentTrackReports.push_back(GoalTracker::TrackReport(track));
 	}
-	return m_currentTrackReports;
+	return currentTrackReports;
 }
 
 GoalTracker::GoalTracker() {

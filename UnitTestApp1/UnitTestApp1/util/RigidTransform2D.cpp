@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "RigidTransform2D.h"
 
+RigidTransform2D::Delta::Delta(double dx, double dy, double dtheta) 
+	: m_dx(dx), m_dy(dy), m_dtheta(dtheta) 
+{
+
+}
 RigidTransform2D::RigidTransform2D()
 	: m_translation(Translation2D()), m_rotation(Rotation2D())
 {
@@ -32,6 +37,22 @@ RigidTransform2D RigidTransform2D::fromTranslation(const Translation2D &translat
 RigidTransform2D RigidTransform2D::fromRotation(const Rotation2D &rotation)
 {
 	return RigidTransform2D(Translation2D(), rotation);
+}
+
+RigidTransform2D RigidTransform2D::fromVelocity(Delta delta) {
+	double sinTheta = sin(delta.m_dtheta);
+	double cosTheta = cos(delta.m_dtheta);
+	double s, c;
+	if (abs(delta.m_dtheta) < 1e-9) {
+		s = 1.0 - 1.0 / 6.0 * delta.m_dtheta * delta.m_dtheta;
+		c = .5 * delta.m_dtheta;
+	}
+	else {
+		s = sinTheta / delta.m_dtheta;
+		c = (1.0 - cosTheta) / delta.m_dtheta;
+	}
+	return RigidTransform2D(Translation2D(delta.m_dx * s - delta.m_dy * c, delta.m_dx * c + delta.m_dy * s),
+		 Rotation2D(cosTheta, sinTheta, false));
 }
 
 Translation2D RigidTransform2D::getTranslation() const

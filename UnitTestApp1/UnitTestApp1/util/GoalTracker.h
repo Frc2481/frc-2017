@@ -11,9 +11,8 @@ public:
 		double m_stability;
 		int m_id;
 		double m_LastTrackId;
-		double m_CurrentTimestamp;
 		TrackReport(const GoalTrack &track);
-		double score() const;
+		//double score() const;
 		friend bool operator<(const TrackReport &lhs, const TrackReport &rhs);
 	};
 private:
