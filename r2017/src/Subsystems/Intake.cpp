@@ -5,9 +5,10 @@
  *      Author: FIRSTMentor
  */
 #include "Intake.h"
+#include "RobotMap.h"
 
-Intake::Intake(uint32_t intakeID) : Subsystem("Intake") {
-	m_intakeMotor = new CANTalon(intakeID);
+Intake::Intake() : Subsystem("Intake") {
+	m_intakeMotor = new CANTalon(INTAKE_MOTOR);
 }
 
 Intake::~Intake(){

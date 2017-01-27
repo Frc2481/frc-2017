@@ -8,6 +8,7 @@
 #include <Components/SwerveModule.h>
 
 SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
+	SmartDashboard::PutNumber("Temp Setpoint", 0.0);
 	// TODO Auto-generated constructor stub
 	m_driveMotor = new CANTalon(driveID);
 	m_steerMotor = new CANTalon(steerID);
@@ -17,13 +18,13 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_speedP = 0;
 	m_speedI = 0;
 	m_speedD = 0;
-	m_steerP = 0;
+	m_steerP = 3;
 	m_steerI = 0;
-	m_steerD = 0;
+	m_steerD = 40;
 	m_isSpeedPIDEnabled = false;
 
 	m_driveMotor->SelectProfileSlot(0);
-	m_driveMotor->SetControlMode(CANTalon::kSpeed);
+	m_driveMotor->SetControlMode(CANTalon::kPercentVbus);
 	m_driveMotor->SetPID(m_speedP, m_speedI, m_speedD);
 	m_driveMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
 	m_driveMotor->SetSensorDirection(true);
@@ -33,6 +34,10 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerMotor->SetPID(m_steerP, m_steerI, m_steerD);
 	m_steerMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Absolute);
 	m_steerMotor->SetSensorDirection(true);
+	m_steerMotor->SetClosedLoopOutputDirection(false);
+	m_steerMotor->SetPulseWidthPosition(m_steerMotor->GetPulseWidthPosition() & 0xFFF);
+	m_steerMotor->SetAllowableClosedLoopErr(1);
+	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
 	m_steerMotor->Enable();
 }
 
@@ -63,7 +68,32 @@ void SwerveModule::Set(float speed, float angle) {
 	}
 
 	m_driveMotor->Set(speed);
-	m_steerMotor->SetSetpoint(angle);
+
+	int currentPosition = -m_steerMotor->GetPulseWidthPosition(); //& 0xFFF;
+//	currentPosition = m_steerMotor->GetEncPosition();
+	int n = currentPosition/4096;
+	angle += m_offset;
+	angle = AngleToEncoderTicks(angle);
+	printf("Original Angle=%d, n=%d,", (int)angle, n);
+	angle += n*4096;
+	int error = currentPosition - angle;
+	printf("new angle=%d, Current position=%d, ", (int)angle, currentPosition);
+
+	if(error < -2048){
+		angle -= 4096;
+		printf("subtracting 4096 to angle\n");
+	}
+	else if (error > 2048){
+		angle += 4096;
+		printf("adding 4096 from angle\n");
+	}
+	else {
+		printf("\n");
+	}
+	m_steerMotor->SetSetpoint(angle / 4096.0);
+	SmartDashboard::PutNumber("Setpoint", m_steerMotor->GetSetpoint());
+	SmartDashboard::PutNumber("Get Closed Loop Error", m_steerMotor->GetClosedLoopError());
+	SmartDashboard::PutNumber("Rotations", n);
 }
 
 
@@ -72,7 +102,11 @@ float SwerveModule::GetSpeed() const {
 }
 
 float SwerveModule::GetAngle() const {
-	return m_steerMotor->GetPosition();
+	return GetRawAngle() - m_offset;
+}
+
+float SwerveModule::GetRawAngle() const{
+	return m_steerMotor->GetPulseWidthPosition()/4096.0 * -360.0;
 }
 
 float SwerveModule::GetOffset() const {
@@ -80,7 +114,6 @@ float SwerveModule::GetOffset() const {
 }
 
 void SwerveModule::SetOffset(float offset) {
-	m_steerMotor->SetPosition(offset);
 	m_offset = offset;
 }
 
@@ -125,7 +158,7 @@ void SwerveModule::SetSteerPID(double p, double i, double d) {
 }
 
 double SwerveModule::GetSteerP() {
-	return m_steerP;
+	return m_steerMotor->GetP();
 }
 
 double SwerveModule::GetSteerI() {
@@ -134,4 +167,8 @@ double SwerveModule::GetSteerI() {
 
 double SwerveModule::GetSteerD() {
 	return m_steerD;
+}
+
+int SwerveModule::AngleToEncoderTicks(double angle) {
+	return (int)(angle/360 * 4096);
 }

@@ -1,10 +1,10 @@
+#include <Commands/DriveWithJoystickCommand.h>
 #include "DriveTrain.h"
 #include "../RobotMap.h"
 
 #include <cmath>
 #include <algorithm>
 #include "RobotParameters.h"
-#include "Commands/DriveCommand.h"
 #include "Components/PersistedSettings.h"
 
 DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
@@ -12,6 +12,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_frWheel(new SwerveModule(FRONT_RIGHT_DRIVE, FRONT_RIGHT_STEER)),
 	m_brWheel(new SwerveModule(BACK_RIGHT_DRIVE, BACK_RIGHT_STEER)),
 	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER)),
+	m_shifter(new Solenoid(0)),
 	m_serialPort(new SerialPort(57600,SerialPort::kMXP)),
 //		imu(new IMU(serialPort,update_rate_hz)),
 	m_isFieldCentric(false),
@@ -20,10 +21,10 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 
 	printf("Pre DriveTrain Constructor \n");
 	m_prevAngle = 90.0;
-	m_flWheel->SetOffset(PersistedSettings::GetInstance().Get("FL_ENCODER_OFFSET", 181.561));
-	m_frWheel->SetOffset(PersistedSettings::GetInstance().Get("FR_ENCODER_OFFSET", 325.812));
-	m_brWheel->SetOffset(PersistedSettings::GetInstance().Get("BR_ENCODER_OFFSET", 348.182));
-	m_blWheel->SetOffset(PersistedSettings::GetInstance().Get("BL_ENCODER_OFFSET", 13.0601));
+	m_flWheel->SetOffset(PersistedSettings::GetInstance().Get("FL_ENCODER_OFFSET", 0));
+	m_frWheel->SetOffset(PersistedSettings::GetInstance().Get("FR_ENCODER_OFFSET", 0));
+	m_brWheel->SetOffset(PersistedSettings::GetInstance().Get("BR_ENCODER_OFFSET", 0));
+	m_blWheel->SetOffset(PersistedSettings::GetInstance().Get("BL_ENCODER_OFFSET", 0));
 	//driveLogger = new DataLogger("/home/lvuser/DriveLogger.txt");
 	m_gyroCorrection = false;
 
@@ -40,7 +41,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 }
 
 void DriveTrain::InitDefaultCommand() {
-	SetDefaultCommand(new DriveCommand());
+	SetDefaultCommand(new DriveWithJoystickCommand());
 }
 
 void DriveTrain::Stop() {
@@ -62,13 +63,13 @@ double DriveTrain::radToDeg(double rad) {
 }
 
 void DriveTrain::SetEncoderOffset(int wheel, float offset){
-	if (wheel == FRONT_RIGHT_ENCODER){
+	if (wheel == FRONT_RIGHT_STEER){
 		m_frWheel->SetOffset(offset);
-	}else if (wheel == FRONT_LEFT_ENCODER){
+	}else if (wheel == FRONT_LEFT_STEER){
 		m_flWheel->SetOffset(offset);
-	}else if (wheel == BACK_RIGHT_ENCODER){
+	}else if (wheel == BACK_RIGHT_STEER){
 		m_brWheel->SetOffset(offset);
-	}else if (wheel == BACK_LEFT_ENCODER){
+	}else if (wheel == BACK_LEFT_STEER){
 		m_blWheel->SetOffset(offset);
 	}
 }
@@ -126,16 +127,16 @@ void DriveTrain::SetFieldCentric(bool fieldCentric) {
 }
 
 void DriveTrain::SetWheelAngle(int wheel, float angle){
-	if (wheel == FRONT_LEFT_ENCODER){
+	if (wheel == FRONT_LEFT_STEER){
 		m_flWheel->Set(0, angle);
 	}
-	else if (wheel == FRONT_RIGHT_ENCODER){
+	else if (wheel == FRONT_RIGHT_STEER){
 		m_frWheel->Set(0, angle);
 	}
-	else if (wheel == BACK_LEFT_ENCODER){
+	else if (wheel == BACK_LEFT_STEER){
 		m_blWheel->Set(0, angle);
 	}
-	else if (wheel == BACK_RIGHT_ENCODER){
+	else if (wheel == BACK_RIGHT_STEER){
 		m_brWheel->Set(0, angle);
 	}
 }
@@ -200,7 +201,7 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 //		else {
 			twist = twist * .05;   //limit twist speed while not in field centric
 			FWD = yPos;
-			STR = xPos;
+			STR = -xPos;
 //		}
 
 		if (m_isForward) {
@@ -216,14 +217,14 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 		double B = STR + twist * ((m_baseLength / 2.0)-m_originY);
 		double C = FWD - twist * ((m_baseWidth / 2.0)+m_originX);
 		double D = FWD + twist * ((m_baseWidth / 2.0)-m_originX);
-		double wheelSpeedFL = sqrt(pow(B, 2) + pow(C, 2));
-		double wheelSpeedFR = sqrt(pow(B, 2) + pow(D, 2));
-		double wheelSpeedBL = sqrt(pow(A, 2) + pow(C, 2));
-		double wheelSpeedBR = sqrt(pow(A, 2) + pow(D, 2));
-		double wheelAngleFL = atan2(B, C) * 180 / k_pi;
-		double wheelAngleFR = atan2(B, D) * 180 / k_pi;
-		double wheelAngleBL = atan2(A, C) * 180 / k_pi;
-		double wheelAngleBR = atan2(A, D) * 180 / k_pi;
+		double wheelSpeedFL = sqrt(pow(B, 2) + pow(D, 2));
+		double wheelSpeedFR = sqrt(pow(B, 2) + pow(C, 2));
+		double wheelSpeedBL = sqrt(pow(A, 2) + pow(D, 2));
+		double wheelSpeedBR = sqrt(pow(A, 2) + pow(C, 2));
+		double wheelAngleFL = atan2(B, D) * 180 / k_pi;
+		double wheelAngleFR = atan2(B, C) * 180 / k_pi;
+		double wheelAngleBL = atan2(A, D) * 180 / k_pi;
+		double wheelAngleBR = atan2(A, C) * 180 / k_pi;
 
 
 	//speeds normalized 0 to 1
@@ -250,11 +251,15 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 	SmartDashboard::PutNumber("commandedAngleFL", wheelAngleFL);
 	SmartDashboard::PutNumber("commandedAngleBR", wheelAngleBR);
 	SmartDashboard::PutNumber("commandedAngleBL", wheelAngleBL);
+	SmartDashboard::PutNumber("commandedSpeedFR", wheelSpeedFR);
+	SmartDashboard::PutNumber("commandedSpeedFL", wheelSpeedFL);
+	SmartDashboard::PutNumber("commandedSpeedBR", wheelSpeedBR);
+	SmartDashboard::PutNumber("commandedSpeedBL", wheelSpeedBL);
 
-	m_flWheel->Set(wheelSpeedFL, wheelAngleFL);
-	m_frWheel->Set(-wheelSpeedFR, wheelAngleFR);
-	m_brWheel->Set(-wheelSpeedBR, wheelAngleBR);
-	m_blWheel->Set(wheelSpeedBL, wheelAngleBL);
+	m_flWheel->Set(-wheelSpeedFL, wheelAngleFL);
+	m_frWheel->Set(wheelSpeedFR, wheelAngleFR);
+	m_brWheel->Set(wheelSpeedBR, wheelAngleBR);
+	m_blWheel->Set(-wheelSpeedBL, wheelAngleBL);
 }
 
 void DriveTrain::SetOrigin(double xPos, double yPos) {
@@ -280,6 +285,22 @@ float DriveTrain::GetPitch() {
 	return m_pitch;
 }
 
+float DriveTrain::GetEncoderValue(DriveTrain::EncoderType encoder) {
+	if(encoder == FRONT_RIGHT_ENCODER){
+		return m_frWheel->GetRawAngle();
+	}
+	else if(encoder == FRONT_LEFT_ENCODER){
+		return m_flWheel->GetRawAngle();
+	}
+	else if(encoder == BACK_RIGHT_ENCODER){
+		return m_brWheel->GetRawAngle();
+	}
+	else if (encoder == BACK_LEFT_ENCODER){
+		return m_blWheel->GetRawAngle();
+	}
+	return 0.0;
+}
+
 void DriveTrain::PeriodicUpdate() {
 	Drive(m_XPos, m_YPos, m_Twist);
 }
@@ -297,4 +318,8 @@ double DriveTrain::GetGyroCorrectionOffset() {
 
 void DriveTrain::SetGyroCorrectionOffset(double offset) {
 	m_gyroCorrectionOffset = offset;
+}
+
+void DriveTrain::Shift(bool state){
+	m_shifter->Set(state);
 }

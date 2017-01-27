@@ -5,9 +5,10 @@
  *      Author: FIRSTMentor
  */
 #include "GearLoader.h"
+#include "RobotMap.h"
 
-GearLoader::GearLoader(uint32_t gearLoaderID) : Subsystem("GearLoader") {
-	m_gearLoaderMotor = new CANTalon(gearLoaderID);
+GearLoader::GearLoader() : Subsystem("GearLoader") {
+	m_gearLoaderMotor = new CANTalon(GEAR_LOADER_MOTOR);
 }
 
 GearLoader::~GearLoader() {

@@ -16,6 +16,7 @@ private:
 	SwerveModule *m_frWheel;
 	SwerveModule *m_brWheel;
 	SwerveModule *m_blWheel;
+	Solenoid *m_shifter;
 	const uint8_t k_updateRateHz = 50;
 	SerialPort* m_serialPort;
 	AHRS* m_imu;
@@ -43,6 +44,12 @@ private:
 	double m_XPos, m_YPos, m_Twist;
 
 public:
+	enum EncoderType{
+		FRONT_LEFT_ENCODER,
+		FRONT_RIGHT_ENCODER,
+		BACK_LEFT_ENCODER,
+		BACK_RIGHT_ENCODER,
+	};
 	DriveTrain();
 	~DriveTrain();
 	void InitDefaultCommand();
@@ -55,6 +62,7 @@ public:
 	double GetXOrigin();
 	double GetYOrigin();
 	//float GetEncoderValue(int wheel);
+	float GetEncoderValue(DriveTrain::EncoderType encoder);
 	void SetEncoderOffset(int wheel, float offset);
 	//void SetP(float p);
 	void SetSpeedPID(double p, double i, double d);
@@ -85,6 +93,7 @@ public:
 //	IMU* GetIMU();
 	void PeriodicUpdate();
 	void SetBrake(bool brake);
+	void Shift(bool state);
 };
 
 #endif  // DriveTrain_H

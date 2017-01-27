@@ -11,19 +11,31 @@
 #include "WPILib.h"
 #include "Commands/Subsystem.h"
 #include "CANTalon.h"
-#include "../Components/ContinuousEncoder.h"
 
 class Shooter : public Subsystem {
 private:
 	CANTalon *m_shooterMotor;
 	CANTalon *m_feederMotor;
+	double m_p;
+	double m_i;
+	double m_d;
+	double m_feederSpeed;
 
 public:
-	Shooter(uint32_t shooterID, uint32_t feederID);
+	Shooter();
 	~Shooter();
-	void TurnOn();
-	void TurnOff();
-
+	void TurnShooterOn();
+	void TurnShooterOff();
+	void SetShooterSetpoint(double setpoint);
+	void SetPID(double p, double i, double d);
+	double GetP();
+	double GetI();
+	double GetD();
+	void TurnFeederOn();
+	void TurnFeederOff();
+	void SetFeederSpeed(double speed);
+	double GetShooterSetpoint();
+	double GetFeederSpeed();
 };
 
 

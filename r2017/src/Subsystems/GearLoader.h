@@ -17,7 +17,7 @@ private:
 	CANTalon *m_gearLoaderMotor;
 
 public:
-GearLoader(uint32_t gearLoaderID);
+GearLoader();
 ~GearLoader();
 void UnloadGear();
 };

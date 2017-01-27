@@ -1,20 +1,48 @@
 #include "WPILib.h"
 #include "Commands/Command.h"
 #include "CommandBase.h"
+#include "Commands/DriveTrainSetPIDCommand.h"
+#include "Commands/ShooterIncreaseSpeedCommand.h"
+#include "Commands/ShooterDecreaseSpeedCommand.h"
+#include "Commands/ShooterOnCommand.h"
+#include "Commands/ShooterOffCommand.h"
+#include "Commands/ShooterSetPIDCommand.h"
+#include "Commands/CalibrateEncoderOffsetsCommand.h"
 
 class Robot: public IterativeRobot
 {
 private:
 	std::unique_ptr<Command> autonomousCommand;
 	frc::SendableChooser<Command*> *chooser;
+	std::unique_ptr<Compressor> pcm;
 
 	void RobotInit()
 	{
 		CommandBase::init();
+		CommandBase::m_driveTrain->SetLengthAndWidth(ROBOT_LENGTH, ROBOT_WIDTH);
 		chooser = new frc::SendableChooser<Command*>();
+		pcm.reset(new Compressor());
+		pcm->SetClosedLoopControl(true);
 //		chooser->AddDefault("Default Auto", new ExampleCommand());
 		//chooser->AddObject("My Auto", new MyAutoCommand());
 		SmartDashboard::PutData("Auto Modes", chooser);
+		SmartDashboard::PutNumber("Speed P", CommandBase::m_driveTrain->GetSpeedP());
+		SmartDashboard::PutNumber("Speed I", CommandBase::m_driveTrain->GetSpeedI());
+		SmartDashboard::PutNumber("Speed D", CommandBase::m_driveTrain->GetSpeedD());
+		SmartDashboard::PutNumber("Steer P", CommandBase::m_driveTrain->GetSteerP());
+		SmartDashboard::PutNumber("Steer I", CommandBase::m_driveTrain->GetSteerI());
+		SmartDashboard::PutNumber("Steer D", CommandBase::m_driveTrain->GetSteerD());
+		SmartDashboard::PutNumber("Shooter P", CommandBase::m_shooter->GetP());
+		SmartDashboard::PutNumber("Shooter I", CommandBase::m_shooter->GetI());
+		SmartDashboard::PutNumber("Shooter D", CommandBase::m_shooter->GetD());
+		SmartDashboard::PutNumber("Hopper Speed", CommandBase::m_hopper->GetSpeed());
+		SmartDashboard::PutData(new DriveTrainSetPIDCommand());
+		SmartDashboard::PutData(new ShooterIncreaseSpeedCommand());
+		SmartDashboard::PutData(new ShooterDecreaseSpeedCommand());
+		SmartDashboard::PutData(new ShooterOnCommand());
+		SmartDashboard::PutData(new ShooterOffCommand());
+		SmartDashboard::PutData(new ShooterSetPIDCommand());
+		SmartDashboard::PutData(new CalibrateEncoderOffsetsCommand());
 	}
 
 	/**
@@ -58,6 +86,8 @@ private:
 	void AutonomousPeriodic()
 	{
 		Scheduler::GetInstance()->Run();
+		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_shooter->GetShooterSetpoint());
+		SmartDashboard::PutNumber("Feeder Speed", CommandBase::m_shooter->GetFeederSpeed());
 	}
 
 	void TeleopInit()
@@ -73,6 +103,8 @@ private:
 	void TeleopPeriodic()
 	{
 		Scheduler::GetInstance()->Run();
+//		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_shooter->GetShooterSetpoint());
+//		SmartDashboard::PutNumber("Feeder Speed", CommandBase::m_shooter->GetFeederSpeed());
 	}
 
 	void TestPeriodic()

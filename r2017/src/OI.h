@@ -2,6 +2,7 @@
 #define OI_H
 
 #include "WPILib.h"
+#include "ControllerMap.h"
 
 class OI
 {
@@ -11,6 +12,7 @@ private:
 public:
 	OI();
 	Joystick* GetDriverStick();
+	Button* m_shifterButton;
 };
 
 #endif

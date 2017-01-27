@@ -17,8 +17,11 @@ private:
 	CANTalon *m_intakeMotor;
 
 public:
-	Intake(uint32_t intakeID);
+	Intake();
 	~Intake();
+	void TurnIntakeOn();
+	void TurnIntakeOff();
+	void SetSpeed();
 	void Consume();
 	void Vomit();
 	void Stop();

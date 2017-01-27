@@ -17,7 +17,7 @@ private:
 	CANTalon *m_climberMotor;
 
 public:
-Climber(uint32_t climberID);
+Climber();
 ~Climber();
 void StartClimbing();
 void StopClimbing();

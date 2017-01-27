@@ -26,6 +26,7 @@ public:
 	void Set(float speed, float angle);
 	float GetSpeed()const;
 	float GetAngle()const;
+	float GetRawAngle()const;
 	float GetOffset() const;
 	void SetOffset(float offset);
 	void SetBrake(bool brake);
@@ -41,6 +42,7 @@ public:
 	double GetSteerI();
 	double GetSteerD();
 
+	int AngleToEncoderTicks(double angle);
 };
 
 #endif /*SWERVEMODULE_H_*/

@@ -5,9 +5,10 @@
  *      Author: FIRSTMentor
  */
 #include "Climber.h"
+#include "RobotMap.h"
 
-Climber::Climber(uint32_t climberID) : Subsystem("Climber") {
-	m_climberMotor = new CANTalon(climberID);
+Climber::Climber() : Subsystem("Climber") {
+	m_climberMotor = new CANTalon(CLIMBER_MOTOR);
 }
 
 Climber::~Climber(){

@@ -16,12 +16,15 @@ class Hopper : public Subsystem {
 private:
 	CANTalon *m_hopperMotor;
 	CANTalon *m_liftMotor;
+	double m_speed;
 
 public:
-	Hopper(uint32_t hopperID, uint32_t liftID);
+	Hopper();
 	~Hopper();
 	void StartFeeding();
 	void StopFeeding();
+	void SetSpeed(double speed);
+	double GetSpeed();
 };
 
 

@@ -3,21 +3,31 @@
 
 #include "WPILib.h"
 
-/**
- * The RobotMap is a mapping from the ports sensors and actuators are wired into
- * to a variable name. This provides flexibility changing wiring, makes checking
- * the wiring easier and significantly reduces the number of magic numbers
- * floating around.
- */
- 
-// For example to map the left and right motors, you could define the
-// following variables to use with your drivetrain subsystem.
-//const int LEFTMOTOR = 1;
-//const int RIGHTMOTOR = 2;
+//Climber
+		#define CLIMBER_MOTOR 9
 
-// If you are using multiple modules, make sure to define both the port
-// number and the module. For example you with a rangefinder:
-//const int RANGE_FINDER_PORT = 1;
-//const int RANGE_FINDER_MODULE = 1;
+//DriveTrain
+		#define FRONT_LEFT_DRIVE 1
+		#define FRONT_LEFT_STEER 2
+		#define FRONT_RIGHT_DRIVE 3
+		#define FRONT_RIGHT_STEER 4
+		#define BACK_LEFT_DRIVE 7
+		#define BACK_LEFT_STEER 8
+		#define BACK_RIGHT_DRIVE 5
+		#define BACK_RIGHT_STEER 6
+
+//GearLoader
+		#define GEAR_LOADER_MOTOR 10
+
+//Hopper
+		#define HOPPER_MOTOR 11
+		#define LIFT_MOTOR 12
+
+//Intake
+		#define INTAKE_MOTOR 13
+
+//Shooter
+		#define SHOOTER_MOTOR 14
+		#define FEEDER_MOTOR 15
 
 #endif
