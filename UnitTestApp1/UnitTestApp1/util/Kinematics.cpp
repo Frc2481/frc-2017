@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Kinematics.h"
 
-RigidTransform2D::Delta forwardKinematics(double frDriveDelta, double flDriveDelta, double brDriveDelta, double blDriveDelta,
+RigidTransform2D::Delta Kinematics::forwardKinematics(double frDriveDelta, double flDriveDelta, double brDriveDelta, double blDriveDelta,
 	double frRotationDelta, double flRotationDelta, double brRotationDelta, double blRotationDelta) 
 {
 	double linearVelocity = (frDriveDelta + flDriveDelta + brDriveDelta + blDriveDelta) / 4;
@@ -10,12 +10,16 @@ RigidTransform2D::Delta forwardKinematics(double frDriveDelta, double flDriveDel
 	return RigidTransform2D::Delta(linearVelocity, 0, deltaRotation);
 }
 
-RigidTransform2D::Delta forwardKinematics(double frDriveDelta, double flDriveDelta, double brDriveDelta, double blDriveDelta,
+RigidTransform2D::Delta Kinematics::forwardKinematics(double frDriveDelta, double flDriveDelta, double brDriveDelta, double blDriveDelta,
 	double frRotationDelta, double flRotationDelta, double brRotationDelta, double blRotationDelta, double gyroDelta) 
 {
 	//TODO: Initialize these Values
 	double L, W;
+	L = 0;
+	W = 0;
 	double originY, originX;
+	originY = 0;
+	originX = 0;
 
 	double FR_B = sin(frRotationDelta) * frDriveDelta;
 	double FR_D = cos(frRotationDelta) * frDriveDelta;
@@ -47,9 +51,11 @@ RigidTransform2D::Delta forwardKinematics(double frDriveDelta, double flDriveDel
 
 	STR = (STR1 + STR2) / 2;
 	FWD = (FWD1 + FWD2) / 2;
+
+	return RigidTransform2D::Delta(FWD, STR, omega);
 }
 
-RigidTransform2D integrateForwardKinematics(RigidTransform2D currentPose, double frDriveDelta, double flDriveDelta, double brDriveDelta, double blDriveDelta,
+RigidTransform2D Kinematics::integrateForwardKinematics(RigidTransform2D currentPose, double frDriveDelta, double flDriveDelta, double brDriveDelta, double blDriveDelta,
 	double frRotationDelta, double flRotationDelta, double brRotationDelta, double blRotationDelta, Rotation2D currentHeading) 
 {
 	RigidTransform2D::Delta withGyro = forwardKinematics(frDriveDelta, flDriveDelta, brDriveDelta, blDriveDelta,
@@ -65,7 +71,7 @@ Kinematics::DriveVelocity::DriveVelocity(double fLeft, double fRight, double bLe
 	m_bRight = bRight;
 }
 
-Kinematics::DriveVelocity inverseKinematics(RigidTransform2D::Delta velocity) {
+Kinematics::DriveVelocity Kinematics::DriveVelocity::inverseKinematics(RigidTransform2D::Delta velocity) {
 	if (abs(velocity.m_dtheta) < 1e-9) {
 		return Kinematics::DriveVelocity(velocity.m_dx, velocity.m_dx, velocity.m_dx, velocity.m_dx);
 	}

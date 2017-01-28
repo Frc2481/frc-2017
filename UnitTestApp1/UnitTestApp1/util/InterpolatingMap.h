@@ -1,3 +1,4 @@
+#pragma once
 #include "pch.h"
 #include <map>
 #include "util/InverseInterpolable.h"

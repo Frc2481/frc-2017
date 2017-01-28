@@ -160,3 +160,16 @@ double SwerveModule::GetSteerD() {
 int SwerveModule::AngleToEncoderTicks(double angle) {
 	return (int)(angle/360 * 4096);
 }
+
+double SwerveModule::GetDistance() {
+	return m_driveMotor->GetPosition();
+}
+
+void SwerveModule::SetOpenLoopSpeed(float speed) {
+}
+
+void SwerveModule::SetClosedLoopSpeed(float speed) {
+}
+
+void SwerveModule::SetAngle(float angle) {
+}

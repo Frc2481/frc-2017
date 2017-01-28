@@ -5,7 +5,7 @@
 
 class Kinematics {
 public:
-	static class DriveVelocity {
+	class DriveVelocity {
 	public:
 		double m_fLeft;
 		double m_fRight;

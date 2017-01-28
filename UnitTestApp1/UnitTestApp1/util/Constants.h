@@ -21,5 +21,8 @@ public:
 	static constexpr double kTurretXOffset = -7.376; //Probably Wrong
 	static constexpr double kTurretYOffset = 0.0; //Maybe Wrong
 	static constexpr double kTurretAngleOffsetDegrees = 0.0;
+	static constexpr double kAutoAimPredictionTime = 0.25;
+	static constexpr double kCameraDeadBand = 0.0;
+
 };
 	

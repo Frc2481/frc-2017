@@ -19,6 +19,7 @@ private:
 	double m_steerI;
 	double m_steerD;
 	bool m_isSpeedPIDEnabled;
+	bool m_angleOptimized;
 
 public:
 	SwerveModule(uint32_t driveID, uint32_t steerID);
@@ -43,6 +44,11 @@ public:
 	double GetSteerD();
 
 	int AngleToEncoderTicks(double angle);
+	double GetDistance();
+
+	void SetOpenLoopSpeed(float speed);
+	void SetClosedLoopSpeed(float speed);
+	void SetAngle(float angle);
 };
 
 #endif /*SWERVEMODULE_H_*/

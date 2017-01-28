@@ -1,4 +1,6 @@
 #pragma once
+#include "Subsystems\ShooterAimingParameters.h"
+#include "Vision\TargetInfo.h"
 #include "Constants.h"
 #include "GoalTracker.h"
 #include "InterpolatingDouble.h"
@@ -22,8 +24,9 @@ protected:
 	Rotation2D m_cameraYawCorrection;
 	double m_differentialHeight;
 
-	RobotState();
+//	RobotState();
 public:
+	RobotState();
 	//static RobotState getInstance();
 	const int kObservationBufferSize = 100;
 	const double kMaxTargetAge = 0.4;
@@ -49,4 +52,5 @@ public:
 	void outputToSmartDashboard();
 	void setVehicleToTurretFixed();
 	void setTurretRotatingToCamera();
+	GoalTracker getGoalTracker();
 };
