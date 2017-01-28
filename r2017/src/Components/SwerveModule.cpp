@@ -6,6 +6,7 @@
  */
 
 #include <Components/SwerveModule.h>
+#include "RoboUtils.h"
 
 SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	SmartDashboard::PutNumber("Temp Setpoint", 0.0);
@@ -47,12 +48,10 @@ SwerveModule::~SwerveModule() {
 }
 
 void SwerveModule::Set(float speed, float angle) {
-	while(angle > 360.0f)
-		angle -= 360.0f;
-	while(angle < 0.0f)
-		angle += 360.0f;
-
 	float currentAngle = GetAngle();
+
+	angle = RoboUtils::constrainDeg0To360(angle);
+	currentAngle = RoboUtils::constrainDeg0To360(currentAngle);
 
 	if (fabs(angle - currentAngle) > 90 && fabs(angle - currentAngle) < 270) {
 		angle = ((int)angle + 180) % 360;
@@ -69,31 +68,20 @@ void SwerveModule::Set(float speed, float angle) {
 
 	m_driveMotor->Set(speed);
 
-	int currentPosition = -m_steerMotor->GetPulseWidthPosition(); //& 0xFFF;
-//	currentPosition = m_steerMotor->GetEncPosition();
+	int currentPosition = -m_steerMotor->GetPulseWidthPosition();
 	int n = currentPosition/4096;
 	angle += m_offset;
 	angle = AngleToEncoderTicks(angle);
-	printf("Original Angle=%d, n=%d,", (int)angle, n);
 	angle += n*4096;
 	int error = currentPosition - angle;
-	printf("new angle=%d, Current position=%d, ", (int)angle, currentPosition);
 
 	if(error < -2048){
 		angle -= 4096;
-		printf("subtracting 4096 to angle\n");
 	}
 	else if (error > 2048){
 		angle += 4096;
-		printf("adding 4096 from angle\n");
-	}
-	else {
-		printf("\n");
 	}
 	m_steerMotor->SetSetpoint(angle / 4096.0);
-	SmartDashboard::PutNumber("Setpoint", m_steerMotor->GetSetpoint());
-	SmartDashboard::PutNumber("Get Closed Loop Error", m_steerMotor->GetClosedLoopError());
-	SmartDashboard::PutNumber("Rotations", n);
 }
 
 
