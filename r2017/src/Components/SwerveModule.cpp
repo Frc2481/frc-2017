@@ -48,40 +48,8 @@ SwerveModule::~SwerveModule() {
 }
 
 void SwerveModule::Set(float speed, float angle) {
-	float currentAngle = GetAngle();
-
-	angle = RoboUtils::constrainDeg0To360(angle);
-	currentAngle = RoboUtils::constrainDeg0To360(currentAngle);
-
-	if (fabs(angle - currentAngle) > 90 && fabs(angle - currentAngle) < 270) {
-		angle = ((int)angle + 180) % 360;
-		speed = -speed;
-	}
-
-	//If we are moving slowly, don't change the angle to keep things stable (rotating wheels when speed is small can induce lateral movement)
-	if (fabs(speed) < .05){
-		angle = m_prevAngle;
-	}
-	else {
-		m_prevAngle = angle;
-	}
-
-	m_driveMotor->Set(speed);
-
-	int currentPosition = -m_steerMotor->GetPulseWidthPosition();
-	int n = currentPosition/4096;
-	angle += m_offset;
-	angle = AngleToEncoderTicks(angle);
-	angle += n*4096;
-	int error = currentPosition - angle;
-
-	if(error < -2048){
-		angle -= 4096;
-	}
-	else if (error > 2048){
-		angle += 4096;
-	}
-	m_steerMotor->SetSetpoint(angle / 4096.0);
+	SetAngle(angle);
+	SetOpenLoopSpeed(speed);
 }
 
 
@@ -166,10 +134,75 @@ double SwerveModule::GetDistance() {
 }
 
 void SwerveModule::SetOpenLoopSpeed(float speed) {
+	if (m_driveMotor->GetControlMode() != CANTalon::kPercentVbus){
+		m_driveMotor->SetControlMode(CANTalon::kPercentVbus);
+	}
+
+	if (fabs(speed) < .05){
+		m_stopped = true;
+	}
+	else {
+		m_stopped = false;
+	}
+
+	if(m_angleOptimized == true){
+		speed *= -1;
+	}
+	m_driveMotor->Set(speed);
 }
 
 void SwerveModule::SetClosedLoopSpeed(float speed) {
+	if (m_driveMotor->GetControlMode() != CANTalon::kSpeed){
+		m_driveMotor->SetControlMode(CANTalon::kSpeed);
+	}
+
+	if (fabs(speed) > 0.01){
+		m_stopped = false;
+	}
+	else {
+		m_stopped = true;
+	}
+
+	if(m_angleOptimized == true){
+		speed *= -1;
+	}
+	m_driveMotor->Set(speed);
 }
 
 void SwerveModule::SetAngle(float angle) {
+	float currentAngle = GetAngle();
+
+		angle = RoboUtils::constrainDeg0To360(angle);
+		currentAngle = RoboUtils::constrainDeg0To360(currentAngle);
+
+		if (fabs(angle - currentAngle) > 90 && fabs(angle - currentAngle) < 270) {
+			angle = ((int)angle + 180) % 360;
+			m_angleOptimized = true;
+		}
+		else{
+			m_angleOptimized = false;
+		}
+
+		//If we are moving slowly, don't change the angle to keep things stable (rotating wheels when speed is small can induce lateral movement)
+		if (m_stopped){
+			angle = m_prevAngle;
+		}
+		else {
+			m_prevAngle = angle;
+		}
+
+		int currentPosition = -m_steerMotor->GetPulseWidthPosition();
+		int n = currentPosition/4096;
+		angle += m_offset;
+		angle = AngleToEncoderTicks(angle);
+		angle += n*4096;
+		int error = currentPosition - angle;
+
+		if(error < -2048){
+			angle -= 4096;
+		}
+		else if (error > 2048){
+			angle += 4096;
+		}
+		m_steerMotor->SetSetpoint(angle / 4096.0);
 }

@@ -20,6 +20,7 @@ private:
 	double m_steerD;
 	bool m_isSpeedPIDEnabled;
 	bool m_angleOptimized;
+	bool m_stopped;
 
 public:
 	SwerveModule(uint32_t driveID, uint32_t steerID);
