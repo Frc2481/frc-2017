@@ -8,13 +8,21 @@
 #include "RobotMap.h"
 
 GearLoader::GearLoader() : Subsystem("GearLoader") {
-	m_gearLoaderMotor = new CANTalon(GEAR_LOADER_MOTOR);
+	m_gearLoader = new Solenoid(GEAR_LOADER);
 }
 
 GearLoader::~GearLoader() {
-	delete m_gearLoaderMotor;
+	delete m_gearLoader;
 }
 
-void UnloadGear(){
+void GearLoader::LoadGear(){
+	m_gearLoader->Set(true);
+}
 
+void GearLoader::ResetGear(){
+	m_gearLoader->Set(false);
+}
+
+bool GearLoader::IsUnloaded(){
+	return m_gearLoader->Get();
 }
