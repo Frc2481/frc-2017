@@ -8,6 +8,7 @@
 #include "Commands/ShooterOffCommand.h"
 #include "Commands/ShooterSetPIDCommand.h"
 #include "Commands/CalibrateEncoderOffsetsCommand.h"
+#include "Commands/SetEncoderConfigsCommand.h"
 
 class Robot: public IterativeRobot
 {
@@ -43,6 +44,14 @@ private:
 		SmartDashboard::PutData(new ShooterOffCommand());
 		SmartDashboard::PutData(new ShooterSetPIDCommand());
 		SmartDashboard::PutData(new CalibrateEncoderOffsetsCommand());
+		SmartDashboard::PutData(new SetEncoderConfigsCommand());
+
+		SmartDashboard::PutNumber("EncoderConfig InitPos", 0);
+		SmartDashboard::PutNumber("EncoderConfig P", 0.0);
+		SmartDashboard::PutNumber("EncoderConfig I", 0.0);
+		SmartDashboard::PutNumber("EncoderConfig D", 0.0);
+		SmartDashboard::PutNumber("EncoderConfig V", 0.0);
+		SmartDashboard::PutNumber("EncoderConfig A", 0.0);
 	}
 
 	/**

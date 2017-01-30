@@ -1,0 +1,114 @@
+/*
+ * TrajectoryFollower.cpp
+ *
+ *  Created on: Jan 28, 2017
+ *      Author: Team2481
+ */
+
+#include "Components/TrajectoryFollower.h"
+#include "Components/SwerveModule.h"
+#include "CommandBase.h"
+
+
+TrajectoryFollower::TrajectoryFollower() {
+	// TODO Auto-generated constructor stub
+
+}
+
+TrajectoryFollower::~TrajectoryFollower() {
+	// TODO Auto-generated destructor stub
+}
+
+TrajectoryFollower* TrajectoryFollower::GetInstance(){
+	static TrajectoryFollower instance;
+	return &instance;
+}
+
+void TrajectoryFollower::PeriodicUpdate() {
+	//TODO: Get swerve modules
+	SwerveModule *frModule = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE);
+	SwerveModule *flModule = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE);
+	SwerveModule *brModule = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE);
+	SwerveModule *blModule = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE);
+	//TODO: Get current encoder ticks
+	int frDistanceInches = frModule->GetDistance();
+	int flDistanceInches = flModule->GetDistance();
+	int brDistanceInches = brModule->GetDistance();
+	int blDistanceInches = blModule->GetDistance();
+	//TODO: call pathfinder api
+	double flSpeed = pathfinder_follow_encoder(m_flConfig, &m_flFollower, m_flTrajectory, m_flLength, flDistanceInches);
+	double frSpeed = pathfinder_follow_encoder(m_frConfig, &m_frFollower, m_frTrajectory, m_frLength, frDistanceInches);
+	double blSpeed = pathfinder_follow_encoder(m_blConfig, &m_blFollower, m_blTrajectory, m_blLength, blDistanceInches);
+	double brSpeed = pathfinder_follow_encoder(m_brConfig, &m_brFollower, m_brTrajectory, m_brLength, brDistanceInches);
+	//TODO: set angle and speed setpoint on swerve module
+
+	frModule->SetClosedLoopSpeed(frSpeed);
+	flModule->SetClosedLoopSpeed(flSpeed);
+	brModule->SetClosedLoopSpeed(brSpeed);
+	blModule->SetClosedLoopSpeed(blSpeed);
+
+	double flDesiredHeading = r2d(m_flFollower.heading);
+	double frDesiredHeading = r2d(m_frFollower.heading);
+	double blDesiredHeading = r2d(m_blFollower.heading);
+	double brDesiredHeading = r2d(m_brFollower.heading);
+
+	frModule->SetAngle(frDesiredHeading);
+	flModule->SetAngle(flDesiredHeading);
+	brModule->SetAngle(brDesiredHeading);
+	blModule->SetAngle(blDesiredHeading);
+
+}
+
+void TrajectoryFollower::SetTrajectories(Segment* frSegment, Segment* flSegment,
+		Segment* brSegment, Segment* blSegment) {
+	m_frTrajectory = frSegment;
+	m_flTrajectory = flSegment;
+	m_brTrajectory = brSegment;
+	m_blTrajectory = blSegment;
+}
+
+void TrajectoryFollower::Reset() {
+	m_frTrajectory = 0;
+	m_flTrajectory = 0;
+	m_brTrajectory = 0;
+	m_blTrajectory = 0;
+}
+
+void TrajectoryFollower::SetEncoderConfig(int initPos, int ticksPerRev,
+		double wheelCircum, double p, double i, double d, double v, double a) {
+	m_flConfig.initial_position = initPos;
+	m_flConfig.ticks_per_revolution = ticksPerRev;
+	m_flConfig.wheel_circumference = wheelCircum;
+	m_flConfig.kp = p;
+	m_flConfig.ki = i;
+	m_flConfig.kd = d;
+	m_flConfig.kv = v;
+	m_flConfig.ka = a;
+
+	m_frConfig.initial_position = initPos;
+	m_frConfig.ticks_per_revolution = ticksPerRev;
+	m_frConfig.wheel_circumference = wheelCircum;
+	m_frConfig.kp = p;
+	m_frConfig.ki = i;
+	m_frConfig.kd = d;
+	m_frConfig.kv = v;
+	m_frConfig.ka = a;
+
+	m_blConfig.initial_position = initPos;
+	m_blConfig.ticks_per_revolution = ticksPerRev;
+	m_blConfig.wheel_circumference = wheelCircum;
+	m_blConfig.kp = p;
+	m_blConfig.ki = i;
+	m_blConfig.kd = d;
+	m_blConfig.kv = v;
+	m_blConfig.ka = a;
+
+	m_brConfig.initial_position = initPos;
+	m_brConfig.ticks_per_revolution = ticksPerRev;
+	m_brConfig.wheel_circumference = wheelCircum;
+	m_brConfig.kp = p;
+	m_brConfig.ki = i;
+	m_brConfig.kd = d;
+	m_brConfig.kv = v;
+	m_brConfig.ka = a;
+}
