@@ -45,6 +45,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.1895838080" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.libs.1363675797" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="CTRLib"/>
+									<listOptionValue builtIn="false" value="pathfinder"/>
 									<listOptionValue builtIn="false" value="navx_frc_cpp"/>
 									<listOptionValue builtIn="false" value="wpi"/>
 								</option>
@@ -240,6 +241,7 @@
 		<configuration configurationName="Simulate">
 			<resource resourceType="PROJECT" workspacePath="/GearsBotCPP"/>
 		</configuration>
+		<configuration configurationName="linux_simulate"/>
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/GearsBotCPP"/>
 		</configuration>
