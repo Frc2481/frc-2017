@@ -8,29 +8,16 @@
 #ifndef SRC_COMMANDS_SHOOTERDECREASESPEEDCOMMAND_H_
 #define SRC_COMMANDS_SHOOTERDECREASESPEEDCOMMAND_H_
 
-class ShooterDecreaseSpeedCommand : public CommandBase{
+#include "Commands/InstantCommand.h"
+
+class ShooterDecreaseSpeedCommand : public InstantCommand {
 public:
-	ShooterDecreaseSpeedCommand() : CommandBase("Shooter Decrease Speed Command"){
-		Requires(m_shooter.get());
+	ShooterDecreaseSpeedCommand() : InstantCommand("Shooter Decrease Speed Command"){
+		Requires(CommandBase::m_shooter.get());
 	}
+
 	void Initialize(){
-		m_shooter->SetShooterSetpoint(m_shooter->GetShooterSetpoint()-100);
-	}
-
-	void Execute() {
-
-	}
-
-	bool IsFinished(){
-		return true;
-	}
-
-	void End() {
-
-	}
-
-	void Interrupted() {
-		End();
+		CommandBase::m_shooter->SetShooterSetpoint(CommandBase::m_shooter->GetShooterSetpoint()-100);
 	}
 };
 

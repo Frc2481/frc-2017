@@ -8,30 +8,16 @@
 #ifndef SRC_COMMANDS_INTAKEONCOMMAND_H_
 #define SRC_COMMANDS_INTAKEONCOMMAND_H_
 
-class IntakeOnCommand : public CommandBase {
+#include "Commands/InstantCommand.h"
+
+class IntakeOnCommand : public InstantCommand {
 public:
-	IntakeOnCommand() : CommandBase("Intake On Command"){
-		Requires(m_intake.get());
+	IntakeOnCommand() : InstantCommand("Intake On Command"){
+		Requires(CommandBase::m_intake.get());
 	}
 
 	void Initialize() {
-		m_intake->TurnIntakeOn();
-	}
-
-	void Execute() {
-
-	}
-
-	bool IsFinished() {
-		return true;
-	}
-
-	void End() {
-
-	}
-
-	void Interrupted() {
-		End();
+		CommandBase::m_intake->TurnIntakeOn();
 	}
 };
 

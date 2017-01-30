@@ -8,31 +8,15 @@
 #ifndef SRC_COMMANDS_FEEDERONCOMMAND_H_
 #define SRC_COMMANDS_FEEDERONCOMMAND_H_
 
-class FeederOnCommand : public CommandBase {
-	FeederOnCommand() : CommandBase("Feeder On Command") {
-		Requires(m_shooter.get());
+#include "Commands/InstantCommand.h"
+
+class FeederOnCommand : public InstantCommand {
+	FeederOnCommand() : InstantCommand("Feeder On Command") {
+		Requires(CommandBase::m_shooter.get());
 	}
 	void Initialize() {
-		m_shooter->TurnFeederOn();
-	}
-
-	void Execute() {
-
-	}
-
-	bool IsFinished() {
-		return true;
-	}
-
-	void End() {
-
-	}
-
-	void Interrupt() {
-		End();
+		CommandBase::m_shooter->TurnFeederOn();
 	}
 };
-
-
 
 #endif /* SRC_COMMANDS_FEEDERONCOMMAND_H_ */

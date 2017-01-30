@@ -9,33 +9,19 @@
 #define SRC_COMMANDS_DRIVETRAINSHIFTCOMMAND_H_
 
 #include "CommandBase.h"
+#include "Commands/InstantCommand.h"
 
-class DriveTrainShiftCommand : public CommandBase{
+class DriveTrainShiftCommand : public InstantCommand{
 private:
 	bool m_shiftUp;
 public:
 	DriveTrainShiftCommand(bool shiftUp) :
-		CommandBase("DriveTrainShiftCommand"), m_shiftUp(shiftUp) {
-			Requires(m_driveTrain.get());
+		InstantCommand("DriveTrainShiftCommand"), m_shiftUp(shiftUp) {
+			Requires(CommandBase::m_driveTrain.get());
 	}
 
 	void Initialize() {
-		m_driveTrain->Shift(m_shiftUp);
-	}
-	void Execute(){
-
-	}
-
-	bool IsFinished(){
-		return true;
-	}
-
-	void End(){
-		m_driveTrain->Shift(false);
-	}
-
-	void Interrupted(){
-		End();
+		CommandBase::m_driveTrain->Shift(m_shiftUp);
 	}
 };
 

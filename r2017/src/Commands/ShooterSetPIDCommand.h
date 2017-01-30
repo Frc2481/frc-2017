@@ -8,33 +8,16 @@
 #ifndef SRC_COMMANDS_SHOOTERSETPIDCOMMAND_H_
 #define SRC_COMMANDS_SHOOTERSETPIDCOMMAND_H_
 #include "CommandBase.h"
+#include "Commands/InstantCommand.h"
 
-class ShooterSetPIDCommand : public CommandBase {
+class ShooterSetPIDCommand : public InstantCommand {
 public:
-	ShooterSetPIDCommand() : CommandBase("Shooter Set PID Command") {
-
-	}
+	ShooterSetPIDCommand() : InstantCommand("Shooter Set PID Command") {}
 
 	void Initialize() {
-		m_shooter->SetPID(SmartDashboard::GetNumber("Shooter P", 0),
+		CommandBase::m_shooter->SetPID(SmartDashboard::GetNumber("Shooter P", 0),
 				SmartDashboard::GetNumber("Shooter I", 0),
 				SmartDashboard::GetNumber("Shooter D", 0));
-	}
-
-	void Execute() {
-
-	}
-
-	bool IsFinished() {
-		return true;
-	}
-
-	void End() {
-
-	}
-
-	void Interrupt() {
-		End();
 	}
 };
 

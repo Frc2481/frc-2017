@@ -8,36 +8,17 @@
 #ifndef SRC_COMMANDS_FEEDEROFFCOMMAND_H_
 #define SRC_COMMANDS_FEEDEROFFCOMMAND_H_
 
-class FeederOffCommand : public CommandBase {
-	FeederOffCommand() : CommandBase("Feeder Off Command") {
-		Requires(m_shooter.get());
+#include "Commands/InstantCommand.h"
+
+class FeederOffCommand : public InstantCommand {
+	FeederOffCommand() : InstantCommand("Feeder Off Command") {
+		Requires(CommandBase::m_shooter.get());
 	}
 	void Initialize() {
-		m_shooter->TurnFeederOff();
-	}
-
-	void Execute() {
-
-	}
-
-	bool IsFinished() {
-		return true;
-	}
-
-	void End() {
-
-	}
-
-	void Interrupt() {
-		End();
+		CommandBase::m_shooter->TurnFeederOff();
 	}
 };
 
-
-
 #endif /* SRC_COMMANDS_FEEDEROFFCOMMAND_H_ */
-
-
-
 
 #endif /* SRC_COMMANDS_FEEDEROFFCOMMAND_H_ */
