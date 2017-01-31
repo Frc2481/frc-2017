@@ -8,13 +8,12 @@
 #ifndef SRC_COMMANDS_DRIVETRAINSETPIDCOMMAND_H_
 #define SRC_COMMANDS_DRIVETRAINSETPIDCOMMAND_H_
 #include "CommandBase.h"
+#include "Commands/InstantCommand.h"
 
 
-class DriveTrainSetPIDCommand : public CommandBase {
+class DriveTrainSetPIDCommand : public InstantCommand {
 public:
-	DriveTrainSetPIDCommand() : CommandBase("DriveTrain Set PID Command"){
-
-	}
+	DriveTrainSetPIDCommand() : InstantCommand("DriveTrain Set PID Command"){}
 
 	void Initialize(){
 		double speedP = SmartDashboard::GetNumber("Speed P", 0);
@@ -23,25 +22,10 @@ public:
 		double steerP = SmartDashboard::GetNumber("Steer P", 0.01);
 		double steerI = SmartDashboard::GetNumber("Steer I", 0);
 		double steerD = SmartDashboard::GetNumber("Steer D", 0);
-		m_driveTrain->SetSpeedPID(speedP, speedI, speedD);
-		m_driveTrain->SetSteerPID(steerP, steerI, steerD);
+		CommandBase::m_driveTrain->SetSpeedPID(speedP, speedI, speedD);
+		CommandBase::m_driveTrain->SetSteerPID(steerP, steerI, steerD);
 	}
 
-	void Execute(){
-
-	}
-
-	bool IsFinished(){
-		return true;
-	}
-
-	void End(){
-
-	}
-
-	void Interrupted(){
-		End();
-	}
 };
 
 

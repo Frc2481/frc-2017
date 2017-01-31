@@ -43,7 +43,25 @@ class AutoRightHopperFromRightGearCommand : public DriveTrainFollowPathCommand {
 	AutoRightHopperFromRightGearCommand() : DriveTrainFollowPathCommand("AutoRightHopperFromRightGearCommand") {}
 	void Initialize(){
 			GeneratePath(m_path, 2);
-		}
+			DriverStation::Alliance color = DriverStation::GetInstance().GetAlliance()
+			if(color == DriverStation::Alliance::kRed){
+				Waypoint initial = {0, 0, 0};
+				Waypoint final = {1000, 1000, 0}; //TUNE THIS
+				Waypoint path[2] = {initial, final};
+				GeneratePath(path, 2);
+			}
+			else if(color == DriverStation::Alliance::kBlue){
+				Waypoint initial = {0, 0, 0};
+				Waypoint final = {1000, 1000, 0}; //TUNE THIS
+				Waypoint path[2] = {initial, final};
+				GeneratePath(path, 2);
+			}
+			else {
+				Waypoint initial = {0, 0, 0};
+				Waypoint final = {0, 150, 0}; //TUNE THIS
+				Waypoint path[2] = {initial, final};
+				GeneratePath(path, 2);
+		  } 
 };
 
 #endif /* SRC_COMMANDS_AUTODRIVEHOPPERCOMMAND_H_ */

@@ -8,18 +8,20 @@
 #ifndef SRC_SUBSYSTEMS_GEARLOADER_H_
 #define SRC_SUBSYSTEMS_GEARLOADER_H_
 
-#include "WPILib.h"
+#include "Solenoid.h"
 #include "Commands/Subsystem.h"
 #include "CANTalon.h"
 
 class GearLoader : public Subsystem {
 private:
-	CANTalon *m_gearLoaderMotor;
+	Solenoid *m_gearLoader;
 
 public:
 GearLoader();
 ~GearLoader();
-void UnloadGear();
+void LoadGear();
+void ResetGear();
+bool IsUnloaded();
 };
 
 

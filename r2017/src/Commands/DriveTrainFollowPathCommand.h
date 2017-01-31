@@ -32,9 +32,7 @@ public:
 		PathGenerator::GetInstance()->GeneratePath(&m_candidate, m_flTrajectory, m_frTrajectory, m_blTrajectory, m_brTrajectory);
 	}
 
-	void Initialize(){
-
-	}
+	void Initialize(){}
 	void Execute(){}
 	bool IsFinished(){}
 	void End(){}

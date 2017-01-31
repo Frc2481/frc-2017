@@ -8,31 +8,14 @@
 #ifndef SRC_COMMANDS_HOPPERSETSPEEDCOMMAND_H_
 #define SRC_COMMANDS_HOPPERSETSPEEDCOMMAND_H_
 #include "CommandBase.h"
+#include "Commands/InstantCommand.h"
 
-class HopperSetSpeedCommand : public CommandBase {
+class HopperSetSpeedCommand : public InstantCommand {
 public:
-	HopperSetSpeedCommand() : CommandBase("Hopper Set Speed Command") {
-
-	}
+	HopperSetSpeedCommand() : InstantCommand("Hopper Set Speed Command") {}
 
 	void Initialize(){
-		m_hopper->SetSpeed(SmartDashboard::GetNumber("Hopper Speed", 0));
-	}
-
-	void Execute(){
-
-	}
-
-	bool IsFinished(){
-		return true;
-	}
-
-	void End(){
-
-	}
-
-	void Interrupted(){
-		End();
+		CommandBase::m_hopper->SetSpeed(SmartDashboard::GetNumber("Hopper Speed", 0));
 	}
 };
 

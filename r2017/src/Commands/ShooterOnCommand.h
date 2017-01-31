@@ -8,30 +8,16 @@
 #ifndef SRC_COMMANDS_SHOOTERONCOMMAND_H_
 #define SRC_COMMANDS_SHOOTERONCOMMAND_H_
 
-class ShooterOnCommand : public CommandBase {
+#include "Commands/InstantCommand.h"
+
+class ShooterOnCommand : public InstantCommand {
 public:
-	ShooterOnCommand() : CommandBase("Shooter On Command") {
-		Requires(m_shooter.get());
+	ShooterOnCommand() : InstantCommand("Shooter On Command") {
+		Requires(CommandBase::m_shooter.get());
 	}
 
 	void Initialize() {
-		m_shooter->TurnShooterOn();
-	}
-
-	void Execute() {
-
-	}
-
-	bool IsFinished() {
-		return true;
-	}
-
-	void End() {
-
-	}
-
-	void Inerrupted() {
-		End();
+		CommandBase::m_shooter->TurnShooterOn();
 	}
 };
 
