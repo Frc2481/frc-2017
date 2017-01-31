@@ -8,30 +8,16 @@
 #ifndef SRC_COMMANDS_SHOOTEROFFCOMMAND_H_
 #define SRC_COMMANDS_SHOOTEROFFCOMMAND_H_
 
-class ShooterOffCommand : public CommandBase {
+#include "Commands/InstantCommand.h"
+
+class ShooterOffCommand : public InstantCommand {
 public:
-	ShooterOffCommand() : CommandBase("Shooter Off Command") {
-		Requires(m_shooter.get());
+	ShooterOffCommand() : InstantCommand("Shooter Off Command") {
+		Requires(CommandBase::m_shooter.get());
 	}
 
 	void Initialize() {
-		m_shooter->TurnShooterOff();
-	}
-
-	void Execute() {
-
-	}
-
-	bool IsFinished() {
-		return true;
-	}
-
-	void End() {
-
-	}
-
-	void Inerrupted() {
-		End();
+		CommandBase::m_shooter->TurnShooterOff();
 	}
 };
 

@@ -8,30 +8,16 @@
 #ifndef SRC_COMMANDS_HOPPEROFFCOMMAND_H_
 #define SRC_COMMANDS_HOPPEROFFCOMMAND_H_
 
-class HopperOffCommand : public CommandBase {
+#include "Commands/InstantCommand.h"
+
+class HopperOffCommand : public InstantCommand {
 public:
-	HopperOffCommand() : CommandBase("Hopper Off Command"){
-		Requires(m_hopper.get());
+	HopperOffCommand() : InstantCommand("Hopper Off Command"){
+		Requires(CommandBase::m_hopper.get());
 	}
 
 	void Initialize() {
-		m_hopper->StopFeeding();
-	}
-
-	void Executive() {
-
-	}
-
-	bool IsFinished() {
-		return true;
-	}
-
-	void End() {
-
-	}
-
-	void Interrupted(){
-		End();
+		CommandBase::m_hopper->StopFeeding();
 	}
 };
 
