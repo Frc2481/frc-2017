@@ -14,7 +14,7 @@ public:
 	virtual ~VisionMessage();
 	virtual const char* getType() = 0;
 	virtual const char* getMessage() = 0;
-	char* toJson();
+	const char* toJson();
 };
 
 #endif /* SRC_VISION_MESSAGES_VISIONMESSAGE_H_ */
