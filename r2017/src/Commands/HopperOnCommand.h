@@ -9,32 +9,16 @@
 #define SRC_COMMANDS_HOPPERONCOMMAND_H_
 
 #include "CommandBase.h"
+#include "Commands/InstantCommand.h"
 
-class HopperOnCommand : public CommandBase {
+class HopperOnCommand : public InstantCommand {
 public:
-	HopperOnCommand() : CommandBase("Hopper On Command"){
-		Requires(m_hopper.get());
+	HopperOnCommand() : InstantCommand("Hopper On Command"){
+		Requires(CommandBase::m_hopper.get());
 	}
 
 	void Initialize(){
-		m_hopper->StartFeeding();
-	}
-
-	void Execute(){
-
-	}
-
-	bool IsFinished(){
-		return true;
-	}
-
-	void End(){
-
-
-	}
-
-	void Interrupted(){
-		End();
+		CommandBase::m_hopper->StartFeeding();
 	}
 };
 

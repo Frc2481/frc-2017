@@ -13,10 +13,10 @@
 #include "../RobotParameters.h"
 #include "Components/PersistedSettings.h"
 
-class CalibrateEncoderOffsetsCommand: public CommandBase
+class CalibrateEncoderOffsetsCommand: public InstantCommand
 {
 public:
-	CalibrateEncoderOffsetsCommand() : CommandBase("Calibrate Encoder Command"){
+	CalibrateEncoderOffsetsCommand() : InstantCommand("Calibrate Encoder Command"){
 		SetRunWhenDisabled(true);
 	}
 	void Initialize(){
@@ -25,14 +25,11 @@ public:
 		saveAndApplyEncoderOffset(DriveTrain::BACK_LEFT_MODULE, "BL_ENCODER_OFFSET");
 		saveAndApplyEncoderOffset(DriveTrain::BACK_RIGHT_MODULE, "BR_ENCODER_OFFSET");
 	}
-	bool IsFinished(){
-		return true;
-	}
 
 private:
 	void saveAndApplyEncoderOffset(DriveTrain::SwerveModuleType encoder, const std::string& key){
-		float temp = m_driveTrain->GetEncoderValue(encoder);
-		m_driveTrain->SetEncoderOffset(encoder, temp);
+		float temp = CommandBase::m_driveTrain->GetEncoderValue(encoder);
+		CommandBase::m_driveTrain->SetEncoderOffset(encoder, temp);
 		PersistedSettings::GetInstance().Set(key.c_str(),temp);
 	}
 };
