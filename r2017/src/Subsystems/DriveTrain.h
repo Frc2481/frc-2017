@@ -44,11 +44,11 @@ private:
 	double m_XPos, m_YPos, m_Twist;
 
 public:
-	enum EncoderType{
-		FRONT_LEFT_ENCODER,
-		FRONT_RIGHT_ENCODER,
-		BACK_LEFT_ENCODER,
-		BACK_RIGHT_ENCODER,
+	enum SwerveModuleType{
+		FRONT_LEFT_MODULE,
+		FRONT_RIGHT_MODULE,
+		BACK_LEFT_MODULE,
+		BACK_RIGHT_MODULE,
 	};
 	DriveTrain();
 	~DriveTrain();
@@ -62,7 +62,7 @@ public:
 	double GetXOrigin();
 	double GetYOrigin();
 	//float GetEncoderValue(int wheel);
-	float GetEncoderValue(DriveTrain::EncoderType encoder);
+	float GetEncoderValue(DriveTrain::SwerveModuleType encoder);
 	void SetEncoderOffset(int wheel, float offset);
 	//void SetP(float p);
 	void SetSpeedPID(double p, double i, double d);
@@ -94,6 +94,7 @@ public:
 	void PeriodicUpdate();
 	void SetBrake(bool brake);
 	void Shift(bool state);
+	SwerveModule* GetModule(DriveTrain::SwerveModuleType module);
 };
 
 #endif  // DriveTrain_H

@@ -22,6 +22,10 @@
     <ClCompile Include="util\InterpolatingDouble.cpp" />
     <ClCompile Include="util\GoalTrack.cpp" />
     <ClCompile Include="util\GoalTracker.cpp" />
+    <ClCompile Include="util\Kinematics.cpp" />
+    <ClCompile Include="util\RobotState.cpp" />
+    <ClCompile Include="Subsystems\ShooterAimingParameters.cpp" />
+    <ClCompile Include="Vision\TargetInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -36,6 +40,10 @@
     <ClInclude Include="util\GoalTrack.h" />
     <ClInclude Include="util\Constants.h" />
     <ClInclude Include="util\GoalTracker.h" />
+    <ClInclude Include="util\Kinematics.h" />
+    <ClInclude Include="util\RobotState.h" />
+    <ClInclude Include="Subsystems\ShooterAimingParameters.h" />
+    <ClInclude Include="Vision\TargetInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="UnitTestApp.rd.xml" />

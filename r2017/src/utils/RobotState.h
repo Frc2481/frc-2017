@@ -1,20 +1,23 @@
 #pragma once
-#include "Subsystems\ShooterAimingParameters.h"
+#include <utils/Constants.h>
+#include <utils/GoalTracker.h>
+#include <utils/InterpolatingDouble.h>
+#include <utils/InterpolatingMap.h>
+#include <utils/Kinematics.h>
+#include <utils/RigidTransform2D.h>
+#include <utils/Rotation2D.h>
+#include <utils/Translation2D.h>
+#include <mutex>
+
+#include "ShooterAimingParameters.h"
 #include "Vision\TargetInfo.h"
-#include "Constants.h"
-#include "GoalTracker.h"
-#include "InterpolatingDouble.h"
-#include "InterpolatingMap.h"
-#include "RigidTransform2D.h"
-#include "Rotation2D.h"
-#include "Translation2D.h"
-#include "Kinematics.h"
 
 class RobotState {
 private:
 	//static RobotState m_instance;
 	RigidTransform2D kVehicleToTurretFixed;
 	RigidTransform2D kTurretRotatingToCamera;
+	std::recursive_mutex m_mutex;
 protected:
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_fieldToVehicle;
 	RigidTransform2D::Delta m_vehicleVelocity;

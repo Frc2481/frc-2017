@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "RobotState.h"
+#include <utils/RobotState.h>
+
 #include <cmath>
 
 RobotState::RobotState() : m_vehicleVelocity(0,0,0) {
@@ -12,9 +12,10 @@ RobotState::RobotState() : m_vehicleVelocity(0,0,0) {
 //}
 
 void RobotState::reset(double startTime, RigidTransform2D initialFieldToVehicle, Rotation2D initialTurretRotation) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	m_fieldToVehicle = InterpolatingMap<InterpolatingDouble, RigidTransform2D>(kObservationBufferSize);
 	m_fieldToVehicle.put(InterpolatingDouble(startTime), initialFieldToVehicle);
-	m_vehicleVelocity = RigidTransform2D::Delta::Delta(0, 0, 0);
+	m_vehicleVelocity = RigidTransform2D::Delta(0, 0, 0);
 	m_turretRotation = InterpolatingMap<InterpolatingDouble, Rotation2D>(kObservationBufferSize);
 	m_turretRotation.put(InterpolatingDouble(startTime), initialTurretRotation);
 	m_goalTracker = GoalTracker();
@@ -24,42 +25,51 @@ void RobotState::reset(double startTime, RigidTransform2D initialFieldToVehicle,
 }
 
 RigidTransform2D RobotState::getFieldToVehicle(double timeStamp) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	return m_fieldToVehicle.getInterpolated(InterpolatingDouble(timeStamp));
 }
 
 RigidTransform2D RobotState::getPredictedFieldToVehicle(double lookAheadTime) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	return getLatestFieldToVehicle().transformBy(RigidTransform2D::fromVelocity(RigidTransform2D::Delta(m_vehicleVelocity.m_dx * lookAheadTime,
 		m_vehicleVelocity.m_dy * lookAheadTime, m_vehicleVelocity.m_dtheta * lookAheadTime)));
 }
 
 Rotation2D RobotState::getTurretRotation(double timeStamp) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	return m_turretRotation.getInterpolated(InterpolatingDouble(timeStamp));
 }
 
 RigidTransform2D RobotState::getFieldToTurretRotated(double timeStamp) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	InterpolatingDouble key = InterpolatingDouble(timeStamp);
 	return m_fieldToVehicle.getInterpolated(key).transformBy(kVehicleToTurretFixed).transformBy(RigidTransform2D::fromRotation(m_turretRotation.getInterpolated(key)));
 }
 
 RigidTransform2D RobotState::getFieldToCamera(double timeStamp) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	return getFieldToTurretRotated(timeStamp).transformBy(kTurretRotatingToCamera);
 }
 
 void RobotState::addFieldToVehicleObservation(double timeStamp, RigidTransform2D observation) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	m_fieldToVehicle.put(InterpolatingDouble(timeStamp), observation);
 }
 
 void RobotState::addTurretRotationObservation(double timeStamp, Rotation2D observation) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	m_turretRotation.put(InterpolatingDouble(timeStamp), observation);
 }
 
 void RobotState::addObservations(double timeStamp, RigidTransform2D field_to_vehicle, Rotation2D turret_rotation, RigidTransform2D::Delta velocity) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	addFieldToVehicleObservation(timeStamp, field_to_vehicle);
 	addTurretRotationObservation(timeStamp, turret_rotation);
 	m_vehicleVelocity = velocity;
 }
 
 void RobotState::addVisionUpdate(double timeStamp, std::list<TargetInfo> visionUpdate) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	std::list<Translation2D> fieldToGoals;
 	RigidTransform2D fieldToCamera = getFieldToCamera(timeStamp);
 	
@@ -88,6 +98,7 @@ void RobotState::addVisionUpdate(double timeStamp, std::list<TargetInfo> visionU
 }
 
 std::list<ShooterAimingParameters> RobotState::getAimingParameters(double currentTimeStamp) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	std::list<ShooterAimingParameters> rv;
 	std::list<GoalTracker::TrackReport> reports = m_goalTracker.getTracks();
 
@@ -106,6 +117,7 @@ std::list<ShooterAimingParameters> RobotState::getAimingParameters(double curren
 }
 
 std::list<RigidTransform2D> RobotState::getCaptureTimeFieldToGoal() {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	std::list<RigidTransform2D> rv;
 	
 	for (GoalTracker::TrackReport report : m_goalTracker.getTracks()) {
@@ -115,32 +127,39 @@ std::list<RigidTransform2D> RobotState::getCaptureTimeFieldToGoal() {
 }
 
 void RobotState::resetVision() {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	m_goalTracker.reset();
 }
 
 RigidTransform2D RobotState::generateOdemetryFromSensors(double frEncoderDeltaDistance, double flEncoderDeltaDistance, double brEncoderDeltaDistance,
 	double blEncoderDeltaDistance, double frRotationDeltaDistance, double flRotationDeltaDistance, double brRotationDeltaDistance, double blRotationDeltaDistance, Rotation2D currentGyroAngle) {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	RigidTransform2D lastMeasurement = getLatestFieldToVehicle();
 	return Kinematics::integrateForwardKinematics(lastMeasurement, frEncoderDeltaDistance, flEncoderDeltaDistance, brEncoderDeltaDistance, blEncoderDeltaDistance,
 		frRotationDeltaDistance, flRotationDeltaDistance, brRotationDeltaDistance, blRotationDeltaDistance, currentGyroAngle);
 }
 
 RigidTransform2D RobotState::getLatestFieldToVehicle() {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	return m_fieldToVehicle.rbegin()->second;
 }
 
 Rotation2D RobotState::getLatestTurretRotation() {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	return m_turretRotation.rbegin()->second;
 }
 
 void RobotState::setVehicleToTurretFixed() {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	kVehicleToTurretFixed = RigidTransform2D(Translation2D(Constants::kTurretXOffset, Constants::kTurretYOffset), Rotation2D::fromDegrees(Constants::kTurretAngleOffsetDegrees));
 }
 
 void RobotState::setTurretRotatingToCamera() {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	kTurretRotatingToCamera = RigidTransform2D(Translation2D(Constants::kCameraXOffset, Constants::kCameraYOffset), Rotation2D());
 }
 
 GoalTracker RobotState::getGoalTracker() {
+	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	return m_goalTracker;
 }

@@ -7,6 +7,7 @@
 #include "util\InterpolatingMap.h"
 #include "util\GoalTrack.h"
 #include "util\GoalTracker.h"
+#include "util\RobotState.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -218,15 +219,39 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 		}
 	};
 	TEST_CLASS(TrackReport) {
-		TEST_METHOD(scoreTest) {
-			GoalTracker goalTracker = GoalTracker();
-			std::list<Translation2D> fieldToGoal;
-			fieldToGoal.push_back(Translation2D(1, 2));
-			fieldToGoal.push_back(Translation2D(1, 3));
-			goalTracker.update(1.0, fieldToGoal);
-			std::list<GoalTracker::TrackReport> trackReports;
-			trackReports = goalTracker.getTracks();
-			trackReports.begin()->score();
+		TEST_METHOD(lessThanOperatorTest) {
+			//Test Stability Different
+			GoalTrack track1 = GoalTrack(1.0, Translation2D(1, 1), 1);
+			track1.tryUpdate(1.1, Translation2D(3, 3));
+			track1.tryUpdate(1.2, Translation2D(5, 5));
+			GoalTrack track2 = GoalTrack(1.0, Translation2D(2, 2), 1);
+			track2.tryUpdate(1.2, Translation2D(2, 2));
+			Assert::AreEqual(true, track2<track1);
+			Assert::AreEqual(false, track1<track2);
+
+			//Test Time Different
+			GoalTrack track3 = GoalTrack(1.0, Translation2D(1, 1), 1);
+			GoalTrack track4 = GoalTrack(1.25, Translation2D(2, 2), 1);
+			Assert::AreEqual(true, track3<track4);
+
+			//Test Stability and Time Different, Score 0
+			GoalTrack track5 = GoalTrack(1.15, Translation2D(1, 1), 1);
+			GoalTrack track6 = GoalTrack(1.0, Translation2D(1, 1), 1);
+			track6.tryUpdate(1.1, Translation2D(2, 2));
+			Assert::AreEqual(false, track5<track6);
+		}
+	};
+	TEST_CLASS(TestRobotState){
+		TEST_METHOD(addVisionUpdateTest) {
+			RobotState state = RobotState();
+			double timeStamp = 5.0;
+			std::list<TargetInfo> targetInfo;
+			TargetInfo info = TargetInfo(1,1);
+			targetInfo.push_back(info);
+			state.addVisionUpdate(timeStamp, targetInfo);
+			GoalTracker tracker = state.getGoalTracker();
+			std::list<GoalTracker::TrackReport> track = tracker.getTracks();
+			Assert::AreEqual(1, int(track.size()));
 		}
 	};
 //}

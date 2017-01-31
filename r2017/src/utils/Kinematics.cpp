@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "Kinematics.h"
+#include <utils/Kinematics.h>
+#include <cmath>
 
 RigidTransform2D::Delta Kinematics::forwardKinematics(double frDriveDelta, double flDriveDelta, double brDriveDelta, double blDriveDelta,
 	double frRotationDelta, double flRotationDelta, double brRotationDelta, double blRotationDelta) 
@@ -72,7 +72,7 @@ Kinematics::DriveVelocity::DriveVelocity(double fLeft, double fRight, double bLe
 }
 
 Kinematics::DriveVelocity Kinematics::DriveVelocity::inverseKinematics(RigidTransform2D::Delta velocity) {
-	if (abs(velocity.m_dtheta) < 1e-9) {
+	if (fabs(velocity.m_dtheta) < 1e-9) {
 		return Kinematics::DriveVelocity(velocity.m_dx, velocity.m_dx, velocity.m_dx, velocity.m_dx);
 	}
 	double deltaV = Constants::kTrackEffectiveDiameter * velocity.m_dtheta / (2 * Constants::kTrackScrubFactor);

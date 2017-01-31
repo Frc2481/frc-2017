@@ -14,6 +14,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER)),
 	m_shifter(new Solenoid(0)),
 	m_serialPort(new SerialPort(57600,SerialPort::kMXP)),
+	m_imu(new AHRS(SerialPort::kMXP)),
 //		imu(new IMU(serialPort,update_rate_hz)),
 	m_isFieldCentric(false),
 	m_isForward(true),
@@ -285,17 +286,17 @@ float DriveTrain::GetPitch() {
 	return m_pitch;
 }
 
-float DriveTrain::GetEncoderValue(DriveTrain::EncoderType encoder) {
-	if(encoder == FRONT_RIGHT_ENCODER){
+float DriveTrain::GetEncoderValue(DriveTrain::SwerveModuleType encoder) {
+	if(encoder == FRONT_RIGHT_MODULE){
 		return m_frWheel->GetRawAngle();
 	}
-	else if(encoder == FRONT_LEFT_ENCODER){
+	else if(encoder == FRONT_LEFT_MODULE){
 		return m_flWheel->GetRawAngle();
 	}
-	else if(encoder == BACK_RIGHT_ENCODER){
+	else if(encoder == BACK_RIGHT_MODULE){
 		return m_brWheel->GetRawAngle();
 	}
-	else if (encoder == BACK_LEFT_ENCODER){
+	else if (encoder == BACK_LEFT_MODULE){
 		return m_blWheel->GetRawAngle();
 	}
 	return 0.0;
@@ -322,4 +323,20 @@ void DriveTrain::SetGyroCorrectionOffset(double offset) {
 
 void DriveTrain::Shift(bool state){
 	m_shifter->Set(state);
+}
+
+SwerveModule* DriveTrain::GetModule(DriveTrain::SwerveModuleType module) {
+	if(module == FRONT_RIGHT_MODULE){
+		return m_frWheel;
+	}
+	else if(module == FRONT_LEFT_MODULE){
+		return m_flWheel;
+	}
+	else if(module == BACK_RIGHT_MODULE){
+		return m_brWheel;
+	}
+	else if(module == BACK_LEFT_MODULE){
+		return m_blWheel;
+	}
+	return 0;
 }

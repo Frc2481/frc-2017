@@ -1,7 +1,7 @@
 #pragma once
-#include "RigidTransform2D.h"
-#include "Rotation2D.h"
-#include "Constants.h"
+#include <utils/Constants.h>
+#include <utils/RigidTransform2D.h>
+#include <utils/Rotation2D.h>
 
 class Kinematics {
 public:

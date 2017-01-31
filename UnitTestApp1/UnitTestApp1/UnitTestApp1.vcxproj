@@ -162,6 +162,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Subsystems\ShooterAimingParameters.h" />
     <ClInclude Include="UnitTestApp.xaml.h">
       <DependentUpon>UnitTestApp.xaml</DependentUpon>
     </ClInclude>
@@ -172,9 +173,12 @@
     <ClInclude Include="util\InterpolatingDouble.h" />
     <ClInclude Include="util\InterpolatingMap.h" />
     <ClInclude Include="util\InverseInterpolable.h" />
+    <ClInclude Include="util\Kinematics.h" />
     <ClInclude Include="util\RigidTransform2D.h" />
+    <ClInclude Include="util\RobotState.h" />
     <ClInclude Include="util\Rotation2D.h" />
     <ClInclude Include="util\Translation2D.h" />
+    <ClInclude Include="Vision\TargetInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="UnitTestApp.xaml">
@@ -197,6 +201,7 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Subsystems\ShooterAimingParameters.cpp" />
     <ClCompile Include="UnitTestApp.xaml.cpp">
       <DependentUpon>UnitTestApp.xaml</DependentUpon>
     </ClCompile>
@@ -212,9 +217,12 @@
     <ClCompile Include="util\GoalTrack.cpp" />
     <ClCompile Include="util\GoalTracker.cpp" />
     <ClCompile Include="util\InterpolatingDouble.cpp" />
+    <ClCompile Include="util\Kinematics.cpp" />
     <ClCompile Include="util\RigidTransform2D.cpp" />
+    <ClCompile Include="util\RobotState.cpp" />
     <ClCompile Include="util\Rotation2D.cpp" />
     <ClCompile Include="util\Translation2D.cpp" />
+    <ClCompile Include="Vision\TargetInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="CppUnitTestFramework.Universal, Version=$(UnitTestPlatformVersion)" />
