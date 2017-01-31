@@ -61,7 +61,7 @@ class AutoRightHopperFromRightGearCommand : public DriveTrainFollowPathCommand {
 				Waypoint final = {0, 150, 0}; //TUNE THIS
 				Waypoint path[2] = {initial, final};
 				GeneratePath(path, 2);
-		}
+		  } 
 };
 
 #endif /* SRC_COMMANDS_AUTODRIVEHOPPERCOMMAND_H_ */
