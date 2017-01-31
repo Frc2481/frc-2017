@@ -63,18 +63,6 @@ double DriveTrain::radToDeg(double rad) {
 	return rad * 180 / k_pi;
 }
 
-void DriveTrain::SetEncoderOffset(int wheel, float offset){
-	if (wheel == FRONT_RIGHT_STEER){
-		m_frWheel->SetOffset(offset);
-	}else if (wheel == FRONT_LEFT_STEER){
-		m_flWheel->SetOffset(offset);
-	}else if (wheel == BACK_RIGHT_STEER){
-		m_brWheel->SetOffset(offset);
-	}else if (wheel == BACK_LEFT_STEER){
-		m_blWheel->SetOffset(offset);
-	}
-}
-
 DriveTrain::~DriveTrain() {
 	delete m_frWheel;
 	delete m_brWheel;
@@ -125,21 +113,6 @@ float DriveTrain::GetHeading(){
 
 void DriveTrain::SetFieldCentric(bool fieldCentric) {
 	m_isFieldCentric = fieldCentric;
-}
-
-void DriveTrain::SetWheelAngle(int wheel, float angle){
-	if (wheel == FRONT_LEFT_STEER){
-		m_flWheel->Set(0, angle);
-	}
-	else if (wheel == FRONT_RIGHT_STEER){
-		m_frWheel->Set(0, angle);
-	}
-	else if (wheel == BACK_LEFT_STEER){
-		m_blWheel->Set(0, angle);
-	}
-	else if (wheel == BACK_RIGHT_STEER){
-		m_brWheel->Set(0, angle);
-	}
 }
 
 void DriveTrain::SetForward(bool fwd) {
@@ -284,22 +257,6 @@ float DriveTrain::GetRoll() {
 float DriveTrain::GetPitch() {
 //	pitch = imu->GetPitch();
 	return m_pitch;
-}
-
-float DriveTrain::GetEncoderValue(DriveTrain::SwerveModuleType encoder) {
-	if(encoder == FRONT_RIGHT_MODULE){
-		return m_frWheel->GetRawAngle();
-	}
-	else if(encoder == FRONT_LEFT_MODULE){
-		return m_flWheel->GetRawAngle();
-	}
-	else if(encoder == BACK_RIGHT_MODULE){
-		return m_brWheel->GetRawAngle();
-	}
-	else if (encoder == BACK_LEFT_MODULE){
-		return m_blWheel->GetRawAngle();
-	}
-	return 0.0;
 }
 
 void DriveTrain::PeriodicUpdate() {

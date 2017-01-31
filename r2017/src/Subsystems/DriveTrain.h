@@ -61,10 +61,6 @@ public:
 	void SetOrigin(double xPos, double yPos);
 	double GetXOrigin();
 	double GetYOrigin();
-	//float GetEncoderValue(int wheel);
-	float GetEncoderValue(DriveTrain::SwerveModuleType encoder);
-	void SetEncoderOffset(int wheel, float offset);
-	//void SetP(float p);
 	void SetSpeedPID(double p, double i, double d);
 	float GetSpeedP();
 	float GetSpeedI();
@@ -81,8 +77,6 @@ public:
 	double GetGyroCorrectionOffset();
 	void Stop();
 	void SetFieldCentric(bool fieldCentric);
-	//float GetWheelAngle(int wheel);
-	void SetWheelAngle(int wheel, float angle);
 	//void SetOptimized(bool optimized);
 	void SetForward(bool fwd);
 	void SetGyroCorrection(bool b);

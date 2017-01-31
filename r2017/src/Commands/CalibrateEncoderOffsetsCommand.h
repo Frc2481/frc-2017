@@ -12,6 +12,7 @@
 #include "WPILib.h"
 #include "../RobotParameters.h"
 #include "Components/PersistedSettings.h"
+#include "Components/SwerveModule.h"
 
 class CalibrateEncoderOffsetsCommand: public InstantCommand
 {
@@ -27,9 +28,10 @@ public:
 	}
 
 private:
-	void saveAndApplyEncoderOffset(DriveTrain::SwerveModuleType encoder, const std::string& key){
-		float temp = CommandBase::m_driveTrain->GetEncoderValue(encoder);
-		CommandBase::m_driveTrain->SetEncoderOffset(encoder, temp);
+	void saveAndApplyEncoderOffset(DriveTrain::SwerveModuleType module, const std::string& key){
+		SwerveModule* swerveModule= CommandBase::m_driveTrain->GetModule(module);
+		float temp = swerveModule->GetRawAngle();
+		swerveModule->SetOffset(temp);
 		PersistedSettings::GetInstance().Set(key.c_str(),temp);
 	}
 };
