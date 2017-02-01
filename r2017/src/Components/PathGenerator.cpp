@@ -37,3 +37,11 @@ void PathGenerator::PreparePath(Waypoint* path, int pathLength, TrajectoryCandid
 			candidate);
 }
 
+void PathGenerator::AddDynamicWaypoint(double x, double y, double angle) {
+	Waypoint dynamic = {x,y,angle};
+	m_dynamicPath.push_back(dynamic);
+}
+
+std::vector<Waypoint>* PathGenerator::GetDynamicPath() {
+	return &m_dynamicPath;
+}

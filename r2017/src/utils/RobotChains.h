@@ -12,9 +12,10 @@
 #include "ShooterAimingParameters.h"
 #include "Vision/TargetInfo.h"
 
-class RobotState {
+class RobotChains {
 private:
-	//static RobotState m_instance;
+	RobotChains();
+	static RobotChains* m_instance;
 	RigidTransform2D kVehicleToTurretFixed;
 	RigidTransform2D kTurretRotatingToCamera;
 	std::recursive_mutex m_mutex;
@@ -26,10 +27,7 @@ protected:
 	Rotation2D m_cameraPitchCorrection;
 	Rotation2D m_cameraYawCorrection;
 	double m_differentialHeight;
-
-//	RobotState();
 public:
-	RobotState();
 	//static RobotState getInstance();
 	const int kObservationBufferSize = 100;
 	const double kMaxTargetAge = 0.4;
@@ -43,17 +41,20 @@ public:
 	RigidTransform2D getFieldToCamera(double timeStamp);
 	void addFieldToVehicleObservation(double timeStamp, RigidTransform2D observation);
 	void addTurretRotationObservation(double timeStamp, Rotation2D observation);
-	void addObservations(double timeStamp, RigidTransform2D field_to_vehicle, Rotation2D turret_rotation, RigidTransform2D::Delta velocity);
+	void addObservations(double timeStamp, RigidTransform2D field_to_vehicle,/* Rotation2D turret_rotation,*/ RigidTransform2D::Delta velocity);
 	void addVisionUpdate(double timeStamp, std::list<TargetInfo> visionUpdate);
 	std::list<ShooterAimingParameters> getAimingParameters(double currentTimeStamp); //std::comparator);
 	std::list<RigidTransform2D> getCaptureTimeFieldToGoal();
 	Rotation2D getLatestTurretRotation();
 	RigidTransform2D getLatestFieldToVehicle();
 	void resetVision();
-	RigidTransform2D generateOdemetryFromSensors(double frEncoderDeltaDistance, double flEncoderDeltaDistance, double brEncoderDeltaDistance,
+	RigidTransform2D generateOdometryFromSensors(double frEncoderDeltaDistance, double flEncoderDeltaDistance, double brEncoderDeltaDistance,
 		double blEncoderDeltaDistance, double frRotationDeltaDistance, double flRotationDeltaDistance, double brRotationDeltaDistance, double blRotationDeltaDistance, Rotation2D currentGyroAngle);
 	void outputToSmartDashboard();
 	void setVehicleToTurretFixed();
 	void setTurretRotatingToCamera();
 	GoalTracker getGoalTracker();
+	static RobotChains* getInstance();
 };
+
+RobotChains* RobotChains::m_instance = 0;

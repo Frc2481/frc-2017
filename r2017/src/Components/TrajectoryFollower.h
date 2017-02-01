@@ -26,9 +26,10 @@ public:
 	virtual ~TrajectoryFollower();
 	static TrajectoryFollower* GetInstance();
 	void PeriodicUpdate();
-	void SetTrajectories(Segment *segment1, Segment *segment2, Segment *segment3, Segment *segment4);
+	void SetTrajectories(Segment *frTrajectory, Segment *flTrajectory, Segment *brTrajectory, Segment *blTrajectory);
 	void Reset();
 	void SetEncoderConfig(int initPos, int ticksPerRev, double wheelCircum, double p, double i, double d, double v, double a);
+	bool TrajectoryFinished();
 
 };
 

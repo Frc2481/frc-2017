@@ -19,7 +19,9 @@ public:
 	Segment* m_frTrajectory;
 	Segment* m_blTrajectory;
 	Segment* m_brTrajectory;
-	DriveTrainFollowPathCommand(std::string name) : CommandBase(name) {}
+	DriveTrainFollowPathCommand(std::string name) : CommandBase(name) {
+		TrajectoryFollowerLooper::GetInstance()->Start();
+	}
 
 	void GeneratePath(Waypoint* path, int length) {
 		m_path = path;
@@ -32,11 +34,25 @@ public:
 		PathGenerator::GetInstance()->GeneratePath(&m_candidate, m_flTrajectory, m_frTrajectory, m_blTrajectory, m_brTrajectory);
 	}
 
-	void Initialize(){}
+	void Initialize(){
+		m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->ResetDriveEncoders();
+		m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->ResetDriveEncoders();
+		m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->ResetDriveEncoders();
+		m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->ResetDriveEncoders();
+		TrajectoryFollower::GetInstance()->Reset();
+		TrajectoryFollower::GetInstance()->SetTrajectories(m_frTrajectory, m_flTrajectory, m_brTrajectory, m_blTrajectory);
+		TrajectoryFollowerLooper::GetInstance()->SetActive(true);
+	}
 	void Execute(){}
-	bool IsFinished(){}
-	void End(){}
-	void Interrupted(){}
+	bool IsFinished(){
+		return TrajectoryFollower::GetInstance()->TrajectoryFinished();
+	}
+	void End(){
+		TrajectoryFollowerLooper::GetInstance()->SetActive(false);
+	}
+	void Interrupted(){
+		End();
+	}
 };
 
 
