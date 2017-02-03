@@ -12,9 +12,10 @@
 #include "Subsystems/GearFlicker.h"
 #include "CommandBase.h"
 
-class GearFlickCommand : public Command {
+class GearFlickCommand : public InstantCommand {
 public:
-	GearFlickCommand() : Command("GearFlickCommand"){
+	GearFlickCommand() : InstantCommand("GearFlickCommand"){
+		Requires(CommandBase::m_gearFlicker.get());
 	}
 
 	void Initialize(){

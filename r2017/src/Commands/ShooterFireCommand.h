@@ -27,7 +27,9 @@ public:
 		}
 	}
 
-	bool IsFinished(){}
+	bool IsFinished(){
+		return true;
+	}
 	void End(){
 		m_shooter->TurnFeederOff();
 		m_hopper->StopFeeding();
