@@ -22,10 +22,10 @@ public:
 	double m_capturedAtTimestamp;
 	static double parseDouble(json j, std::string key);
 	static VisionUpdate generateFromJsonString(double currentTime, std::string updateString);
-	std::list<TargetInfo> getTargets();
-	bool isValid();
-	long getCapturedAgoMs();
-	double getCapturedAtTimestamp();
+	std::list<TargetInfo> getTargets() const;
+	bool isValid() const;
+	long getCapturedAgoMs() const;
+	double getCapturedAtTimestamp() const;
 };
 
 #endif /* SRC_VISION_VISIONUPDATE_H_ */

@@ -1,3 +1,11 @@
+
+/*
+ * VisionUpdate.cpp
+ *
+ *  Created on: Jan 31, 2017
+ *      Author: FIRSTMentor
+ */
+
 #include "VisionUpdate.h"
 
 VisionUpdate::VisionUpdate()
@@ -41,32 +49,21 @@ static VisionUpdate generateFromJsonString(double currentTime, std::string updat
 	return update;
 }
 
-std::list<TargetInfo> VisionUpdate::getTargets() {
+std::list<TargetInfo> VisionUpdate::getTargets() const {
 	return m_targets;
 }
 
 
-bool VisionUpdate::isValid() {
+
+bool VisionUpdate::isValid() const {
 	return m_valid;
 }
 
-
-long VisionUpdate::getCapturedAgoMs() {
+long VisionUpdate::getCapturedAgoMs() const {
 	return m_capturedAgoMs;
 
 }
 
-
-double VisionUpdate::getCapturedAtTimestamp() {
+double VisionUpdate::getCapturedAtTimestamp() const {
 	return m_capturedAtTimestamp;
 }
-/*
- * VisionUpdate.cpp
- *
- *  Created on: Jan 31, 2017
- *      Author: FIRSTMentor
- */
-
-
-
-
