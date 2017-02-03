@@ -9,15 +9,25 @@
 #define SRC_COMMANDS_GEARLOADCOMMAND_H_
 
 #include "Commands/InstantCommand.h"
-#include "GearLoader.h"
+#include "Subsystems/GearLoader.h"
 
-class GearLoadCommand : public InstantCommand {
+class GearLoadCommand : public Command {
 public:
-	GearLoadCommand() : InstantCommand("GearLoadCommand"){
+	GearLoadCommand() : Command("GearLoadCommand"){
 	}
 
 	void Initialize(){
 		CommandBase::m_gearLoader->LoadGear();
+	}
+	void Execute(){}
+	bool IsFinished(){
+		return false;
+	}
+	void End(){
+		CommandBase::m_gearLoader->ResetGear();
+	}
+	void Interrupted(){
+		CommandBase::m_gearLoader->ResetGear();
 	}
 };
 

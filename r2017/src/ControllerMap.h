@@ -11,6 +11,7 @@
 #include "XboxController.h"
 
 #define SHIFTER_BUTTON    new JoystickButton(driverStick, XB_RIGHT_BUMPER)
+#define GEAR_BUTTON       new JoystickButton(driverStick, XB_B_BUTTON)
 
 
 

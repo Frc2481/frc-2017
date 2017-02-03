@@ -13,6 +13,7 @@ public:
 	OI();
 	Joystick* GetDriverStick();
 	Button* m_shifterButton;
+	Button* m_gearButton;
 };
 
 #endif
