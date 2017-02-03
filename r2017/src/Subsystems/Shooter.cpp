@@ -15,6 +15,7 @@ Shooter::Shooter() : Subsystem("Shooter"){
 	m_shooterMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
 	m_shooterMotor->SetSensorDirection(true);
 	m_feederSpeed = 0;
+	m_onTargetCounter = 0;
 }
 
 Shooter::~Shooter(){
@@ -73,3 +74,19 @@ void Shooter::SetFeederSpeed(double speed) {
 	m_feederSpeed = speed;
 }
 
+bool Shooter::IsShooterOn() {
+	return m_shooterMotor->IsEnabled();
+
+}
+
+bool Shooter::IsOnTarget() {
+	if(m_shooterMotor->GetSpeed() > 1000 && fabs(m_shooterMotor->GetSpeed() - m_shooterMotor->GetSetpoint() > 20)){
+		m_onTargetCounter++;
+	}
+
+	else {
+		m_onTargetCounter = 0;
+	}
+
+	return m_onTargetCounter > 5;
+}

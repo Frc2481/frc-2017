@@ -20,6 +20,7 @@ private:
 	double m_i;
 	double m_d;
 	double m_feederSpeed;
+	int m_onTargetCounter;
 
 public:
 	Shooter();
@@ -36,6 +37,8 @@ public:
 	void SetFeederSpeed(double speed);
 	double GetShooterSetpoint();
 	double GetFeederSpeed();
+	bool IsShooterOn();
+	bool IsOnTarget();
 };
 
 
