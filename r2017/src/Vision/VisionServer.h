@@ -4,18 +4,20 @@
 #include "AdbBridge.h"
 #include <vector>
 
-class VisionServer()
-{
+class VisionUpdateReceiver;
+class VisionMessage;
+
+class VisionServer {
 private:
 	bool mIsConnect = false;
 	bool mWantsAppRestart = false;
 	bool mRunning = true;
 	int mPort;
 	char* mPortStr;
-	AdbBridge* adb;
-	std::vector<VisionUpdateReceiver*> receivers;
+	AdbBridge* m_adb;
+	std::vector<VisionUpdateReceiver*> m_receivers;
 
-	int sockfd;
+	int m_sockfd;
 
 public:
 	class ServerThread
@@ -31,7 +33,7 @@ public:
 		void handleMessage(VisionMessage* message, double timestamp);
 		void runServerThread();
 		static void runServerThreadWrapper(void* context);
-	}
+	};
 
 	VisionServer(char* port);
 	~VisionServer();
@@ -44,6 +46,6 @@ public:
 
 	void addVisionUpdateReceiver(VisionUpdateReceiver* receiver);
 	void removeVisionUpdateReceiver(VisionUpdateReceiver* receiver);
-}
+};
 
 #endif

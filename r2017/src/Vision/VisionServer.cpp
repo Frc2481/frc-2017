@@ -14,19 +14,24 @@
 #include <pthread.h>
 #include <vector>
 
+#include "Messages/VisionMessage.h"
+#include "Messages/OffwireMessage.h"
+#include "Messages/HeartbeatMessage.h"
+#include "VisionUpdate.h"
+
 VisionServer::VisionServer(char* port)
 {
-	adb = new AdbBridge();
+	m_adb = new AdbBridge("/usr/bin/adb");
 	mPort = atoi(port);
 	mPortStr = port;
-	receivers = new std::vector<VisionUpdateReceiver*>();
+	m_sockfd = -1;
 
 	int sockfd, rv;
 	struct addrinfo hints, *servinfo, *p;
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_Flags = AI_PASSIVE;
+	hints.ai_flags = AI_PASSIVE;
 	if((rv = getaddrinfo(NULL, mPortStr, &hints, &servinfo)) != 0)
 	{
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
@@ -63,13 +68,13 @@ VisionServer::VisionServer(char* port)
 	pthread_t accepterThread;
 	pthread_create(&accepterThread, NULL, &VisionServer::runAccepterThreadWrapper, &this);
 
-	adb.start();
-	adb.reversePortForward(port, port);
+	m_adb->start();
+	m_adb->reversePortForward(*port, *port));
 }
 
 VisionServer::~VisionServer()
 {
-	delete adb;
+	delete m_adb;
 }
 
 bool VisionServer::isConnected()
@@ -84,8 +89,8 @@ void VisionServer::requestAppRestart()
 
 void VisionServer::restartAdb()
 {
-	adb.restartAdb();
-	adb.reversePortForward(mPort, mPort);
+	m_adb->restartAdb();
+	m_adb->reversePortForward(mPort, mPort);
 }
 
 void VisionServer::runAccepterThread()
@@ -95,7 +100,7 @@ void VisionServer::runAccepterThread()
 	int new_fd;
 	while(mRunning)
 	{
-		new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
+		new_fd = accept(m_sockfd, (struct sockaddr *)&their_addr, &sin_size);
 		if(new_fd == -1)
 		{
 			//Error accepting connection, do something interesting
@@ -103,7 +108,7 @@ void VisionServer::runAccepterThread()
 		}
 		inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof(s));
 
-		VisionServer::ServerThread st* = new VisionServer::ServerThread(new_fd);
+		VisionServer::ServerThread *st = new VisionServer::ServerThread(new_fd);
 		pthread_t pst;
 		pthread_create(&pst, NULL, &VisionServer::ServerThread::runServerThreadWrapper, st);
 
@@ -111,16 +116,16 @@ void VisionServer::runAccepterThread()
 	}
 }
 
-static void VisionServer::runAccepterThreadWrapper(void* context)
+void VisionServer::runAccepterThreadWrapper(void* context)
 {
 	return ((VisionServer*)context)->runAccepterThread();
 }
 
 void VisionServer::addVisionUpdateReceiver(VisionUpdateReceiver* receiver)
 {
-	if(std::find(receivers.begin(), receivers.end(), receiver) == receivers.end())
+	if(std::find(m_receivers.begin(), m_receivers.end(), receiver) == m_receivers.end())
 	{
-		receivers.push_back(receiver);
+		m_receivers.push_back(receiver);
 	}
 }
 
@@ -143,7 +148,7 @@ VisionServer::ServerThread::~ServerThread()
 
 void VisionServer::ServerThread::send(VisionMessage* message)
 {
-	char* toSend = message.toJson();
+	const char* toSend = message->toJson();
 	int numSent = 0;
 	int bytesLeft = strlen(toSend);
 	int n;
@@ -151,7 +156,7 @@ void VisionServer::ServerThread::send(VisionMessage* message)
 	{
 		while(remToSend > 0)
 		{
-			n = send(commfd, toSend+numSent, bytesLeft, 0);
+			n = ::send(commfd, toSend+numSent, bytesLeft, 0);
 			if(n == -1) { break; }
 			numSent += n;
 			bytesLeft -= n;
@@ -161,10 +166,10 @@ void VisionServer::ServerThread::send(VisionMessage* message)
 
 void VisionServer::ServerThread::handleMessage(VisionMessage* message, double timestamp)
 {
-	std::string mType = message.getType();
+	std::string mType = message->getType();
 	if("targets" == mType)
 	{
-		VisionUpdate update = VisionUpdate.generateFromJsonString(timestamp, message.getMessage());
+		VisionUpdate update = VisionUpdate::generateFromJsonString(timestamp, message->getMessage());
 		//receivers.removeAll(null singleton);
 		if(update.isValid()) {
 			//for(
@@ -175,7 +180,7 @@ void VisionServer::ServerThread::handleMessage(VisionMessage* message, double ti
 	}
 	if("heartbeat" == mType)
 	{
-		send(HeartbeatMessage.getInstance());
+		send(&HeartbeatMessage());
 	}
 }
 
@@ -200,26 +205,26 @@ void VisionServer::ServerThread::runServerThread()
 		}
 		//Split string by \n and pass each into handleMessage
 		//Not networking, fill in later
-		std::vector msgs = split(rcvStr, '\n');
-		for(int i=0;i<msgs.size();i++)
+		std::vector<std::string> msgs = split(rcvStr, '\n');
+		for(size_t i = 0; i < msgs.size(); i++)
 		{
 			OffWireMessage* parsedMessage = new OffWireMessage(msgs[i]);
 			if(parsedMessage->isValid())
 			{
-				handleMessage(parseMessage, 0);  //timestamp
+				handleMessage(parsedMessage, 0);  //timestamp
 			}
 		}
 	}
 }
 
-static VisionServer::ServerThread::runServerThreadWrapper(void* context)
+VisionServer::ServerThread::runServerThreadWrapper(void* context)
 {
 	return ((VisionServer::ServerThread*)context)->runServerThread();
 }
 
 std::vector<std::string> VisionServer::ServerThread::split(std::string &text, char sep)
 {
-	std::vector<Std::string tokens;
+	std::vector<std::string> tokens;
 	std::size_t start = 0, end = 0;
 	while((end = text.find(sep, start)) != std::string::npos) {
 		tokens.push_back(text.substr(start, end - start));
