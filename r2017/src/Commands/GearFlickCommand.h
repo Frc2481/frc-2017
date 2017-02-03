@@ -21,16 +21,6 @@ public:
 	void Initialize(){
 		CommandBase::m_gearFlicker->FlickGear();
 	}
-	void Execute(){}
-	bool IsFinished(){
-		return false;
-	}
-	void End(){
-
-	}
-	void Interrupted(){
-
-	}
 };
 
 #endif /* SRC_COMMANDS_GEARFLICKCOMMAND_H_ */
