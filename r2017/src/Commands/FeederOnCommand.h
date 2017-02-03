@@ -11,6 +11,7 @@
 #include "Commands/InstantCommand.h"
 
 class FeederOnCommand : public InstantCommand {
+public:
 	FeederOnCommand() : InstantCommand("Feeder On Command") {
 		Requires(CommandBase::m_shooter.get());
 	}

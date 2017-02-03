@@ -11,6 +11,7 @@
 #include "Commands/InstantCommand.h"
 
 class FeederOffCommand : public InstantCommand {
+public:
 	FeederOffCommand() : InstantCommand("Feeder Off Command") {
 		Requires(CommandBase::m_shooter.get());
 	}
@@ -18,7 +19,5 @@ class FeederOffCommand : public InstantCommand {
 		CommandBase::m_shooter->TurnFeederOff();
 	}
 };
-
-#endif /* SRC_COMMANDS_FEEDEROFFCOMMAND_H_ */
 
 #endif /* SRC_COMMANDS_FEEDEROFFCOMMAND_H_ */

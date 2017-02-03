@@ -17,7 +17,7 @@
 		#define BACK_RIGHT_STEER 6
 
 //GearLoader
-		#define GEAR_LOADER 1
+		#define GEAR_FLICKER 1
 
 //Hopper
 		#define HOPPER_MOTOR 11
