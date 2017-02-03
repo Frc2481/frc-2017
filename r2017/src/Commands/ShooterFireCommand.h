@@ -9,6 +9,7 @@
 #define SRC_COMMANDS_SHOOTERFIRECOMMAND_H_
 
 class ShooterFireCommand : public CommandBase {
+public:
 	ShooterFireCommand() : CommandBase("ShooterFireCommand") {
 
 	}

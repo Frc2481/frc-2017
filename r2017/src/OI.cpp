@@ -1,7 +1,6 @@
 #include <Commands/GearFlickCommandGroup.h>
 #include "OI.h"
 
-#include "Commands/GearLoadCommand.h"
 #include "Commands/DriveTrainShiftSequenceCommand.h"
 #include "Commands/HopperOffCommand.h"
 #include "Commands/HopperOnCommand.h"
@@ -12,8 +11,8 @@
 #include "Commands/ShooterDecreaseSpeedCommand.h"
 #include "Commands/ShooterFireCommand.h"
 
-OI::OI()
-{
+
+OI::OI() {
 	m_driverStick = new Joystick(DRIVE_STICK_PORT);
 	m_operatorStick = new Joystick(OPERATOR_STICK_PORT);
 

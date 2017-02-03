@@ -10,7 +10,7 @@
 #include <mutex>
 
 #include "ShooterAimingParameters.h"
-#include "Vision\TargetInfo.h"
+#include "Vision/TargetInfo.h"
 
 class RobotState {
 private:
