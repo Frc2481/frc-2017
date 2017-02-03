@@ -17,6 +17,7 @@ OI::OI() {
 	m_operatorStick = new Joystick(OPERATOR_STICK_PORT);
 
 	m_shifterButton = SHIFTER_BUTTON;
+
 	m_shifterButton->WhenPressed(new DriveTrainShiftSequenceCommand(true));
 	m_shifterButton->WhenReleased(new DriveTrainShiftSequenceCommand(false));
 
