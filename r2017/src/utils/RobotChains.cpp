@@ -164,8 +164,6 @@ GoalTracker RobotChains::getGoalTracker() {
 }
 
 RobotChains* RobotChains::getInstance() {
-	if(!m_instance){
-		m_instance = new RobotChains();
-	}
-	return m_instance;
+	static RobotChains instance;
+	return &instance;
 }

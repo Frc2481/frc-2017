@@ -52,7 +52,7 @@ RigidTransform2D::Delta Kinematics::forwardKinematics(double frDriveDelta, doubl
 	STR = (STR1 + STR2) / 2;
 	FWD = (FWD1 + FWD2) / 2;
 
-	return RigidTransform2D::Delta(FWD, STR, omega);
+	return RigidTransform2D::Delta(FWD, STR, gyroDelta);
 }
 
 RigidTransform2D Kinematics::integrateForwardKinematics(RigidTransform2D currentPose, double frDriveDelta, double flDriveDelta, double brDriveDelta, double blDriveDelta,

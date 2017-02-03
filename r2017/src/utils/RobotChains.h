@@ -15,7 +15,6 @@
 class RobotChains {
 private:
 	RobotChains();
-	static RobotChains* m_instance;
 	RigidTransform2D kVehicleToTurretFixed;
 	RigidTransform2D kTurretRotatingToCamera;
 	std::recursive_mutex m_mutex;
@@ -56,5 +55,3 @@ public:
 	GoalTracker getGoalTracker();
 	static RobotChains* getInstance();
 };
-
-RobotChains* RobotChains::m_instance = 0;
