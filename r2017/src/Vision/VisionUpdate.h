@@ -8,8 +8,10 @@
 #ifndef SRC_VISION_VISIONUPDATE_H_
 #define SRC_VISION_VISIONUPDATE_H_
 
+#include <list>
 #include "json.h"
 using namespace nlohmann;
+#include "Vision/TargetInfo.h"
 
 class VisionUpdate {
 public:
@@ -18,8 +20,12 @@ public:
 	long m_capturedAgoMs;
 	std::list<TargetInfo> m_targets;
 	double m_capturedAtTimestamp;
-	static long m_getOptLong( n, long defaultValue);
-
+	static double parseDouble(json j, std::string key);
+	static VisionUpdate generateFromJsonString(double currentTime, std::string updateString);
+	std::list<TargetInfo> getTargets();
+	bool isValid();
+	long getCapturedAgoMs();
+	double getCapturedAtTimestamp();
 };
 
 #endif /* SRC_VISION_VISIONUPDATE_H_ */
