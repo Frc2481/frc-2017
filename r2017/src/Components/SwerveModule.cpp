@@ -30,6 +30,8 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_driveMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
 	m_driveMotor->SetSensorDirection(true);
 
+	m_driveMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
+
 	m_steerMotor->SelectProfileSlot(0);
 	m_steerMotor->SetControlMode(CANTalon::kPosition);
 	m_steerMotor->SetPID(m_steerP, m_steerI, m_steerD);
@@ -48,8 +50,8 @@ SwerveModule::~SwerveModule() {
 }
 
 void SwerveModule::Set(float speed, float angle) {
-	SetAngle(angle);
 	SetOpenLoopSpeed(speed);
+	SetAngle(angle);
 }
 
 
@@ -175,7 +177,7 @@ void SwerveModule::SetAngle(float angle) {
 		angle = RoboUtils::constrainDeg0To360(angle);
 		currentAngle = RoboUtils::constrainDeg0To360(currentAngle);
 
-		if (fabs(angle - currentAngle) > 90 && fabs(angle - currentAngle) < 270) {
+		if (m_optimized && fabs(angle - currentAngle) > 90 && fabs(angle - currentAngle) < 270) {
 			angle = ((int)angle + 180) % 360;
 			m_angleOptimized = true;
 		}
@@ -205,4 +207,8 @@ void SwerveModule::SetAngle(float angle) {
 			angle += 4096;
 		}
 		m_steerMotor->SetSetpoint(angle / 4096.0);
+}
+
+void SwerveModule::SetOptimized(bool optimized) {
+	m_optimized = optimized;
 }

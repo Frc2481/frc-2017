@@ -50,6 +50,8 @@ public:
 	void SetOpenLoopSpeed(float speed);
 	void SetClosedLoopSpeed(float speed);
 	void SetAngle(float angle);
+
+	void SetOptimized(bool optimized);
 };
 
 #endif /*SWERVEMODULE_H_*/
