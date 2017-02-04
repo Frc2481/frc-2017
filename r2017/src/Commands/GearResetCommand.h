@@ -8,7 +8,8 @@
 #ifndef SRC_COMMANDS_GEARRESETCOMMAND_H_
 #define SRC_COMMANDS_GEARRESETCOMMAND_H_
 
-#include <Subsystems/GearFlicker.h>
+#include "Subsystems/GearFlicker.h"
+#include "Commands/InstantCommand.h"
 
 class GearResetCommand : public InstantCommand{
 public:
