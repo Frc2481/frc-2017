@@ -16,7 +16,7 @@ using namespace frc;
 
 class DriveTrainShiftSequenceCommand : public CommandGroup {
 private:
-	static constexpr double kShiftDurationCommand = .1;
+	static constexpr double kShiftDurationCommand = .05;
 
 public:
 	DriveTrainShiftSequenceCommand(bool shiftUp) : CommandGroup("DriveTrainShiftSequenceCommand"){

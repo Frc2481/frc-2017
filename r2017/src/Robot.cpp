@@ -9,6 +9,7 @@
 #include "Commands/ShooterSetPIDCommand.h"
 #include "Commands/CalibrateEncoderOffsetsCommand.h"
 #include "Commands/SetEncoderConfigsCommand.h"
+#include "Commands/ToggleOptimizedCommand.h"
 
 class Robot: public IterativeRobot
 {
@@ -16,6 +17,7 @@ private:
 	std::unique_ptr<Command> autonomousCommand;
 	frc::SendableChooser<Command*> *chooser;
 	std::unique_ptr<Compressor> pcm;
+	std::unique_ptr<PowerDistributionPanel> pdp;
 
 	void RobotInit()
 	{
@@ -24,6 +26,7 @@ private:
 		chooser = new frc::SendableChooser<Command*>();
 		pcm.reset(new Compressor());
 		pcm->SetClosedLoopControl(true);
+		pdp.reset(new PowerDistributionPanel());
 //		chooser->AddDefault("Default Auto", new ExampleCommand());
 		//chooser->AddObject("My Auto", new MyAutoCommand());
 		SmartDashboard::PutData("Auto Modes", chooser);
@@ -37,6 +40,8 @@ private:
 		SmartDashboard::PutNumber("Shooter I", CommandBase::m_shooter->GetI());
 		SmartDashboard::PutNumber("Shooter D", CommandBase::m_shooter->GetD());
 		SmartDashboard::PutNumber("Hopper Speed", CommandBase::m_hopper->GetSpeed());
+		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
+		SmartDashboard::PutData(new ToggleOptimizedCommand());
 		SmartDashboard::PutData(new DriveTrainSetPIDCommand());
 		SmartDashboard::PutData(new ShooterIncreaseSpeedCommand());
 		SmartDashboard::PutData(new ShooterDecreaseSpeedCommand());
@@ -114,6 +119,7 @@ private:
 		Scheduler::GetInstance()->Run();
 //		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_shooter->GetShooterSetpoint());
 //		SmartDashboard::PutNumber("Feeder Speed", CommandBase::m_shooter->GetFeederSpeed());
+		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
 	}
 
 	void TestPeriodic()
