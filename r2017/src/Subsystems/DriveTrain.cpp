@@ -297,3 +297,31 @@ SwerveModule* DriveTrain::GetModule(DriveTrain::SwerveModuleType module) {
 	}
 	return 0;
 }
+
+Rotation2D DriveTrain::GetAngle() {
+	return Rotation2D::fromDegrees(m_imu->GetAngle());
+}
+
+double DriveTrain::GetFLVelocityInchesPerSec() {
+	return RPMToInchesPerSec(m_flWheel->GetDistance());
+}
+
+double DriveTrain::GetFRVelocityInchesPerSec() {
+	return RPMToInchesPerSec(m_frWheel->GetDistance());
+}
+
+double DriveTrain::GetBLVelocityInchesPerSec() {
+	return RPMToInchesPerSec(m_blWheel->GetDistance());
+}
+
+double DriveTrain::GetBRVelocityInchesPerSec() {
+	return RPMToInchesPerSec(m_brWheel->GetDistance());
+}
+
+double DriveTrain::RPMToInchesPerSec(double rpm) {
+	return RotationsToInches(rpm) / 60;//Not Sure Why 60
+}
+
+double DriveTrain::RotationsToInches(double rotation) {
+	return rotation * (INCHES_PER_REV);
+}

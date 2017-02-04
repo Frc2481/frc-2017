@@ -23,6 +23,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerI = 0;
 	m_steerD = 40;
 	m_isSpeedPIDEnabled = false;
+	m_driveDistanceOffset = 0.0;
 
 	m_driveMotor->SelectProfileSlot(0);
 	m_driveMotor->SetControlMode(CANTalon::kPercentVbus);
@@ -132,7 +133,7 @@ int SwerveModule::AngleToEncoderTicks(double angle) {
 }
 
 double SwerveModule::GetDistance() {
-	return m_driveMotor->GetPosition();
+	return m_driveMotor->GetPosition() - m_driveDistanceOffset;
 }
 
 void SwerveModule::SetOpenLoopSpeed(float speed) {
@@ -211,4 +212,12 @@ void SwerveModule::SetAngle(float angle) {
 
 void SwerveModule::SetOptimized(bool optimized) {
 	m_optimized = optimized;
+}
+void SwerveModule::ResetDriveEncoders() {
+	m_driveDistanceOffset = GetDistance();
+}
+
+void SwerveModule::SetRampRates() {
+	m_driveMotor->SetVoltageRampRate(48);
+	m_steerMotor->SetVoltageRampRate(48);
 }

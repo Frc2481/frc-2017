@@ -21,6 +21,7 @@ private:
 	bool m_isSpeedPIDEnabled;
 	bool m_angleOptimized;
 	bool m_stopped;
+	double m_driveDistanceOffset;
 
 public:
 	SwerveModule(uint32_t driveID, uint32_t steerID);
@@ -52,6 +53,9 @@ public:
 	void SetAngle(float angle);
 
 	void SetOptimized(bool optimized);
+	void ResetDriveEncoders();
+
+	void SetRampRates();
 };
 
 #endif /*SWERVEMODULE_H_*/

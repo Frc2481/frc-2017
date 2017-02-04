@@ -6,6 +6,7 @@
 #include "WPILib.h"
 #include "Commands/Subsystem.h"
 #include "AHRS.h"
+#include "utils/Rotation2D.h"
 
 #include <Commands/Subsystem.h>
 #include <Components/SwerveModule.h>
@@ -89,6 +90,14 @@ public:
 	void SetBrake(bool brake);
 	void Shift(bool state);
 	SwerveModule* GetModule(DriveTrain::SwerveModuleType module);
+	Rotation2D GetAngle();
+
+	double GetFLVelocityInchesPerSec();
+	double GetFRVelocityInchesPerSec();
+	double GetBLVelocityInchesPerSec();
+	double GetBRVelocityInchesPerSec();
+	double RPMToInchesPerSec(double rpm);
+	double RotationsToInches(double rotation);
 };
 
 #endif  // DriveTrain_H

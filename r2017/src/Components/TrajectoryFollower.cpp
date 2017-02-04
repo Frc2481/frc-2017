@@ -31,15 +31,15 @@ void TrajectoryFollower::PeriodicUpdate() {
 	SwerveModule *brModule = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE);
 	SwerveModule *blModule = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE);
 	//TODO: Get current encoder ticks
-	int frDistanceInches = frModule->GetDistance();
-	int flDistanceInches = flModule->GetDistance();
-	int brDistanceInches = brModule->GetDistance();
-	int blDistanceInches = blModule->GetDistance();
+	int frDistance = (frModule->GetDistance() / (4));
+	int flDistance = (flModule->GetDistance() / (4));
+	int brDistance = (brModule->GetDistance() / (4));
+	int blDistance = (blModule->GetDistance() / (4));
 	//TODO: call pathfinder api
-	double flSpeed = pathfinder_follow_encoder(m_flConfig, &m_flFollower, m_flTrajectory, m_flLength, flDistanceInches);
-	double frSpeed = pathfinder_follow_encoder(m_frConfig, &m_frFollower, m_frTrajectory, m_frLength, frDistanceInches);
-	double blSpeed = pathfinder_follow_encoder(m_blConfig, &m_blFollower, m_blTrajectory, m_blLength, blDistanceInches);
-	double brSpeed = pathfinder_follow_encoder(m_brConfig, &m_brFollower, m_brTrajectory, m_brLength, brDistanceInches);
+	double flSpeed = pathfinder_follow_encoder(m_flConfig, &m_flFollower, m_flTrajectory, m_flLength, flDistance);
+	double frSpeed = pathfinder_follow_encoder(m_frConfig, &m_frFollower, m_frTrajectory, m_frLength, frDistance);
+	double blSpeed = pathfinder_follow_encoder(m_blConfig, &m_blFollower, m_blTrajectory, m_blLength, blDistance);
+	double brSpeed = pathfinder_follow_encoder(m_brConfig, &m_brFollower, m_brTrajectory, m_brLength, brDistance);
 	//TODO: set angle and speed setpoint on swerve module
 
 	frModule->SetClosedLoopSpeed(frSpeed);
@@ -67,11 +67,15 @@ void TrajectoryFollower::SetTrajectories(Segment* frSegment, Segment* flSegment,
 	m_blTrajectory = blSegment;
 }
 
+//Always reset DriveTrain encoders before using reset
 void TrajectoryFollower::Reset() {
 	m_frTrajectory = 0;
 	m_flTrajectory = 0;
 	m_brTrajectory = 0;
 	m_blTrajectory = 0;
+
+	SetEncoderConfig(0,m_flConfig.ticks_per_revolution,m_flConfig.wheel_circumference, m_flConfig.kp, m_flConfig.ki, m_flConfig.kd,
+			m_flConfig.kv, m_flConfig.ka);
 }
 
 void TrajectoryFollower::SetEncoderConfig(int initPos, int ticksPerRev,
@@ -111,4 +115,8 @@ void TrajectoryFollower::SetEncoderConfig(int initPos, int ticksPerRev,
 	m_brConfig.kd = d;
 	m_brConfig.kv = v;
 	m_brConfig.ka = a;
+}
+
+bool TrajectoryFollower::TrajectoryFinished() {
+	return m_flFollower.finished && m_frFollower.finished && m_blFollower.finished && m_brFollower.finished;
 }
