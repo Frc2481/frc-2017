@@ -1,5 +1,6 @@
 #include <utils/Rotation2D.h>
 #include <cmath>
+#include <math.h>
 #include <limits>
 
 Rotation2D::Rotation2D()

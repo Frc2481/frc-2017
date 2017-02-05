@@ -7,22 +7,28 @@
 #include <utils/RigidTransform2D.h>
 #include <utils/Rotation2D.h>
 #include <utils/Translation2D.h>
+#include <vision/LiftTarget.h>
 #include <mutex>
 
-#include "ShooterAimingParameters.h"
+#include "AimingParameters.h"
 #include "Vision/TargetInfo.h"
 
 class RobotChains {
 private:
 	RobotChains();
+	InterpolatingMap<InterpolatingDouble, InterpolatingDouble> m_skewAngleMap;
 	RigidTransform2D kVehicleToTurretFixed;
+	RigidTransform2D kVehicleToGearCameraFixed;
 	RigidTransform2D kTurretRotatingToCamera;
+	RigidTransform2D kVehicleToGearFlickerFixed;
+	Rotation2D m_angle;
 	std::recursive_mutex m_mutex;
 protected:
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_fieldToVehicle;
 	RigidTransform2D::Delta m_vehicleVelocity;
 	InterpolatingMap<InterpolatingDouble, Rotation2D> m_turretRotation;
-	GoalTracker m_goalTracker;
+	GoalTracker m_goalLiftTracker;
+	GoalTracker m_goalBoilerTracker;
 	Rotation2D m_cameraPitchCorrection;
 	Rotation2D m_cameraYawCorrection;
 	double m_differentialHeight;
@@ -41,8 +47,9 @@ public:
 	void addFieldToVehicleObservation(double timeStamp, RigidTransform2D observation);
 	void addTurretRotationObservation(double timeStamp, Rotation2D observation);
 	void addObservations(double timeStamp, RigidTransform2D field_to_vehicle,/* Rotation2D turret_rotation,*/ RigidTransform2D::Delta velocity);
-	void addVisionUpdate(double timeStamp, std::list<TargetInfo> visionUpdate);
-	std::list<ShooterAimingParameters> getAimingParameters(double currentTimeStamp); //std::comparator);
+	void addVisionUpdate(double timeStamp, TargetInfo visionUpdate);
+	void addVisionUpdateGear(double timeStamp, LiftTarget gearTarget);
+	std::list<AimingParameters> getGearAimingParameters(double currentTimeStamp); //std::comparator);
 	std::list<RigidTransform2D> getCaptureTimeFieldToGoal();
 	Rotation2D getLatestTurretRotation();
 	RigidTransform2D getLatestFieldToVehicle();

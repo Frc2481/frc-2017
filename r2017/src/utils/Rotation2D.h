@@ -1,7 +1,7 @@
 #pragma once
 #include "utils/Interpolable.h"
 
-#define M_PI 3.14159265359
+//#define M_PI 3.14159265359
 
 class Rotation2D : public Interpolable<Rotation2D>
 {

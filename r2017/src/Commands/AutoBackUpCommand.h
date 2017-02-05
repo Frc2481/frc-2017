@@ -10,7 +10,7 @@
 
 class AutoBackUpFromGearsCommand : public DriveTrainFollowPathCommand {
 	Waypoint m_initial = {0, 0, 0};
-	Waypoint m_final = {-152.4, -152.4, 0}; //TUNE THIS
+	Waypoint m_final = {-6, -6, 0}; //TUNE THIS  Inches
 	Waypoint m_path[2] = {m_initial, m_final};
 	AutoBackUpFromGearsCommand() : DriveTrainFollowPathCommand("AutoBackUpFromGearsCommand") {}
 	void Initialize(){
@@ -20,7 +20,7 @@ class AutoBackUpFromGearsCommand : public DriveTrainFollowPathCommand {
 
 class AutoBackUpFromHopperCommand : public DriveTrainFollowPathCommand {
 	Waypoint m_initial = {0, 0, 0};
-	Waypoint m_final = {-304.8, -304.8, 0}; //TUNE THIS
+	Waypoint m_final = {-12, -12, 0}; //TUNE THIS  Inches
 	Waypoint m_path[2] = {m_initial, m_final};
 	AutoBackUpFromHopperCommand() : DriveTrainFollowPathCommand("AutoBackUpFromHopperCommand") {}
 	void Initialize(){
