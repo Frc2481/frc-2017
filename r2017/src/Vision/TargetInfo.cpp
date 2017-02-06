@@ -13,6 +13,12 @@ double TargetInfo::getY() {
 	return m_y;
 }
 
+TargetInfo::TargetInfo(const TargetInfo& a, const TargetInfo& b) {
+	m_y = (a.m_y + b.m_y)/2.0;
+	m_z = (a.m_z + b.m_z)/2.0;
+
+}
+
 double TargetInfo::getZ() {
 	return m_z;
 }

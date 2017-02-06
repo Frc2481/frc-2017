@@ -40,18 +40,16 @@ void GoalTracker::reset() {
 	m_currentTracks.clear();
 }
 
-void GoalTracker::update(double timestamp, std::list<Translation2D> &fieldToGoals) {
+void GoalTracker::update(double timestamp, RigidTransform2D &fieldToGoals) {
 	//bool hasUpdatedTrack = false; 
-	for (Translation2D target : fieldToGoals){
-		bool hasUpdatedTrack = false;
-		for (GoalTrack track : m_currentTracks) {
-			if (!hasUpdatedTrack) {
-				if (track.tryUpdate(timestamp, target)) {
-					hasUpdatedTrack = true;
-				}
-			}else {
-				track.pruneByTime(timestamp);
+	bool hasUpdatedTrack = false;
+	for (GoalTrack track : m_currentTracks) {
+		if (!hasUpdatedTrack) {
+			if (track.tryUpdate(timestamp, fieldToGoals)) {
+				hasUpdatedTrack = true;
 			}
+		}else {
+			track.pruneByTime(timestamp);
 		}
 	}
 	for (std::list<GoalTrack>::iterator it = m_currentTracks.begin(); it != m_currentTracks.end();) {
@@ -64,10 +62,8 @@ void GoalTracker::update(double timestamp, std::list<Translation2D> &fieldToGoal
 		}
 	}
 	if (m_currentTracks.empty()) {
-		for (Translation2D target : fieldToGoals) {
-			m_currentTracks.push_back(GoalTrack(timestamp, target, m_nextId));
-			++m_nextId;
-		}
+		m_currentTracks.push_back(GoalTrack(timestamp, fieldToGoals, m_nextId));
+		++m_nextId;
 	}
 }
 
@@ -75,11 +71,8 @@ bool GoalTracker::hasTracks() {
 	return !m_currentTracks.empty();
 }
 
-std::list<GoalTracker::TrackReport> GoalTracker::getTracks() {
-	std::list<GoalTracker::TrackReport> currentTrackReports;
-	for (GoalTrack track : m_currentTracks) {
-		currentTrackReports.push_back(GoalTracker::TrackReport(track));
-	}
+std::set<GoalTracker::TrackReport> GoalTracker::getTracks() {
+	std::set<GoalTracker::TrackReport> currentTrackReports(m_currentTracks.begin(),m_currentTracks.end());
 	return currentTrackReports;
 }
 

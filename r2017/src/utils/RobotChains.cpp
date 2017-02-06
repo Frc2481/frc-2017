@@ -3,6 +3,10 @@
 
 RobotChains::RobotChains() : m_vehicleVelocity(0,0,0) {
 	reset(0, RigidTransform2D(), Rotation2D());
+	m_skewAngleMap.put(InterpolatingDouble(0),InterpolatingDouble(0));
+	m_skewAngleMap.put(InterpolatingDouble(5),InterpolatingDouble(15));
+	m_skewAngleMap.put(InterpolatingDouble(10),InterpolatingDouble(30));
+	m_skewAngleMap.put(InterpolatingDouble(15),InterpolatingDouble(45));
 //	m_instance = RobotState();
 }
 //
@@ -17,7 +21,7 @@ void RobotChains::reset(double startTime, RigidTransform2D initialFieldToVehicle
 	m_vehicleVelocity = RigidTransform2D::Delta(0, 0, 0);
 	m_turretRotation = InterpolatingMap<InterpolatingDouble, Rotation2D>(kObservationBufferSize);
 	m_turretRotation.put(InterpolatingDouble(startTime), initialTurretRotation);
-	m_goalTracker = GoalTracker();
+	m_goalLiftTracker = GoalTracker();
 	m_cameraPitchCorrection = Rotation2D::fromDegrees(-Constants::kCameraPitchAngleDegrees);
 	m_cameraYawCorrection = Rotation2D::fromDegrees(-Constants::kCameraYawAngleDegrees);
 	m_differentialHeight = Constants::kCenterOfTargetHeight - Constants::kCameraZOffset;
@@ -47,7 +51,7 @@ RigidTransform2D RobotChains::getFieldToTurretRotated(double timeStamp) {
 
 RigidTransform2D RobotChains::getFieldToCamera(double timeStamp) {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
-	return getFieldToTurretRotated(timeStamp).transformBy(kTurretRotatingToCamera);
+	return getFieldToTurretRotated(timeStamp).transformBy(kVehicleToGearCameraFixed);
 }
 
 void RobotChains::addFieldToVehicleObservation(double timeStamp, RigidTransform2D observation) {
@@ -67,50 +71,46 @@ void RobotChains::addObservations(double timeStamp, RigidTransform2D field_to_ve
 	m_vehicleVelocity = velocity;
 }
 
-void RobotChains::addVisionUpdate(double timeStamp, std::list<TargetInfo> visionUpdate) {
+void RobotChains::addVisionUpdateGear(double timeStamp, LiftTarget gearTarget) {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
-	std::list<Translation2D> fieldToGoals;
 	RigidTransform2D fieldToCamera = getFieldToCamera(timeStamp);
 	
-	if (!(visionUpdate.begin() == visionUpdate.end() || visionUpdate.size() == 0)) {
-		for (TargetInfo target : visionUpdate) {
-			double yDeadBand = (target.getY() > -Constants::kCameraDeadBand && target.getY() < Constants::kCameraDeadBand) ? 0.0 : target.getY();
+	double yDeadBand = (gearTarget.getY() > -Constants::kCameraDeadBand && gearTarget.getY() < Constants::kCameraDeadBand) ? 0.0 : gearTarget.getY();
 
-			double xYaw = target.getX() * m_cameraYawCorrection.getCos() + yDeadBand * m_cameraYawCorrection.getSin();
-			double yYaw = yDeadBand * m_cameraYawCorrection.getCos() - target.getX() * m_cameraYawCorrection.getSin();
-			double zYaw = target.getZ();
+	double xYaw = gearTarget.getX() * m_cameraYawCorrection.getCos() + yDeadBand * m_cameraYawCorrection.getSin();
+	double yYaw = yDeadBand * m_cameraYawCorrection.getCos() - gearTarget.getX() * m_cameraYawCorrection.getSin();
+	double zYaw = gearTarget.getZ();
 
-			double xPitch = zYaw * m_cameraPitchCorrection.getSin() + xYaw * m_cameraPitchCorrection.getCos();
-			double yPitch = yYaw;
-			double zPitch = zYaw * m_cameraPitchCorrection.getCos() - xYaw * m_cameraPitchCorrection.getSin();
+	double xPitch = zYaw * m_cameraPitchCorrection.getSin() + xYaw * m_cameraPitchCorrection.getCos();
+	double yPitch = yYaw;
+	double zPitch = zYaw * m_cameraPitchCorrection.getCos() - xYaw * m_cameraPitchCorrection.getSin();
 
-			if (zPitch > 0) {
-				double scaling = m_differentialHeight / zPitch;
-				double distance = hypot(xPitch, yPitch) * scaling;
-				Rotation2D angle = Rotation2D(xPitch, yPitch, true);
-				fieldToGoals.push_back(fieldToCamera.transformBy(RigidTransform2D::fromTranslation(
-					Translation2D(distance * angle.getCos(), distance * angle.getSin()))).getTranslation());
-			}
-		}
+	if (zPitch > 0) {
+		double scaling = m_differentialHeight / zPitch;
+		double distance = hypot(xPitch, yPitch) * scaling;
+		Rotation2D robotAngle = Rotation2D(xPitch, yPitch, true);
+		Rotation2D targetAngle = Rotation2D::fromDegrees(m_skewAngleMap.getInterpolated(gearTarget.GetSkew().getDegrees()).m_value);
+		RigidTransform2D fieldToGoal = (fieldToCamera.transformBy(RigidTransform2D(
+			Translation2D(distance * robotAngle.getCos(), distance * robotAngle.getSin()),
+				targetAngle)));
+		m_goalLiftTracker.update(timeStamp, fieldToGoal);
 	}
-	m_goalTracker.update(timeStamp, fieldToGoals);
 }
 
-std::list<ShooterAimingParameters> RobotChains::getAimingParameters(double currentTimeStamp) {
+std::list<AimingParameters> RobotChains::getGearAimingParameters(double currentTimeStamp) {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
-	std::list<ShooterAimingParameters> rv;
-	std::list<GoalTracker::TrackReport> reports = m_goalTracker.getTracks();
+	std::list<AimingParameters> rv;
+	const std::set<GoalTracker::TrackReport> &reports(m_goalLiftTracker.getTracks());
 
-	RigidTransform2D latestTurretFixedToField = getPredictedFieldToVehicle(Constants::kAutoAimPredictionTime).transformBy(kVehicleToTurretFixed).inverse();
+	RigidTransform2D latestGearFlickerFixedToField = getPredictedFieldToVehicle(Constants::kAutoAimPredictionTime).transformBy(kVehicleToGearFlickerFixed).inverse();
 
 	for (GoalTracker::TrackReport report : reports) {
 		if (currentTimeStamp - report.m_latestTimestamp > kMaxTargetAge) {
 			continue;
 		}
-		RigidTransform2D latestTurretFixedToGoal = latestTurretFixedToField.transformBy(RigidTransform2D::fromTranslation(report.m_fieldToGoal));
+		RigidTransform2D latestGearFlickerFixedToGoal = latestGearFlickerFixedToField.transformBy(report.m_fieldToGoal);
 
-		rv.push_back(ShooterAimingParameters(latestTurretFixedToGoal.getTranslation().norm(), Rotation2D(latestTurretFixedToGoal.getTranslation().getX(),
-			latestTurretFixedToGoal.getTranslation().getY(),true), report.m_id));
+		rv.push_back(AimingParameters(latestGearFlickerFixedToGoal, report.m_id));
 	}
 	return rv;
 }
@@ -119,15 +119,15 @@ std::list<RigidTransform2D> RobotChains::getCaptureTimeFieldToGoal() {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	std::list<RigidTransform2D> rv;
 	
-	for (GoalTracker::TrackReport report : m_goalTracker.getTracks()) {
-		rv.push_back(RigidTransform2D::fromTranslation(report.m_fieldToGoal));
+	for (GoalTracker::TrackReport report : m_goalLiftTracker.getTracks()) {
+		rv.push_back(report.m_fieldToGoal);
 	}
 	return rv;
 }
 
 void RobotChains::resetVision() {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
-	m_goalTracker.reset();
+	m_goalLiftTracker.reset();
 }
 
 RigidTransform2D RobotChains::generateOdometryFromSensors(double frEncoderDeltaDistance, double flEncoderDeltaDistance, double brEncoderDeltaDistance,
@@ -155,12 +155,12 @@ void RobotChains::setVehicleToTurretFixed() {
 
 void RobotChains::setTurretRotatingToCamera() {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
-	kTurretRotatingToCamera = RigidTransform2D(Translation2D(Constants::kCameraXOffset, Constants::kCameraYOffset), Rotation2D());
+	kVehicleToGearCameraFixed = RigidTransform2D(Translation2D(Constants::kCameraXOffset, Constants::kCameraYOffset), Rotation2D());
 }
 
 GoalTracker RobotChains::getGoalTracker() {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
-	return m_goalTracker;
+	return m_goalLiftTracker;
 }
 
 RobotChains* RobotChains::getInstance() {

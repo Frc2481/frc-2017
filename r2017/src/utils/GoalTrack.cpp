@@ -1,7 +1,7 @@
 #include "utils/GoalTrack.h"
 #include "utils/Constants.h"
 
-GoalTrack::GoalTrack(double timestamp, const Translation2D &firstObservation, int id) {
+GoalTrack::GoalTrack(double timestamp, const RigidTransform2D &firstObservation, int id) {
 	m_observePositions.emplace(timestamp, firstObservation);
 	m_smoothPosition = firstObservation;
 	m_id = id;
@@ -9,7 +9,7 @@ GoalTrack::GoalTrack(double timestamp, const Translation2D &firstObservation, in
 
 void GoalTrack::pruneByTime(double timestamp) {
 	double deleteBefore = timestamp - Constants::kMaxGoalTrackAge;
-	for (std::map<double, Translation2D>::iterator it = m_observePositions.begin(); it != m_observePositions.end();) {
+	for (std::map<double, RigidTransform2D>::iterator it = m_observePositions.begin(); it != m_observePositions.end();) {
 		if (it->first < deleteBefore) {
 			it = m_observePositions.erase(it);
 		} 
@@ -18,18 +18,18 @@ void GoalTrack::pruneByTime(double timestamp) {
 		}
 	}
 	if (m_observePositions.empty()) {
-		m_smoothPosition = Translation2D();
+		m_smoothPosition = RigidTransform2D();
 	}
 	else {
 		smooth();
 	}
 }
 
-bool GoalTrack::tryUpdate(double timestamp, const Translation2D &newObservation) {
+bool GoalTrack::tryUpdate(double timestamp, const RigidTransform2D &newObservation) {
 	if (!isAlive()) {
 		return false;
 	}
-	double distance = m_smoothPosition.inverse().translateBy(newObservation).norm();
+	double distance = m_smoothPosition.inverse().transformBy(newObservation).getTranslation().norm();
 	if (distance < Constants::kMaxTrackerDistance) {
 		m_observePositions.emplace(timestamp, newObservation);
 		pruneByTime(timestamp);
@@ -49,17 +49,18 @@ void GoalTrack::smooth() {
 	if (isAlive()) {
 		double x = 0;
 		double y = 0;
-		for (std::map<double, Translation2D>::iterator it = m_observePositions.begin(); it != m_observePositions.end(); ++it) {
-			x += it->second.getX();
-			y += it->second.getY();
+		for (std::map<double, RigidTransform2D>::iterator it = m_observePositions.begin(); it != m_observePositions.end(); ++it) {
+			x += it->second.getTranslation().getX();
+			y += it->second.getTranslation().getY();
 		}
 		x /= m_observePositions.size();
 		y /= m_observePositions.size();
-		m_smoothPosition = Translation2D(x, y);
+		//Get the Latest rotation
+		m_smoothPosition = RigidTransform2D(Translation2D(x,y),m_observePositions.rbegin()->second.getRotation());
 	}
 }
 
-Translation2D GoalTrack::getSmoothedPosition() const {
+RigidTransform2D GoalTrack::getSmoothedPosition() const {
 	return m_smoothPosition;
 }
 
