@@ -8,7 +8,7 @@ class VisionUpdateReceiver;
 class VisionMessage;
 
 class VisionServer {
-private:
+protected	:
 	bool mIsConnect = false;
 	bool mWantsAppRestart = false;
 	bool mRunning = true;
@@ -26,13 +26,14 @@ public:
 		int commfd;
 		std::vector<char>* recvBuf;
 		std::vector<std::string> split(std::string &text, char sep);
+		VisionServer* m_visionServer;
 	public:
-		ServerThread(int fd);
+		ServerThread(int fd, VisionServer* outer);
 		~ServerThread();
 		void send(VisionMessage* message);
 		void handleMessage(VisionMessage* message, double timestamp);
-		void runServerThread();
-		static void runServerThreadWrapper(void* context);
+		void* runServerThread();
+		static void* runServerThreadWrapper(void* context);
 	};
 
 	VisionServer(char* port);
@@ -40,9 +41,10 @@ public:
 	bool isConnected();
 	void requestAppRestart();
 	void restartAdb();
+	void* get_in_addr(struct sockaddr *sa);
 
 	void runAccepterThread();
-	static void runAccepterThreadWrapper(void* context);
+	static void* runAccepterThreadWrapper(void* context);
 
 	void addVisionUpdateReceiver(VisionUpdateReceiver* receiver);
 	void removeVisionUpdateReceiver(VisionUpdateReceiver* receiver);

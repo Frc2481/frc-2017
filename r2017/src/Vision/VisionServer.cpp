@@ -1,23 +1,23 @@
-#include "VisionServer.h"
-#include "AdbBridge.h"
+#include <arpa/inet.h>
+#include <asm-generic/socket.h>
+//#include <bits/socket_type.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <sys/wait.h>
-#include <pthread.h>
-#include <vector>
-
-#include "Messages/VisionMessage.h"
-#include "Messages/OffwireMessage.h"
-#include "Messages/HeartbeatMessage.h"
-#include "VisionUpdate.h"
+#include <unistd.h>
+#include <Vision/Messages/HeartbeatMessage.h>
+#include <Vision/Messages/OffWireMessage.h>
+#include <Vision/VisionServer.h>
+#include <Vision/VisionUpdate.h>
+#include <Vision/VisionUpdateReceiver.h>
+#include <algorithm>
+#include <cstddef>
+#include <iterator>
+#include <string>
 
 VisionServer::VisionServer(char* port)
 {
@@ -26,6 +26,7 @@ VisionServer::VisionServer(char* port)
 	mPortStr = port;
 	m_sockfd = -1;
 
+	int yes = 1;
 	int sockfd, rv;
 	struct addrinfo hints, *servinfo, *p;
 	memset(&hints, 0, sizeof(hints));
@@ -43,7 +44,7 @@ VisionServer::VisionServer(char* port)
 		{
 			continue;
 		}
-		if(setsockopt(sockfd, SOL_SOCKET, S_REUSEADDR, &yes, sizeof(int)) == -1)
+		if(setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
 		{
 			continue;
 		}
@@ -60,16 +61,19 @@ VisionServer::VisionServer(char* port)
 	{
 		//Server failed to bind, do something interesting
 	}
+
+	static const int BACKLOG = 10;
 	if(listen(sockfd, BACKLOG) == -1)
 	{
 		//Couldn't listen, do something interesting
 		return;
 	}
 	pthread_t accepterThread;
-	pthread_create(&accepterThread, NULL, &VisionServer::runAccepterThreadWrapper, &this);
+//	std::thread thread
+	pthread_create(&accepterThread, NULL, &VisionServer::runAccepterThreadWrapper, this);
 
 	m_adb->start();
-	m_adb->reversePortForward(*port, *port));
+	m_adb->reversePortForward(atoi(port), atoi(port));
 }
 
 VisionServer::~VisionServer()
@@ -93,10 +97,18 @@ void VisionServer::restartAdb()
 	m_adb->reversePortForward(mPort, mPort);
 }
 
+void* VisionServer::get_in_addr(struct sockaddr *sa) {
+	if (sa->sa_family == AF_INET) {
+		return &(((struct sockaddr_in*)sa)->sin_addr);
+	}
+	return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}
+
 void VisionServer::runAccepterThread()
 {
 	struct sockaddr_storage their_addr;
 	socklen_t sin_size = sizeof(their_addr);
+	char s[INET6_ADDRSTRLEN];
 	int new_fd;
 	while(mRunning)
 	{
@@ -108,7 +120,7 @@ void VisionServer::runAccepterThread()
 		}
 		inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof(s));
 
-		VisionServer::ServerThread *st = new VisionServer::ServerThread(new_fd);
+		VisionServer::ServerThread *st = new VisionServer::ServerThread(new_fd, this);
 		pthread_t pst;
 		pthread_create(&pst, NULL, &VisionServer::ServerThread::runServerThreadWrapper, st);
 
@@ -116,9 +128,10 @@ void VisionServer::runAccepterThread()
 	}
 }
 
-void VisionServer::runAccepterThreadWrapper(void* context)
+void* VisionServer::runAccepterThreadWrapper(void* context)
 {
-	return ((VisionServer*)context)->runAccepterThread();
+	((VisionServer*)context)->runAccepterThread();
+	return NULL;
 }
 
 void VisionServer::addVisionUpdateReceiver(VisionUpdateReceiver* receiver)
@@ -135,10 +148,11 @@ void VisionServer::removeVisionUpdateReceiver(VisionUpdateReceiver* receiver)
 	//Note that the item being removed is a pointer and thus needs to be deleted before being removed
 }
 
-VisionServer::ServerThread::ServerThread(int fd)
+VisionServer::ServerThread::ServerThread(int fd, VisionServer* outer)
 {
 	commfd = fd;
 	recvBuf = new std::vector<char>();
+	m_visionServer = outer;
 }
 
 VisionServer::ServerThread::~ServerThread()
@@ -154,7 +168,7 @@ void VisionServer::ServerThread::send(VisionMessage* message)
 	int n;
 	if(commfd != 0)
 	{
-		while(remToSend > 0)
+		while(bytesLeft > 0)
 		{
 			n = ::send(commfd, toSend+numSent, bytesLeft, 0);
 			if(n == -1) { break; }
@@ -169,30 +183,30 @@ void VisionServer::ServerThread::handleMessage(VisionMessage* message, double ti
 	std::string mType = message->getType();
 	if("targets" == mType)
 	{
-		VisionUpdate update = VisionUpdate::generateFromJsonString(timestamp, message->getMessage());
-		//receivers.removeAll(null singleton);
+		VisionUpdate update = VisionUpdate::generateFromJsonString(timestamp, std::string(message->getMessage()));
 		if(update.isValid()) {
-			//for(
-			//{
-			//	receiver.gotUpdate(update);
-			//}
+			for (auto it : m_visionServer->m_receivers) {
+//			for(auto it = m_receivers.begin(); it != m_receivers.end(); ++it) {
+				it->gotUpdate(update);
+			}
 		}
 	}
 	if("heartbeat" == mType)
 	{
-		send(&HeartbeatMessage());
+		HeartbeatMessage hbm;
+		send(&hbm);
 	}
 }
 
-void VisionServer::ServerThread::runServerThread()
+void* VisionServer::ServerThread::runServerThread()
 {
 	if(commfd == 0)
 	{
-		return;
+		return NULL;
 	}
 	int bytesRead;
 	std::string rcvStr;
-	while(bytesRead = recv(commfd, recvBuf.data(), sizeof(recvBuf), 0))
+	while((bytesRead = recv(commfd, recvBuf->data(), sizeof(recvBuf), 0)))
 	{
 		if(bytesRead == -1)
 		{
@@ -200,8 +214,8 @@ void VisionServer::ServerThread::runServerThread()
 		}
 		else
 		{
-			rcvStr.append(recvBuf.cbegin(), recvBuf.cend());
-			recvBuf.clear();
+			rcvStr.append(recvBuf->cbegin(), recvBuf->cend());
+			recvBuf->clear();
 		}
 		//Split string by \n and pass each into handleMessage
 		//Not networking, fill in later
@@ -215,9 +229,10 @@ void VisionServer::ServerThread::runServerThread()
 			}
 		}
 	}
+	return NULL;
 }
 
-VisionServer::ServerThread::runServerThreadWrapper(void* context)
+void* VisionServer::ServerThread::runServerThreadWrapper(void* context)
 {
 	return ((VisionServer::ServerThread*)context)->runServerThread();
 }
