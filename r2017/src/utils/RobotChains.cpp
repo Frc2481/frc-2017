@@ -100,7 +100,7 @@ void RobotChains::addVisionUpdateGear(double timeStamp, LiftTarget gearTarget) {
 std::list<AimingParameters> RobotChains::getGearAimingParameters(double currentTimeStamp) {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	std::list<AimingParameters> rv;
-	std::set<GoalTracker::TrackReport> reports(m_goalLiftTracker.getTracks());
+	const std::set<GoalTracker::TrackReport> &reports(m_goalLiftTracker.getTracks());
 
 	RigidTransform2D latestGearFlickerFixedToField = getPredictedFieldToVehicle(Constants::kAutoAimPredictionTime).transformBy(kVehicleToGearFlickerFixed).inverse();
 

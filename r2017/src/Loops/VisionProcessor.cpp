@@ -40,14 +40,14 @@ void VisionProcessor::OnLoop() {
 					//Check for two targets of relatively equal height in image using Y value for gearTarget
 					if(fabs(deltaY) < Constants::kGearYPosThreshold &&
 						fabs(deltaZ) < Constants::kGearCameraWidth / 2.0){
-						LiftTarget gearTarget(&iit, &jit);
+						LiftTarget gearTarget(*iit, *jit);
 						RobotChains::getInstance()->addVisionUpdateGear(update.getCapturedAtTimestamp(), gearTarget);
 					}
-					else if(fabs(deltaZ) < Constants::kBoilerZPosThreshold &&
-							fabs(deltaY) < Constants::kBoilerYPosThreshold){
-						TargetInfo boilerTarget(&iit, &jit);
-						RobotChains::getInstance()->addVisionUpdateBoiler(update.getCapturedAtTimestamp(), boilerTarget);
-					}
+//					else if(fabs(deltaZ) < Constants::kBoilerZPosThreshold &&
+//							fabs(deltaY) < Constants::kBoilerYPosThreshold){
+//						TargetInfo boilerTarget(iit, jit);
+//						RobotChains::getInstance()->addVisionUpdateBoiler(update.getCapturedAtTimestamp(), boilerTarget);
+//					}
 				}
 			}
 		}

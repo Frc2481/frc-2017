@@ -10,7 +10,7 @@ double AimingParameters::getDistance() {
 }
 
 Rotation2D AimingParameters::getAngle() {
-	return m_transform.inverse().getRotation().getDegrees();
+	return m_transform.inverse().getRotation();
 }
 
 int AimingParameters::getTrackID() {
