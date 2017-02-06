@@ -16,10 +16,10 @@ Climber::~Climber(){
 }
 
 void Climber::StartClimbing() {
-
+	m_climberMotor->Set(1);
 }
 
 void Climber::StopClimbing() {
-
+	m_climberMotor->Set(0);
 }
 

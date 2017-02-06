@@ -19,4 +19,5 @@
 #define INC_SHOOTER_BUTTON		new JoystickButton(m_operatorStick, XB_RIGHT_BUMPER)
 #define DEC_SHOOTER_BUTTON		new JoystickButton(m_operatorStick, XB_LEFT_BUMPER)
 #define FIRE_TRIGGER			new AnalogJoystickButton(m_operatorStick, XB_RIGHT_TRIGGER, 0.5)
+#define CLIMBER_BUTTON			new JoystickButton(m_driverStick, XB_A_BUTTON)
 #endif /* CONTROLLERMAP_H_ */
