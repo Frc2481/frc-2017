@@ -10,6 +10,7 @@
 #include "Commands/ShooterIncreaseSpeedCommand.h"
 #include "Commands/ShooterDecreaseSpeedCommand.h"
 #include "Commands/ShooterFireCommand.h"
+#include "Commands/ClimberUpCommand.h"
 
 
 OI::OI() {
@@ -42,6 +43,9 @@ OI::OI() {
 
 	m_fireTrigger = FIRE_TRIGGER;
 	m_fireTrigger->WhileHeld(new ShooterFireCommand());
+
+	m_climberButton = CLIMBER_BUTTON;
+	m_climberButton->WhileHeld(new ClimberUpCommand());
 }
 
 Joystick* OI::GetDriverStick(){

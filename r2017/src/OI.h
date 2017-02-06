@@ -18,6 +18,7 @@ private:
 	Button* m_shooterToggleButton;
 	Button* m_incShooterButton;
 	Button* m_decShooterButton;
+	Button* m_climberButton;
 	AnalogJoystickButton* m_fireTrigger;
 public:
 	OI();
