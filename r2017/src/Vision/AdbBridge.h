@@ -8,6 +8,8 @@
 #ifndef SRC_VISION_ADBBRIDGE_H_
 #define SRC_VISION_ADBBRIDGE_H_
 
+#include <string>
+
 class AdbBridge {
 public:
 	AdbBridge(const std::string &adbLocation);
