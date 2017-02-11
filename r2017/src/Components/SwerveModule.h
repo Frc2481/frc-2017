@@ -3,6 +3,7 @@
 #include <WPILib.h>
 #include "ContinuousEncoder.h"
 #include "CANTalon.h"
+#include "RobotParameters.h"
 
 
 class SwerveModule {
@@ -22,8 +23,14 @@ private:
 	bool m_angleOptimized;
 	bool m_stopped;
 	double m_driveDistanceOffset;
+	double m_velocity;
+	double m_accel;
 
 public:
+	enum CANTalonType{
+		DRIVE_MOTOR,
+		STEER_MOTOR,
+	};
 	SwerveModule(uint32_t driveID, uint32_t steerID);
 	virtual ~SwerveModule();
 	void Set(float speed, float angle);
@@ -40,6 +47,8 @@ public:
 	double GetSpeedI();
 	double GetSpeedD();
 
+	int GetError();
+
 	void SetSteerPID(double p, double i, double d);
 	double GetSteerP();
 	double GetSteerI();
@@ -50,12 +59,16 @@ public:
 
 	void SetOpenLoopSpeed(float speed);
 	void SetClosedLoopSpeed(float speed);
-	void SetAngle(float angle);
+	void SetAngle(float angle, bool forced = false);
 
 	void SetOptimized(bool optimized);
 	void ResetDriveEncoders();
 
 	void SetRampRates();
+
+	void SetMotionMagic(double setpoint);
+
+	CANTalon* GetMotor(enum CANTalonType motor);
 };
 
 #endif /*SWERVEMODULE_H_*/

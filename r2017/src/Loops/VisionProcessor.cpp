@@ -8,7 +8,7 @@
 #include <Loops/VisionProcessor.h>
 #include "Vision/TargetInfo.h"
 
-VisionProcessor::VisionProcessor() : m_processed(false), m_eligible(false){
+VisionProcessor::VisionProcessor() : Looper(10000), m_processed(false), m_eligible(false){
 	// TODO Auto-generated constructor stub
 
 }
@@ -19,7 +19,7 @@ VisionProcessor::~VisionProcessor() {
 
 void VisionProcessor::OnStart() {
 	if(!Looper::m_started){
-		Looper::m_thread = std::thread(&VisionProcessor::OnLoop);
+		Looper::m_thread = std::thread(&VisionProcessor::LoopMe, this);
 	}
 }
 
@@ -71,4 +71,8 @@ void VisionProcessor::gotUpdate(VisionUpdate update) {
 }
 
 void VisionProcessor::ProcessGearTarget(TargetInfo& left, TargetInfo& right) {
+}
+
+void VisionProcessor::LoopMe() {
+	Looper::Loop();
 }

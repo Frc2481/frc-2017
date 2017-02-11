@@ -13,7 +13,8 @@ PathGenerator::PathGenerator() {}
 PathGenerator::~PathGenerator() {}
 
 PathGenerator* PathGenerator::GetInstance(){
-	if (!m_pathGenerator){
+	static PathGenerator* m_pathGenerator = NULL;
+	if(m_pathGenerator==NULL){
 		m_pathGenerator = new PathGenerator();
 	}
 	return m_pathGenerator;

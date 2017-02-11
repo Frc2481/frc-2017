@@ -325,3 +325,15 @@ double DriveTrain::RPMToInchesPerSec(double rpm) {
 double DriveTrain::RotationsToInches(double rotation) {
 	return rotation * (INCHES_PER_REV);
 }
+
+void DriveTrain::PerformMotionMagic(double setpoint) {
+	m_motionSetpoint = setpoint;
+	m_frWheel->SetMotionMagic(m_motionSetpoint);
+	m_flWheel->SetMotionMagic(m_motionSetpoint);
+	m_brWheel->SetMotionMagic(m_motionSetpoint);
+	m_blWheel->SetMotionMagic(m_motionSetpoint);
+}
+
+double DriveTrain::GetMotionMagicSetpoint() {
+	return m_motionSetpoint;
+}

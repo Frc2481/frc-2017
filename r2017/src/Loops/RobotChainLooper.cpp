@@ -66,7 +66,7 @@ void RobotChainLooper::OnStart() {
 		m_frPrevRotation = frModule->GetAngle();
 		m_blPrevRotation = blModule->GetAngle();
 		m_brPrevRotation = brModule->GetAngle();
-		Looper::m_thread = std::thread(&RobotChainLooper::OnLoop);
+		Looper::m_thread = std::thread(&RobotChainLooper::OnLoop, this);
 		m_started = true;
 	}
 }
@@ -76,7 +76,7 @@ void RobotChainLooper::OnStop() {
 
 RobotChainLooper* RobotChainLooper::GetInstance() {
 	if(!m_instance){
-		m_instance = new RobotChainLooper(10);
+		m_instance = new RobotChainLooper(10000);
 	}
 	return m_instance;
 }

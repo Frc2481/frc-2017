@@ -28,20 +28,19 @@ VisionUpdate VisionUpdate::generateFromJsonString(double currentTime, std::strin
 	std::list<json> targets =  obj["targets"];
 	std::list<TargetInfo> targetInfos;
 	for(json targetObj : targets){
-		json target = (json) targetObj;
 		double y;
 		double z;
-		if(obj.find("y") == obj.end()){
+		if(targetObj.find("y") == targetObj.end()){
 			update.m_valid = false;
 			return update;
 		}
-		y = obj["y"];
+		y = targetObj["y"];
 
-		if(obj.find("z") == obj.end()){
+		if(targetObj.find("z") == targetObj.end()){
 			update.m_valid = false;
 			return update;
 		}
-		z = obj["z"];
+		z = targetObj["z"];
 		targetInfos.push_back(TargetInfo(y, z));
 	}
 	update.m_targets = targetInfos;

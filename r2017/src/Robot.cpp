@@ -1,3 +1,4 @@
+#include <Commands/GenerateGearRotationPathCommand.h>
 #include "WPILib.h"
 #include "Commands/Command.h"
 #include "CommandBase.h"
@@ -10,6 +11,13 @@
 #include "Commands/CalibrateEncoderOffsetsCommand.h"
 #include "Commands/SetEncoderConfigsCommand.h"
 #include "Commands/ToggleOptimizedCommand.h"
+#include "Commands/FollowFakePathCommand.h"
+#include "Commands/SwerveModuleTestClosedLoopVelocityCommand.h"
+#include "Commands/GeneratePathToTargetCommand.h"
+#include "Commands/FollowGearPathCommandGroup.h"
+#include "Commands/GenerateGearRotationPathCommand.h"
+#include "Loops/VisionProcessor.h"
+#include "Vision/VisionServer.h"
 
 class Robot: public IterativeRobot
 {
@@ -18,15 +26,23 @@ private:
 	frc::SendableChooser<Command*> *chooser;
 	std::unique_ptr<Compressor> pcm;
 	std::unique_ptr<PowerDistributionPanel> pdp;
+	VisionProcessor* m_visionProcessor = VisionProcessor::GetInstance();
+	VisionServer* m_visionServer;
 
 	void RobotInit()
 	{
+		m_visionServer = new VisionServer("8254");
 		CommandBase::init();
 		CommandBase::m_driveTrain->SetLengthAndWidth(ROBOT_LENGTH, ROBOT_WIDTH);
+		m_visionProcessor->OnStart();
 		chooser = new frc::SendableChooser<Command*>();
 		pcm.reset(new Compressor());
 		pcm->SetClosedLoopControl(true);
 		pdp.reset(new PowerDistributionPanel());
+		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
+		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
+		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
+		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
 //		chooser->AddDefault("Default Auto", new ExampleCommand());
 		//chooser->AddObject("My Auto", new MyAutoCommand());
 		SmartDashboard::PutData("Auto Modes", chooser);
@@ -50,6 +66,10 @@ private:
 		SmartDashboard::PutData(new ShooterSetPIDCommand());
 		SmartDashboard::PutData(new CalibrateEncoderOffsetsCommand());
 		SmartDashboard::PutData(new SetEncoderConfigsCommand());
+		SmartDashboard::PutData(new FollowFakePathCommand());
+		SmartDashboard::PutData(new SwerveModuleTestClosedLoopVelocityCommand());
+		SmartDashboard::PutData(new GenerateGearRotationPathCommand());
+		SmartDashboard::PutData(new FollowGearPathCommandGroup());
 
 		SmartDashboard::PutNumber("EncoderConfig InitPos", 0);
 		SmartDashboard::PutNumber("EncoderConfig P", 0.0);
@@ -57,6 +77,8 @@ private:
 		SmartDashboard::PutNumber("EncoderConfig D", 0.0);
 		SmartDashboard::PutNumber("EncoderConfig V", 0.0);
 		SmartDashboard::PutNumber("EncoderConfig A", 0.0);
+
+		SmartDashboard::PutNumber("Drive Velocity Setpoint TEST", 0.0);
 	}
 
 	/**
@@ -120,6 +142,8 @@ private:
 //		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_shooter->GetShooterSetpoint());
 //		SmartDashboard::PutNumber("Feeder Speed", CommandBase::m_shooter->GetFeederSpeed());
 		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
+		SmartDashboard::PutNumber("Drive Velocity", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetSpeed());
+		SmartDashboard::PutNumber("Current BL Error", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetError());
 	}
 
 	void TestPeriodic()

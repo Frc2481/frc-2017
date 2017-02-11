@@ -12,7 +12,7 @@ Looper::Looper() {
 
 }
 
-Looper::Looper(int interval) : m_interval(interval), m_started(false), m_active(false) {
+Looper::Looper(int interval) : m_active(false), m_interval(interval), m_started(false) {
 }
 
 Looper::~Looper() {
@@ -20,7 +20,7 @@ Looper::~Looper() {
 }
 
 void Looper::Start() {
-	Looper::OnStart();
+	OnStart();
 }
 
 void Looper::Loop() {
@@ -28,7 +28,7 @@ void Looper::Loop() {
 	while(true){
 		start = frc::GetFPGATime();
 		if(m_active){
-			Looper::OnLoop();
+			OnLoop();
 		}
 		uint64_t dt = frc::GetFPGATime() - start;
 		uint64_t sleepTime = m_interval - dt;

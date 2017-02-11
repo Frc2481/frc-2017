@@ -20,13 +20,12 @@ void TrajectoryFollowerLooper::OnLoop() {
 }
 
 TrajectoryFollowerLooper* TrajectoryFollowerLooper::GetInstance() {
-	if (!m_instance){
-		m_instance = new TrajectoryFollowerLooper(10);
-	}
-	return m_instance;
+	static TrajectoryFollowerLooper m_instance(10000);
+	return &m_instance;
 }
 
 void TrajectoryFollowerLooper::OnStart() {
+
 }
 
 void TrajectoryFollowerLooper::OnStop() {
