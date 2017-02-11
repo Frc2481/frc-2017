@@ -8,20 +8,15 @@
 #ifndef SRC_COMMANDS_CLIMBEROFF_H_
 #define SRC_COMMANDS_CLIMBEROFF_H_
 
-class ClimberOff : public CommandBase {
-	ClimberOff() : CommandBase("ClimberOff"){
+#include "Commands/InstantCommand.h"
+#include "CommandBase.h"
+
+class ClimberOff : public InstantCommand {
+	ClimberOff() : InstantCommand("ClimberOff"){
 		Requires(CommandBase::m_climber.get());
 	}
 	void Initialize(){
-		m_climber->StopClimbing();
-	}
-	void Execute(){}
-	bool IsFinished(){
-		return true;
-	}
-	void End(){}
-	void Interrupted(){
-		End();
+		CommandBase::m_climber->StopClimbing();
 	}
 };
 

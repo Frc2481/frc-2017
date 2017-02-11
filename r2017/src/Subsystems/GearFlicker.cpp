@@ -9,7 +9,7 @@
 
 GearFlicker::GearFlicker() : Subsystem("GearFlicker") {
 	m_flickerSolenoid = new Solenoid(GEAR_FLICKER);
-	m_gearLidSolenoid = new Solenoid(GEAR_FLICKER);
+	m_gearLidSolenoid = new Solenoid(GEAR_LID);
 }
 
 GearFlicker::~GearFlicker() {

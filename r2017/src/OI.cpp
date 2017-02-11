@@ -13,6 +13,7 @@
 #include "Commands/ClimberUpCommand.h"
 #include "Commands/GearOpenLidCommand.h"
 #include "Commands/GearCloseLidCommand.h"
+#include "Commands/ShooterHoodToggleCommand.h"
 
 
 OI::OI() {
@@ -52,6 +53,9 @@ OI::OI() {
 	m_gearLidButton = GEAR_LID_BUTTON;
 	m_gearLidButton->WhenPressed(new GearOpenLidCommand());
 	m_gearLidButton->WhenReleased(new GearCloseLidCommand());
+
+	m_shooterHoodToggleButton = SHOOTER_HOOD_TOOGLE_BUTTON;
+	m_shooterHoodToggleButton->WhenPressed(new ShooterHoodToggleCommand());
 }
 
 Joystick* OI::GetDriverStick(){

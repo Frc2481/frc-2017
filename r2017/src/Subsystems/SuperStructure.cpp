@@ -12,8 +12,11 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_shooterMotor = new CANTalon(SHOOTER_MOTOR);
 	m_loaderMotor = new CANTalon(LOADER_MOTOR);
 	m_hopperMotor = new CANTalon(HOPPER_MOTOR);
+	m_hoodSolenoid = new Solenoid(HOOD_SOLENOID);
+	m_shooterMotor->SetClosedLoopOutputDirection(true);
 	m_shooterMotor->SelectProfileSlot(0);
 	m_shooterMotor->SetControlMode(CANTalon::kSpeed);
+	m_shooterMotor->SetPID(0, 0, 0, 0);
 	m_shooterMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
 	m_shooterMotor->SetSensorDirection(true);
 	m_loaderSpeed = 0;
@@ -25,6 +28,7 @@ SuperStructure::~SuperStructure(){
 	delete m_shooterMotor;
 	delete m_loaderMotor;
 	delete m_hopperMotor;
+	delete m_hoodSolenoid;
 }
 
 void SuperStructure::TurnShooterOn(){
@@ -109,4 +113,16 @@ void SuperStructure::SetSpeed(double speed){
 
 double SuperStructure::GetSpeed(){
 	return m_speed;
+}
+
+void SuperStructure::RaiseHood() {
+	m_hoodSolenoid->Set(true);
+}
+
+void SuperStructure::LowerHood() {
+	m_hoodSolenoid->Set(false);
+}
+
+bool SuperStructure::IsRaised() {
+	return m_hoodSolenoid->Get();
 }

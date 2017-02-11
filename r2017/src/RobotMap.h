@@ -18,6 +18,7 @@
 
 //GearFlicker
 		#define GEAR_FLICKER 1
+		#define GEAR_LID 2
 
 //Intake
 		#define INTAKE_MOTOR 13
@@ -26,5 +27,6 @@
 		#define HOPPER_MOTOR 11
 		#define SHOOTER_MOTOR 14
 		#define LOADER_MOTOR 15
+		#define HOOD_SOLENOID 16
 
 #endif

@@ -8,20 +8,15 @@
 #ifndef SRC_COMMANDS_CLIMBERON_H_
 #define SRC_COMMANDS_CLIMBERON_H_
 
-class ClimberOn : public CommandBase {
-	ClimberOn() : CommandBase("ClimberOn"){
+#include "Commands/InstantCommand.h"
+#include "CommandBase.h"
+
+class ClimberOn : public InstantCommand {
+	ClimberOn() : InstantCommand("ClimberOn"){
 		Requires(CommandBase::m_climber.get());
 	}
 	void Initialize(){
-		m_climber->StartClimbing();
-	}
-	void Execute(){}
-	bool IsFinished(){
-		return true;
-	}
-	void End(){}
-	void Interrupted(){
-		End();
+		CommandBase::m_climber->StartClimbing();
 	}
 };
 
