@@ -12,7 +12,7 @@
 #include <atomic>
 #include <Utility.h>
 
-class TrajectoryFollowerLooper : Looper {
+class TrajectoryFollowerLooper : public Looper {
 private:
 	TrajectoryFollowerLooper(int interval);
 	static TrajectoryFollowerLooper* m_instance;
@@ -23,6 +23,5 @@ public:
 	void OnLoop();
 	void OnStop();
 };
-TrajectoryFollowerLooper* TrajectoryFollowerLooper::m_instance = 0;
 
 #endif /* SRC_LOOPS_TRAJECTORYFOLLOWERLOOPER_H_ */

@@ -41,16 +41,16 @@ void AdbBridge::reversePortForward(int remotePort, int localPort) {
 }
 
 void AdbBridge::restartApp() {
-    stop();
-    start();
+    runCommand("shell am force-stop com.team254.cheezdroid \\; am start com.team254.cheezdroid/com.team254.cheezdroid.VisionTrackerActivity");
 }
 
 bool AdbBridge::runCommand(const std::string &args) {
 	std::stringstream ss;
 	ss << m_binLocation << " " << args;
+	printf("%s %s", ss.str().c_str(), args.c_str());
 	FILE* adbStream = popen(ss.str().c_str(), "r");
 	if (adbStream == NULL) {
-		printf("Run Command Failed: %d\t%s", ss.str().c_str(), errno);
+		printf("Run Command Failed: %d\t%s", errno, ss.str().c_str());
 		return false;
 	}
 	pclose(adbStream);

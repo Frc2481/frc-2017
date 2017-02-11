@@ -14,7 +14,7 @@ class ClimberUpCommand : public CommandBase{
 public:
 	ClimberUpCommand(): CommandBase("ClimberUpCommand"){
 	}
-	virtual ~ClimberUpCommand();
+	virtual ~ClimberUpCommand(){}
 
 	void Initialize(){
 		m_climber->StartClimbing();

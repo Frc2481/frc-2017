@@ -8,7 +8,9 @@
 #ifndef SRC_COMMANDS_DRIVETRAINFOLLOWPATHCOMMAND_H_
 #define SRC_COMMANDS_DRIVETRAINFOLLOWPATHCOMMAND_H_
 
-#include "PathGenerator.h"
+#include "Components/PathGenerator.h"
+#include "Loops/TrajectoryFollowerLooper.h"
+#include "Components/TrajectoryFollower.h"
 
 class DriveTrainFollowPathCommand : public CommandBase {
 public:
@@ -30,11 +32,11 @@ public:
 		m_frTrajectory = (Segment*) malloc(length * sizeof(Segment));
 		m_blTrajectory = (Segment*) malloc(length * sizeof(Segment));
 		m_brTrajectory = (Segment*) malloc(length * sizeof(Segment));
-		PathGenerator::GetInstance()->PreparePath(m_path, 2, &m_candidate);
+		PathGenerator::GetInstance()->PreparePath(m_path, m_length, &m_candidate);
 		PathGenerator::GetInstance()->GeneratePath(&m_candidate, m_flTrajectory, m_frTrajectory, m_blTrajectory, m_brTrajectory);
 	}
 
-	void Initialize(){
+	virtual void Initialize(){
 		m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->ResetDriveEncoders();
 		m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->ResetDriveEncoders();
 		m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->ResetDriveEncoders();

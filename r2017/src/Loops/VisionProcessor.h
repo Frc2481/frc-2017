@@ -11,10 +11,11 @@
 #include <mutex>
 #include "Components/Looper.h"
 #include "Vision/VisionUpdate.h"
+#include "Vision/VisionUpdateReceiver.h"
 #include "utils/RobotChains.h"
 #include "Components/Looper.h"
 
-class VisionProcessor : Looper, VisionUpdateReceiver {
+class VisionProcessor : public Looper, VisionUpdateReceiver {
 private:
 	VisionProcessor();
 	VisionUpdate m_update;
@@ -23,12 +24,13 @@ private:
 	std::mutex m_mutex;
 public:
 	virtual ~VisionProcessor();
-	VisionProcessor* GetInstance();
+	static VisionProcessor* GetInstance();
 	void OnStart();
 	void OnLoop();
 	void OnStop();
 	void gotUpdate(VisionUpdate update);
 	void ProcessGearTarget(TargetInfo &left, TargetInfo &right);
+	void LoopMe();
 };
 
 #endif /* SRC_LOOPS_VISIONPROCESSOR_H_ */

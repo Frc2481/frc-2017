@@ -24,7 +24,7 @@ public:
 	static constexpr double kAutoAimPredictionTime = 0.25;
 	static constexpr double kCameraDeadBand = 0.0;
 	static constexpr double kGearYPosThreshold = 20.0; //tune
-	static constexpr double kGearCameraWidth = 100.0; //tune
+	static constexpr double kGearCameraWidth = 3000; //tune
 	static constexpr double kBoilerYPosThreshold = 20.0; //tune
 	static constexpr double kBoilerZPosThreshold = 100.0; //tune
 

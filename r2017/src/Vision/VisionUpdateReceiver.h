@@ -12,8 +12,8 @@
 
 class VisionUpdateReceiver {
 public:
-	VisionUpdateReceiver();
-	virtual ~VisionUpdateReceiver();
+	VisionUpdateReceiver(){}
+	virtual ~VisionUpdateReceiver(){}
 	virtual void gotUpdate(VisionUpdate update) = 0;
 };
 

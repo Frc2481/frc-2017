@@ -15,8 +15,8 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerMotor = new CANTalon(steerID);
 	m_prevAngle = 0;
 	m_offset = 0;
-	m_optimized = 0;
-	m_speedP = 0;
+	m_optimized = true;
+	m_speedP = 0.5;
 	m_speedI = 0;
 	m_speedD = 0;
 	m_steerP = 3;
@@ -24,12 +24,22 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerD = 40;
 	m_isSpeedPIDEnabled = false;
 	m_driveDistanceOffset = 0.0;
+	m_velocity = RPM * ENCODER_REV_PER_WHEEL_REV;
+	m_accel = m_velocity * .75;
 
 	m_driveMotor->SelectProfileSlot(0);
 	m_driveMotor->SetControlMode(CANTalon::kPercentVbus);
-	m_driveMotor->SetPID(m_speedP, m_speedI, m_speedD);
-	m_driveMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
+	//m_driveMotor->SetPID(m_speedP, m_speedI, m_speedD);
+	m_driveMotor->SetFeedbackDevice(CANTalon::QuadEncoder);
 	m_driveMotor->SetSensorDirection(true);
+	m_driveMotor->SetClosedLoopOutputDirection(true);
+	m_driveMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
+	m_driveMotor->ConfigEncoderCodesPerRev(128);
+
+	m_driveMotor->ConfigNominalOutputVoltage(0.0,0.0);
+	m_driveMotor->ConfigPeakOutputVoltage(12.0,-12.0);
+	m_driveMotor->SetMotionMagicAcceleration(m_accel);
+	m_driveMotor->SetMotionMagicCruiseVelocity(m_velocity);
 
 	m_driveMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
 
@@ -57,7 +67,7 @@ void SwerveModule::Set(float speed, float angle) {
 
 
 float SwerveModule::GetSpeed() const {
-	return m_driveMotor->Get();
+	return m_driveMotor->GetSpeed();
 }
 
 float SwerveModule::GetAngle() const {
@@ -172,7 +182,7 @@ void SwerveModule::SetClosedLoopSpeed(float speed) {
 	m_driveMotor->Set(speed);
 }
 
-void SwerveModule::SetAngle(float angle) {
+void SwerveModule::SetAngle(float angle, bool forced) {
 	float currentAngle = GetAngle();
 
 		angle = RoboUtils::constrainDeg0To360(angle);
@@ -187,7 +197,7 @@ void SwerveModule::SetAngle(float angle) {
 		}
 
 		//If we are moving slowly, don't change the angle to keep things stable (rotating wheels when speed is small can induce lateral movement)
-		if (m_stopped){
+		if (m_stopped && !forced){
 			angle = m_prevAngle;
 		}
 		else {
@@ -220,4 +230,22 @@ void SwerveModule::ResetDriveEncoders() {
 void SwerveModule::SetRampRates() {
 	m_driveMotor->SetVoltageRampRate(48);
 	m_steerMotor->SetVoltageRampRate(48);
+}
+
+int SwerveModule::GetError() {
+	return m_driveMotor->GetClosedLoopError();
+}
+
+void SwerveModule::SetMotionMagic(double setpoint) {
+	m_driveMotor->SetTalonControlMode(CANTalon::kMotionMagicMode);
+	m_driveMotor->Set(setpoint);
+}
+
+CANTalon* SwerveModule::GetMotor(CANTalonType motor) {
+	if(motor == SwerveModule::DRIVE_MOTOR){
+		return m_driveMotor;
+	}
+	else if(motor == SwerveModule::STEER_MOTOR){
+		return m_steerMotor;
+	}
 }

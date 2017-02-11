@@ -38,6 +38,7 @@ private:
 	double m_gyroCorrectionOffset = 0;
 	float m_originX;
 	float m_originY;
+	double m_motionSetpoint;
 
 	bool m_isFieldCentric;
 	bool m_isForward;
@@ -91,6 +92,9 @@ public:
 	void Shift(bool state);
 	SwerveModule* GetModule(DriveTrain::SwerveModuleType module);
 	Rotation2D GetAngle();
+	void PerformMotionMagic(double setpoint);
+
+	double GetMotionMagicSetpoint();
 
 	double GetFLVelocityInchesPerSec();
 	double GetFRVelocityInchesPerSec();
