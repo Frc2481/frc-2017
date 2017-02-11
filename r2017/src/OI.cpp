@@ -11,6 +11,8 @@
 #include "Commands/ShooterDecreaseSpeedCommand.h"
 #include "Commands/ShooterFireCommand.h"
 #include "Commands/ClimberUpCommand.h"
+#include "Commands/GearOpenLidCommand.h"
+#include "Commands/GearCloseLidCommand.h"
 
 
 OI::OI() {
@@ -46,6 +48,10 @@ OI::OI() {
 
 	m_climberButton = CLIMBER_BUTTON;
 	m_climberButton->WhileHeld(new ClimberUpCommand());
+
+	m_gearLidButton = GEAR_LID_BUTTON;
+	m_gearLidButton->WhenPressed(new GearOpenLidCommand());
+	m_gearLidButton->WhenReleased(new GearCloseLidCommand());
 }
 
 Joystick* OI::GetDriverStick(){
