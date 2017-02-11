@@ -15,7 +15,7 @@ public:
 	HopperSetSpeedCommand() : InstantCommand("Hopper Set Speed Command") {}
 
 	void Initialize(){
-		CommandBase::m_hopper->SetSpeed(SmartDashboard::GetNumber("Hopper Speed", 0));
+		CommandBase::m_superStructure->SetSpeed(SmartDashboard::GetNumber("Hopper Speed", 0));
 	}
 };
 

@@ -12,9 +12,9 @@
 #include "Components/AnalogJoystickButton.h"
 
 #define SHIFTER_BUTTON    		new JoystickButton(m_driverStick, XB_RIGHT_BUMPER)
-#define UNLOAD_GEAR_BUTTON		new JoystickButton(m_operatorStick, XB_A_BUTTON)
+#define FLICKER_GEAR_BUTTON		new JoystickButton(m_operatorStick, XB_A_BUTTON)
 #define HOPPER_BUTTON			new JoystickButton(m_operatorStick, XB_X_BUTTON)
-#define LIFT_BUTTON				new JoystickButton(m_operatorStick, XB_B_BUTTON)
+#define LOADER_BUTTON			new JoystickButton(m_operatorStick, XB_B_BUTTON)
 #define SHOOTER_TOGGLE_BUTTON	new JoystickButton(m_operatorStick, XB_RIGHT_TRIGGER)
 #define INC_SHOOTER_BUTTON		new JoystickButton(m_operatorStick, XB_RIGHT_BUMPER)
 #define DEC_SHOOTER_BUTTON		new JoystickButton(m_operatorStick, XB_LEFT_BUMPER)

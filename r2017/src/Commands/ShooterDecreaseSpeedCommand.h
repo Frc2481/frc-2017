@@ -13,11 +13,11 @@
 class ShooterDecreaseSpeedCommand : public InstantCommand {
 public:
 	ShooterDecreaseSpeedCommand() : InstantCommand("Shooter Decrease Speed Command"){
-		Requires(CommandBase::m_shooter.get());
+		Requires(CommandBase::m_superStructure.get());
 	}
 
 	void Initialize(){
-		CommandBase::m_shooter->SetShooterSetpoint(CommandBase::m_shooter->GetShooterSetpoint()-100);
+		CommandBase::m_superStructure->SetShooterSetpoint(CommandBase::m_superStructure->GetShooterSetpoint()-100);
 	}
 };
 

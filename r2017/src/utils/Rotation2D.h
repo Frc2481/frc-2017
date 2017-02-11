@@ -34,7 +34,7 @@ public:
 
 
 private:
-	double m_sin;
 	double m_cos;
+	double m_sin;
 	const double kEpsilon = 1E-9;
 };

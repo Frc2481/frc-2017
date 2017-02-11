@@ -4,8 +4,8 @@
 #include "Commands/DriveTrainShiftSequenceCommand.h"
 #include "Commands/HopperOffCommand.h"
 #include "Commands/HopperOnCommand.h"
-#include "Commands/FeederOnCommand.h"
-#include "Commands/FeederOffCommand.h"
+#include "Commands/LoaderOnCommand.h"
+#include "Commands/LoaderOffCommand.h"
 #include "Commands/ShooterToggleCommand.h"
 #include "Commands/ShooterIncreaseSpeedCommand.h"
 #include "Commands/ShooterDecreaseSpeedCommand.h"
@@ -21,16 +21,16 @@ OI::OI() {
 	m_shifterButton->WhenPressed(new DriveTrainShiftSequenceCommand(true));
 	m_shifterButton->WhenReleased(new DriveTrainShiftSequenceCommand(false));
 
-	m_unloadGearButton = UNLOAD_GEAR_BUTTON;
-	m_unloadGearButton->WhenPressed(new GearFlickCommandGroup());
+	m_flickerGearButton = FLICKER_GEAR_BUTTON;
+	m_flickerGearButton->WhenPressed(new GearFlickCommandGroup());
 
 	m_hopperButton = HOPPER_BUTTON;
 	m_hopperButton->WhenPressed(new HopperOnCommand());
 	m_hopperButton->WhenReleased(new HopperOffCommand());
 
-	m_liftButton = LIFT_BUTTON;
-	m_liftButton->WhenPressed(new FeederOnCommand());
-	m_liftButton->WhenReleased(new FeederOffCommand());
+	m_loaderButton = LOADER_BUTTON;
+	m_loaderButton->WhenPressed(new LoaderOnCommand());
+	m_loaderButton->WhenReleased(new LoaderOffCommand());
 
 	m_shooterToggleButton = SHOOTER_TOGGLE_BUTTON;
 	m_shooterToggleButton->WhenPressed(new ShooterToggleCommand());

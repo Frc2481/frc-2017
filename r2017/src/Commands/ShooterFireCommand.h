@@ -16,14 +16,14 @@ public:
 
 	void Initialize(){}
 	void Execute(){
-		if(m_shooter->IsOnTarget()){
-			m_shooter->TurnFeederOn();
-			m_hopper->StartFeeding();
+		if(m_superStructure->IsOnTarget()){
+			m_superStructure->TurnLoaderOn();
+			m_superStructure->StartFeeding();
 		}
 
 		else {
-			m_shooter->TurnFeederOff();
-			m_hopper->StopFeeding();
+			m_superStructure->TurnLoaderOff();
+			m_superStructure->StopFeeding();
 		}
 	}
 
@@ -31,8 +31,8 @@ public:
 		return true;
 	}
 	void End(){
-		m_shooter->TurnFeederOff();
-		m_hopper->StopFeeding();
+		m_superStructure->TurnLoaderOff();
+		m_superStructure->StopFeeding();
 	}
 
 	void Interrupted(){

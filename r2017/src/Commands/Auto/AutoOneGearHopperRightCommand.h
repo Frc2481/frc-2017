@@ -13,7 +13,7 @@
 class AutoOneGearRightCommand : public CommandGroup {
 	AutoOneGearRightCommand() : CommandGroup("AutoOneGearLeftCommand") {
 		AddSequential(new AutoDriveGearRightCommand());
-		AddSequential(new GearUnloadCommand());
+		AddSequential(new GearFlickCommand());
 		AddSequential(new AutoBackUpFromGearsCommand());
 		AddSequential(new AutoRightHopperFromRightGearCommand(), 5);
 		AddSequential(new WaitCommand(2));

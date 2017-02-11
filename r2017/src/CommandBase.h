@@ -8,9 +8,8 @@
 #include "WPILib.h"
 #include "Subsystems/DriveTrain.h"
 #include "Subsystems/Climber.h"
-#include "Subsystems/Hopper.h"
 #include "Subsystems/Intake.h"
-#include "Subsystems/Shooter.h"
+#include "Subsystems/SuperStructure.h"
 
 /**
  * The base for all commands. All atomic commands should subclass CommandBase.
@@ -27,9 +26,8 @@ public:
 	static std::unique_ptr<DriveTrain> m_driveTrain;
 	static std::unique_ptr<Climber> m_climber;
 	static std::unique_ptr<GearFlicker> m_gearFlicker;
-	static std::unique_ptr<Hopper> m_hopper;
 	static std::unique_ptr<Intake> m_intake;
-	static std::unique_ptr<Shooter> m_shooter;
+	static std::unique_ptr<SuperStructure> m_superStructure;
 	static std::unique_ptr<OI> oi;
 };
 
