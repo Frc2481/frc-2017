@@ -49,6 +49,7 @@ public:
 	void RaiseHood();
 	void LowerHood();
 	bool IsRaised();
+	void SetShooterSpeed(double speed);
 };
 
 #endif /* SRC_SUBSYSTEMS_SUPERSTRUCTURE_H_ */

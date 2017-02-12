@@ -16,12 +16,15 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_shooterMotor->SetClosedLoopOutputDirection(true);
 	m_shooterMotor->SelectProfileSlot(0);
 	m_shooterMotor->SetControlMode(CANTalon::kSpeed);
-	m_shooterMotor->SetPID(0, 0, 0, 0);
+//	m_shooterMotor->SetPID(0, 0, 0, 0);
 	m_shooterMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
 	m_shooterMotor->SetSensorDirection(true);
-	m_loaderSpeed = 0;
+//	m_shooterMotor->SetInverted(true);
+	m_loaderSpeed = 0.5;
+	m_loaderMotor->SetInverted(true);
 	m_onTargetCounter = 0;
 	m_speed = 0.2;
+	SmartDashboard::PutNumber("Shooter Setpoint", 0.0);
 }
 
 SuperStructure::~SuperStructure(){
@@ -33,6 +36,10 @@ SuperStructure::~SuperStructure(){
 
 void SuperStructure::TurnShooterOn(){
 	m_shooterMotor->Enable();
+	double targetSpeed = SmartDashboard::GetNumber("Shooter Setpoint", 0.0);
+	SetShooterSetpoint(targetSpeed);
+	printf("Shooter setpoint: %f\n", targetSpeed);
+	printf("Shooter P: %f, I: %f, d: %f\n", m_shooterMotor->GetP(), m_shooterMotor->GetI(), m_shooterMotor->GetP());
 }
 
 void SuperStructure::TurnShooterOff(){
@@ -40,7 +47,7 @@ void SuperStructure::TurnShooterOff(){
 }
 
 void SuperStructure::SetShooterSetpoint(double setpoint) {
-	m_shooterMotor->SetSetpoint(setpoint);
+	m_shooterMotor->Set(setpoint);
 }
 
 void SuperStructure::SetPID(double p, double i, double d) {
@@ -112,7 +119,7 @@ void SuperStructure::SetSpeed(double speed){
 }
 
 double SuperStructure::GetSpeed(){
-	return m_speed;
+	return m_shooterMotor->GetSpeed();
 }
 
 void SuperStructure::RaiseHood() {
@@ -125,4 +132,10 @@ void SuperStructure::LowerHood() {
 
 bool SuperStructure::IsRaised() {
 	return m_hoodSolenoid->Get();
+}
+
+void SuperStructure::SetShooterSpeed(double speed) {
+	m_shooterMotor->Set(speed);
+	m_shooterMotor->Enable();
+	printf("PID enabled\n");
 }
