@@ -16,9 +16,11 @@ public:
 
 	void Initialize() {
 		if (CommandBase::m_superStructure->IsShooterOn()) {
+			printf("Shooter is on, turning off...\n");
 			CommandBase::m_superStructure->TurnShooterOff();
 		} else {
 			CommandBase::m_superStructure->TurnShooterOn();
+			printf("Shooter is off, turning on...\n");
 		}
 	};
 };

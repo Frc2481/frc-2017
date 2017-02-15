@@ -135,6 +135,7 @@ private:
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
+
 		if (autonomousCommand != NULL)
 			autonomousCommand->Cancel();
 	}
@@ -147,6 +148,7 @@ private:
 		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
 		SmartDashboard::PutNumber("Drive Velocity", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetSpeed());
 		SmartDashboard::PutNumber("Current BL Error", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetError());
+		SmartDashboard::PutNumber("Shooter Speed", CommandBase::m_superStructure->GetSpeed());
 	}
 
 	void TestPeriodic()

@@ -23,6 +23,7 @@ private:
 	RigidTransform2D kVehicleToGearFlickerFixed;
 	Rotation2D m_angle;
 	std::recursive_mutex m_mutex;
+
 protected:
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_fieldToVehicle;
 	RigidTransform2D::Delta m_vehicleVelocity;
@@ -61,4 +62,5 @@ public:
 	void setTurretRotatingToCamera();
 	GoalTracker getGoalTracker();
 	static RobotChains* getInstance();
+	//double getInterpolatedGearAngle(double skew);
 };

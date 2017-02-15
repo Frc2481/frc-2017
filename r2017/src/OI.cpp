@@ -11,6 +11,10 @@
 #include "Commands/ShooterDecreaseSpeedCommand.h"
 #include "Commands/ShooterFireCommand.h"
 #include "Commands/ClimberUpCommand.h"
+#include "Commands/GearOpenLidCommand.h"
+#include "Commands/GearCloseLidCommand.h"
+#include "Commands/ShooterHoodToggleCommand.h"
+#include "Commands/SetShooterMaxSpeedCommand.h"
 
 
 OI::OI() {
@@ -41,11 +45,21 @@ OI::OI() {
 	m_decShooterButton = DEC_SHOOTER_BUTTON;
 	m_decShooterButton->WhenPressed(new ShooterDecreaseSpeedCommand());
 
-	m_fireTrigger = FIRE_TRIGGER;
-	m_fireTrigger->WhileHeld(new ShooterFireCommand());
+	//m_fireTrigger = FIRE_TRIGGER;
+	//m_fireTrigger->WhileHeld(new ShooterFireCommand());
 
 	m_climberButton = CLIMBER_BUTTON;
 	m_climberButton->WhileHeld(new ClimberUpCommand());
+
+	m_gearLidButton = GEAR_LID_BUTTON;
+	m_gearLidButton->WhenPressed(new GearOpenLidCommand());
+	m_gearLidButton->WhenReleased(new GearCloseLidCommand());
+
+	m_shooterHoodToggleButton = SHOOTER_HOOD_TOOGLE_BUTTON;
+	m_shooterHoodToggleButton->WhenPressed(new ShooterHoodToggleCommand());
+
+	m_shooterMaxSpeed = SHOOTER_MAX_SPEED;
+	m_shooterMaxSpeed->WhenPressed(new SetShooterMaxSpeedCommand());
 }
 
 Joystick* OI::GetDriverStick(){

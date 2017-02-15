@@ -19,7 +19,10 @@ private:
 	Button* m_incShooterButton;
 	Button* m_decShooterButton;
 	Button* m_climberButton;
+	Button* m_gearLidButton;
+	Button* m_shooterHoodToggleButton;
 	AnalogJoystickButton* m_fireTrigger;
+	Button* m_shooterMaxSpeed;
 public:
 	OI();
 	Joystick* GetDriverStick();
