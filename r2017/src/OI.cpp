@@ -28,6 +28,17 @@ OI::OI() {
 	m_flickerGearButton = FLICKER_GEAR_BUTTON;
 	m_flickerGearButton->WhenPressed(new GearFlickCommandGroup());
 
+	m_climberButton = CLIMBER_BUTTON;
+	m_climberButton->WhileHeld(new ClimberUpCommand());
+
+	m_gearLidButton = GEAR_LID_BUTTON;
+	m_gearLidButton->WhenPressed(new GearOpenLidCommand());
+	m_gearLidButton->WhenReleased(new GearCloseLidCommand());
+
+	m_shooterMaxSpeed = SHOOTER_MAX_SPEED;
+	m_shooterMaxSpeed->WhenPressed(new SetShooterMaxSpeedCommand());
+
+
 	m_hopperButton = HOPPER_BUTTON;
 	m_hopperButton->WhenPressed(new HopperOnCommand());
 	m_hopperButton->WhenReleased(new HopperOffCommand());
@@ -45,21 +56,13 @@ OI::OI() {
 	m_decShooterButton = DEC_SHOOTER_BUTTON;
 	m_decShooterButton->WhenPressed(new ShooterDecreaseSpeedCommand());
 
-	//m_fireTrigger = FIRE_TRIGGER;
-	//m_fireTrigger->WhileHeld(new ShooterFireCommand());
-
-	m_climberButton = CLIMBER_BUTTON;
-	m_climberButton->WhileHeld(new ClimberUpCommand());
-
-	m_gearLidButton = GEAR_LID_BUTTON;
-	m_gearLidButton->WhenPressed(new GearOpenLidCommand());
-	m_gearLidButton->WhenReleased(new GearCloseLidCommand());
-
 	m_shooterHoodToggleButton = SHOOTER_HOOD_TOOGLE_BUTTON;
 	m_shooterHoodToggleButton->WhenPressed(new ShooterHoodToggleCommand());
 
-	m_shooterMaxSpeed = SHOOTER_MAX_SPEED;
-	m_shooterMaxSpeed->WhenPressed(new SetShooterMaxSpeedCommand());
+	//m_fireTrigger = FIRE_TRIGGER;
+	//m_fireTrigger->WhileHeld(new ShooterFireCommand());
+
+
 }
 
 Joystick* OI::GetDriverStick(){
