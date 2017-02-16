@@ -95,6 +95,8 @@ private:
 
 		SmartDashboard::PutNumber("Auto Gear Drive Distance", 0.0);
 
+		SmartDashboard::PutNumber("Shooter Setpoint", 0.0);
+
 		SmartDashboard::PutNumber("Gyro Correction P", 0.0);
 		SmartDashboard::PutNumber("Gyro Correction I", 0.0);
 

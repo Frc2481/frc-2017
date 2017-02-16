@@ -24,7 +24,6 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_loaderMotor->SetInverted(true);
 	m_onTargetCounter = 0;
 	m_speed = 0.2;
-	SmartDashboard::PutNumber("Shooter Setpoint", 0.0);
 }
 
 SuperStructure::~SuperStructure(){

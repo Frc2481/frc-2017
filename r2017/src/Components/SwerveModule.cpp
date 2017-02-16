@@ -9,7 +9,6 @@
 #include "RoboUtils.h"
 
 SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
-	SmartDashboard::PutNumber("Temp Setpoint", 0.0);
 	// TODO Auto-generated constructor stub
 	m_driveMotor = new CANTalon(driveID);
 	m_steerMotor = new CANTalon(steerID);
