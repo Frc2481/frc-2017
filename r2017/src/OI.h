@@ -11,18 +11,21 @@ private:
 	static const int OPERATOR_STICK_PORT = 1;
 	Joystick* m_driverStick;
 	Joystick* m_operatorStick;
+
 	Button* m_shifterButton;
 	Button* m_flickerGearButton;
+	Button* m_climberButton;
+	Button* m_gearLidButton;
+	Button* m_shooterMaxSpeed;
+
 	Button* m_hopperButton;
 	Button* m_loaderButton;
 	Button* m_shooterToggleButton;
 	Button* m_incShooterButton;
 	Button* m_decShooterButton;
-	Button* m_climberButton;
-	Button* m_gearLidButton;
 	Button* m_shooterHoodToggleButton;
-	AnalogJoystickButton* m_fireTrigger;
-	Button* m_shooterMaxSpeed;
+	//AnalogJoystickButton* m_fireTrigger;
+
 public:
 	OI();
 	Joystick* GetDriverStick();
