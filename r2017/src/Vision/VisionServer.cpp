@@ -70,7 +70,7 @@ VisionServer::VisionServer(char* port)
 	}
 	pthread_t accepterThread;
 //	std::thread thread
-	pthread_create(&accepterThread, NULL, &VisionServer::runAccepterThreadWrapper, this);
+	//pthread_create(&accepterThread, NULL, &VisionServer::runAccepterThreadWrapper, this);
 
 	m_adb->start();
 	m_adb->reversePortForward(atoi(port), atoi(port));
@@ -122,7 +122,7 @@ void VisionServer::runAccepterThread()
 
 		VisionServer::ServerThread *st = new VisionServer::ServerThread(new_fd, this);
 		pthread_t pst;
-		pthread_create(&pst, NULL, &VisionServer::ServerThread::runServerThreadWrapper, st);
+		//pthread_create(&pst, NULL, &VisionServer::ServerThread::runServerThreadWrapper, st);
 
 		sleep(0.1);
 	}

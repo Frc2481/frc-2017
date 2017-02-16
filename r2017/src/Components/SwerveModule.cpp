@@ -25,7 +25,8 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_isSpeedPIDEnabled = false;
 	m_driveDistanceOffset = 0.0;
 	m_velocity = RPM * ENCODER_REV_PER_WHEEL_REV;
-	m_accel = m_velocity * .75;
+	m_accel = m_velocity / 1.233;
+	m_motionMagic = false;
 
 	m_driveMotor->SelectProfileSlot(0);
 	m_driveMotor->SetControlMode(CANTalon::kPercentVbus);
@@ -50,7 +51,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerMotor->SetSensorDirection(true);
 	m_steerMotor->SetClosedLoopOutputDirection(false);
 	m_steerMotor->SetPulseWidthPosition(m_steerMotor->GetPulseWidthPosition() & 0xFFF);
-	m_steerMotor->SetAllowableClosedLoopErr(1);
+	m_steerMotor->SetAllowableClosedLoopErr(.25);
 	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
 	m_steerMotor->Enable();
 }
@@ -61,8 +62,13 @@ SwerveModule::~SwerveModule() {
 }
 
 void SwerveModule::Set(float speed, float angle) {
-	SetOpenLoopSpeed(speed);
-	SetAngle(angle);
+	if(m_motionMagic){
+		SetAngle(angle, true);
+	}
+	else{
+		SetOpenLoopSpeed(speed);
+		SetAngle(angle);
+	}
 }
 
 
@@ -237,8 +243,13 @@ int SwerveModule::GetError() {
 }
 
 void SwerveModule::SetMotionMagic(double setpoint) {
+	m_motionMagic = true;
 	m_driveMotor->SetTalonControlMode(CANTalon::kMotionMagicMode);
 	m_driveMotor->Set(setpoint);
+}
+
+void SwerveModule::SetMagicBool(bool magic) {
+	m_motionMagic = magic;
 }
 
 CANTalon* SwerveModule::GetMotor(CANTalonType motor) {
@@ -248,4 +259,15 @@ CANTalon* SwerveModule::GetMotor(CANTalonType motor) {
 	else if(motor == SwerveModule::STEER_MOTOR){
 		return m_steerMotor;
 	}
+}
+
+void SwerveModule::SetSlaveMotor(int id) {
+	m_optimized = m_angleOptimized = false;
+	m_driveMotor->SetTalonControlMode(CANTalon::kFollowerMode);
+	m_driveMotor->Set(id);
+}
+
+void SwerveModule::ResetSlaveMotor() {
+	m_optimized = true;
+	m_driveMotor->SetControlMode(CANTalon::kPercentVbus);
 }

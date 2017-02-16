@@ -56,8 +56,10 @@ public:
 	}
 	void End(){
 		//Reset other modules and enc pos laters
-		m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetTalonControlMode(CANTalon::kSpeedMode);
+		m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetControlMode(CANTalon::kPercentVbus);
+		m_blWheel->SetMagicBool(false);
 		m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
+		//printf("drive set to percentVbus\n");
 	}
 	void Interrupted(){
 		End();

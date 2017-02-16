@@ -19,7 +19,7 @@ VisionProcessor::~VisionProcessor() {
 
 void VisionProcessor::OnStart() {
 	if(!Looper::m_started){
-		Looper::m_thread = std::thread(&VisionProcessor::LoopMe, this);
+		//Looper::m_thread = std::thread(&VisionProcessor::LoopMe, this);
 	}
 }
 

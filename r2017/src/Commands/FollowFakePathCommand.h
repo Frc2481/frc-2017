@@ -17,6 +17,7 @@ public:
 //		GeneratePath(path, 3);
 //		DriveTrainFollowPathCommand::Initialize();
 		double setpoint = SmartDashboard::GetNumber("Drive Velocity Setpoint TEST", 0.0);
+		//double convertDistance = CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(setpoint);
 		CommandBase::m_driveTrain->PerformMotionMagic(setpoint);
 	}
 	void Execute(){}

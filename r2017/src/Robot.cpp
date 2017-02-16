@@ -16,6 +16,12 @@
 #include "Commands/GeneratePathToTargetCommand.h"
 #include "Commands/FollowGearPathCommandGroup.h"
 #include "Commands/GenerateGearRotationPathCommand.h"
+#include "Commands/SetDriveTalonToSlaveCommand.h"
+#include "Commands/AutoDriveToGearCommandGroup.h"
+#include "Commands/TimeAccelAndDecelCommandGroup.h"
+#include "Commands/DriveTrainDisableGyroCorrectionCommand.h"
+#include "Commands/DriveTrainEnableGyroCorrectionCommand.h"
+#include "Commands/DriveToDistanceEncoderCommand.h"
 #include "Loops/VisionProcessor.h"
 #include "Vision/VisionServer.h"
 
@@ -70,6 +76,12 @@ private:
 		SmartDashboard::PutData(new SwerveModuleTestClosedLoopVelocityCommand());
 		SmartDashboard::PutData(new GenerateGearRotationPathCommand());
 		SmartDashboard::PutData(new FollowGearPathCommandGroup());
+		SmartDashboard::PutData(new SetDriveTalonToSlaveCommand(true));
+		SmartDashboard::PutData(new AutoDriveToGearCommandGroup());
+		SmartDashboard::PutData(new TimeAccelAndDecelCommandGroup());
+		SmartDashboard::PutData(new DriveTrainEnableGyroCorrectionCommand());
+		SmartDashboard::PutData(new DriveTrainDisableGyroCorrectionCommand());
+		SmartDashboard::PutData(new DriveToDistanceEncoderCommand());
 
 		SmartDashboard::PutNumber("EncoderConfig InitPos", 0);
 		SmartDashboard::PutNumber("EncoderConfig P", 0.0);
@@ -77,6 +89,11 @@ private:
 		SmartDashboard::PutNumber("EncoderConfig D", 0.0);
 		SmartDashboard::PutNumber("EncoderConfig V", 0.0);
 		SmartDashboard::PutNumber("EncoderConfig A", 0.0);
+
+		SmartDashboard::PutNumber("Auto Gear Drive Distance", 0.0);
+
+		SmartDashboard::PutNumber("Gyro Correction P", 0.0);
+		SmartDashboard::PutNumber("Gyro Correction I", 0.0);
 
 		SmartDashboard::PutNumber("Drive Velocity Setpoint TEST", 0.0);
 	}
@@ -134,6 +151,9 @@ private:
 		// this line or comment it out.
 		if (autonomousCommand != NULL)
 			autonomousCommand->Cancel();
+		CommandBase::m_driveTrain->SetGyroCorrection(false);
+		CommandBase::m_driveTrain->ResetSlaveTalons();
+		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->SetMagicBool(false);
 	}
 
 	void TeleopPeriodic()
@@ -142,8 +162,11 @@ private:
 //		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_shooter->GetShooterSetpoint());
 //		SmartDashboard::PutNumber("Feeder Speed", CommandBase::m_shooter->GetFeederSpeed());
 		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
+		SmartDashboard::PutNumber("DriveTrain Distance", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetDistance());
 		SmartDashboard::PutNumber("Drive Velocity", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetSpeed());
 		SmartDashboard::PutNumber("Current BL Error", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetError());
+		SmartDashboard::PutNumber("BL Encoder Value", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetAngle());
+		SmartDashboard::PutNumber("Gyro Angle", CommandBase::m_driveTrain->GetHeading());
 	}
 
 	void TestPeriodic()

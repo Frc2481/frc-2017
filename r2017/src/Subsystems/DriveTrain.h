@@ -35,7 +35,7 @@ private:
 	float m_roll;
 	float m_pitch;
 	double m_gyroAccumError = 0;
-	double m_gyroCorrectionOffset = 0;
+	double m_gyroCorrectionOffset = 180;
 	float m_originX;
 	float m_originY;
 	double m_motionSetpoint;
@@ -102,6 +102,11 @@ public:
 	double GetBRVelocityInchesPerSec();
 	double RPMToInchesPerSec(double rpm);
 	double RotationsToInches(double rotation);
+
+	double ComputeDriveDistanceInchestoEncoderRotations(double inches);
+
+	void SetSlaveTalons();
+	void ResetSlaveTalons();
 };
 
 #endif  // DriveTrain_H
