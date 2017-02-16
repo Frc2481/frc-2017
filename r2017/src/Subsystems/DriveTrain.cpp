@@ -177,8 +177,8 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 //		}
 //		else {
 			twist = twist * .05;   //limit twist speed while not in field centric
-			FWD = yPos;
-			STR = -xPos;
+			FWD = -yPos;
+			STR = xPos;
 			SmartDashboard::PutNumber("DriveTrain Twist", twist);
 //		}
 
