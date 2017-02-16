@@ -107,8 +107,8 @@ void DriveTrain::ResetGyro(){
 }
 
 float DriveTrain::GetHeading(){
-	//heading = imu->GetYaw();
-	return m_heading;
+	double heading = m_imu->GetYaw();
+	return heading;
 }
 
 void DriveTrain::SetFieldCentric(bool fieldCentric) {
@@ -130,7 +130,7 @@ void DriveTrain::ResetGyroAccumError()
 }
 
 void DriveTrain::ZeroYaw() {
-//	imu->ZeroYaw();
+	m_imu->ZeroYaw();
 }
 
 bool DriveTrain::IsGyroCorrection() const {
@@ -149,24 +149,27 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 	double FWD;
 	double STR;
 
-//	float gyroAngle = imu->GetYaw();
+	float gyroAngle = m_imu->GetYaw();
 
 	//stop Gryo from correcting while sitting still
-//	if (gyroCorrection) {
-//			gyroAngle -= gyroCorrectionOffset;
-//			gyroAngle = std::max(std::min(-gyroAngle, 30.0f), -30.0f);
-//			gyroAccumError += (gyroAngle * 2.0);
-//			gyroAccumError = std::max(std::min(gyroAccumError, 5.0), -5.0);
-//			float P = 0.008; // mPIDGyro->GetP();
-//			float I = 0; // mPIDGyro->GetI() * .1;
-//			twist = gyroAngle * P + gyroAccumError * I;
+	if (m_gyroCorrection) {
+//		if(m_XPos != 0 || m_YPos != 0) {
+//			gyroAngle -= m_gyroCorrectionOffset;
+//			gyroAngle = std::max(std::min(gyroAngle, 30.0f), -30.0f);
+//			m_gyroAccumError += (gyroAngle * 2.0);
+//			m_gyroAccumError = std::max(std::min(m_gyroAccumError, 5.0), -5.0);
+			float P = SmartDashboard::GetNumber("Gyro Correction P", 0.0);//0.008; // mPIDGyro->GetP();
+//			float I = SmartDashboard::GetNumber("Gyro Correction I", 0.0); // mPIDGyro->GetI() * .1;
+//			twist = gyroAngle * P + m_gyroAccumError * I;
+//			twist *= sqrt((m_XPos * m_XPos) + (m_YPos * m_YPos));
 //			twist *= 2;
-//			twist = std::max(std::min(twist, .3), -.3);
-//	}
+//			twist = std::max(std::min(twist, .5), -.5);
+		twist = gyroAngle * P;
+	}
 //
-//		SmartDashboard::PutBoolean("GYRO Correction", gyroCorrection);
+		SmartDashboard::PutBoolean("GYRO Correction", m_gyroCorrection);
 //
-//		twist = -twist;
+		twist = -twist;
 //		if (isFieldCentric) {
 //			heading = -gyroAngle;
 //			FWD = yPos * cos(heading * pi / 180) + xPos *sin(heading * pi / 180);
@@ -176,6 +179,7 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 			twist = twist * .05;   //limit twist speed while not in field centric
 			FWD = yPos;
 			STR = -xPos;
+			SmartDashboard::PutNumber("DriveTrain Twist", twist);
 //		}
 
 		if (m_isForward) {
@@ -328,12 +332,43 @@ double DriveTrain::RotationsToInches(double rotation) {
 
 void DriveTrain::PerformMotionMagic(double setpoint) {
 	m_motionSetpoint = setpoint;
-	m_frWheel->SetMotionMagic(m_motionSetpoint);
-	m_flWheel->SetMotionMagic(m_motionSetpoint);
-	m_brWheel->SetMotionMagic(m_motionSetpoint);
+	//m_frWheel->SetMotionMagic(m_motionSetpoint);
+	//m_flWheel->SetMotionMagic(m_motionSetpoint);
+	//m_brWheel->SetMotionMagic(m_motionSetpoint);
 	m_blWheel->SetMotionMagic(m_motionSetpoint);
+	m_brWheel->SetMagicBool(true);
+	m_flWheel->SetMagicBool(true);
+	m_frWheel->SetMagicBool(true);
 }
 
 double DriveTrain::GetMotionMagicSetpoint() {
 	return m_motionSetpoint;
+}
+
+void DriveTrain::SetSlaveTalons() {
+	//m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(false);
+	//m_brWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(false);
+	m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(false);
+	m_blWheel->SetOptimized(false);
+	m_flWheel->SetSlaveMotor(BACK_LEFT_DRIVE);
+	m_frWheel->SetSlaveMotor(BACK_LEFT_DRIVE);
+	m_brWheel->SetSlaveMotor(BACK_LEFT_DRIVE);
+}
+
+void DriveTrain::ResetSlaveTalons() {
+	//m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(true);
+	//m_brWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(true);
+	m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(true);
+	m_blWheel->SetOptimized(true);
+	m_flWheel->ResetSlaveMotor();
+	m_frWheel->ResetSlaveMotor();
+	m_brWheel->ResetSlaveMotor();
+}
+
+double DriveTrain::ComputeDriveDistanceInchestoEncoderRotations(double inches) {
+	double final;
+	final = inches - 23;
+	final /= INCHES_PER_REV;
+	final *= ENCODER_REV_PER_WHEEL_REV;
+	return final;
 }

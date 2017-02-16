@@ -25,6 +25,7 @@ private:
 	double m_driveDistanceOffset;
 	double m_velocity;
 	double m_accel;
+	bool m_motionMagic;
 
 public:
 	enum CANTalonType{
@@ -66,7 +67,11 @@ public:
 
 	void SetRampRates();
 
+	void SetSlaveMotor(int id);
+	void ResetSlaveMotor();
+
 	void SetMotionMagic(double setpoint);
+	void SetMagicBool(bool magic);
 
 	CANTalon* GetMotor(enum CANTalonType motor);
 };

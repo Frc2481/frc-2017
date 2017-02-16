@@ -21,11 +21,17 @@ public:
 	}
 	void Initialize(){
 		double timeStamp = frc::GetFPGATime();
+		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
 		//AimingParameters params = RobotChains::getInstance()->getGearAimingParameters(timeStamp).begin();
 
-		CommandBase::m_driveTrain->PerformMotionMagic(500/*paramsdistance*/);
+		double distance = SmartDashboard::GetNumber("Auto Gear Drive Distance", 0.0);
+		double convertDistance = CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(distance);
+		CommandBase::m_driveTrain->PerformMotionMagic(convertDistance/*paramsdistance*/);
 	}
-	void Execute(){}
+	void Execute(){
+		//if(CommandBase)
+		//CommandBase::m_driveTrain->Drive(.5,0,0);
+	}
 	bool IsFinished(){
 		bool blIsOnTarget = fabs(m_blWheel->GetDistance() - CommandBase::m_driveTrain->GetMotionMagicSetpoint()) <= 0.3;
 		bool brIsOnTarget = fabs(m_brWheel->GetDistance() - CommandBase::m_driveTrain->GetMotionMagicSetpoint()) <= 0.3;
@@ -40,8 +46,9 @@ public:
 	}
 	void End(){
 		//Reset the control modes and enc position of all modules later
-		m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetTalonControlMode(CANTalon::kSpeedMode);
+		m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetControlMode(CANTalon::kPercentVbus);
 		m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
+		//printf("Drive Set to percent vbus\n");
 	}
 	void Interrupted(){
 		End();
