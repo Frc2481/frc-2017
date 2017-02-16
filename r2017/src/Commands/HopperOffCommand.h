@@ -13,11 +13,11 @@
 class HopperOffCommand : public InstantCommand {
 public:
 	HopperOffCommand() : InstantCommand("Hopper Off Command"){
-		Requires(CommandBase::m_hopper.get());
+		Requires(CommandBase::m_superStructure.get());
 	}
 
 	void Initialize() {
-		CommandBase::m_hopper->StopFeeding();
+		CommandBase::m_superStructure->StopFeeding();
 	}
 };
 

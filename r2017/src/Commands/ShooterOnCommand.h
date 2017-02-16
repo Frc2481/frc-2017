@@ -13,11 +13,11 @@
 class ShooterOnCommand : public InstantCommand {
 public:
 	ShooterOnCommand() : InstantCommand("Shooter On Command") {
-		Requires(CommandBase::m_shooter.get());
+		Requires(CommandBase::m_superStructure.get());
 	}
 
 	void Initialize() {
-		CommandBase::m_shooter->TurnShooterOn();
+		CommandBase::m_superStructure->TurnShooterOn();
 	}
 };
 

@@ -6,6 +6,7 @@
  */
 
 #include "ContinuousEncoder.h"
+#include "WPILib.h"
 
 ContinuousEncoder::ContinuousEncoder(uint32_t encoderChannel)
 		:	mEncoder(new AnalogInput(encoderChannel)),

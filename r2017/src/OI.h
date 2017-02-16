@@ -12,14 +12,17 @@ private:
 	Joystick* m_driverStick;
 	Joystick* m_operatorStick;
 	Button* m_shifterButton;
-	Button* m_unloadGearButton;
+	Button* m_flickerGearButton;
 	Button* m_hopperButton;
-	Button* m_liftButton;
+	Button* m_loaderButton;
 	Button* m_shooterToggleButton;
 	Button* m_incShooterButton;
 	Button* m_decShooterButton;
 	Button* m_climberButton;
+	Button* m_gearLidButton;
+	Button* m_shooterHoodToggleButton;
 	AnalogJoystickButton* m_fireTrigger;
+	Button* m_shooterMaxSpeed;
 public:
 	OI();
 	Joystick* GetDriverStick();

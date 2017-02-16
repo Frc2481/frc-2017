@@ -1,3 +1,10 @@
+/*
+ * AnalogJoystickButton.h
+ *
+ *  Created on: Feb 3, 2017
+ *      Author: FIRSTMentor
+ */
+
 #ifndef _ANALOG_JOYSTICK_BUTTON_H__
 #define _ANALOG_JOYSTICK_BUTTON_H__
 

@@ -12,8 +12,9 @@
 
 class AutoOneGearCenterCommand : public CommandGroup {
 	AutoOneGearCenterCommand() : CommandGroup("AutoOneGearCenterCommand") {
-		AddSequential(new AutoDriveGearCenterCommand());
-		AddSequential(new GearUnloadCommand());
+		//AddSequential(new AutoDriveGearCenterCommand());
+		AddSequential(new GenerateGearRotationPathCommand());
+		AddSequential(new GearFlickCommand());
 		AddSequential(new AutoBackUpFromGearsCommand());
 	}
 };

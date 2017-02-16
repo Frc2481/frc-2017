@@ -1,3 +1,10 @@
+/*
+ * AnalogJoystickButton.cpp
+ *
+ *  Created on: Feb 3, 2017
+ *      Author: FIRSTMentor
+ */
+
 #include "AnalogJoystickButton.h"
 
 AnalogJoystickButton::AnalogJoystickButton(GenericHID *joystick, int axisNumber, float threshold ) {

@@ -1,0 +1,32 @@
+void pf_modify_swerve_rotate(Segment *original, int length, Segment *front_left, Segment *front_right,
+    Segment *back_left, Segment *back_right, double wheelbase_width, double wheelbase_depth, double rotateAmount) {
+    
+    int i;
+    double omegaOffset = 0;
+    for (i = 0; i < length; i++) {
+        Segment seg = original[i];
+        Segment fl = seg;
+        Segment fr = seg;
+        Segment bl = seg;
+        Segment br = seg;
+
+        omegaOffset += rotateAmount / length;
+	cs = cos(d2r(omegaOffset));
+	sn = sin(d2r(omegaOffset));
+
+        fl.x = seg.x + (-wheelbase_width/2)*cs - (wheelbase_depth/2)*sn;
+        fl.y = seg.y + (-wheelbase_width/2)*sn + (wheelbase_depth/2)*cs;
+        fr.x = seg.x + (wheelbase_width/2)*cs - (wheelbase_depth/2)*sn;
+        fr.y = seg.y + (wheelbase_width/2)*sn + (wheelbase_depth/2)*cs;
+        
+        bl.x = seg.x + (-wheelbase_width/2)*cs - (-wheelbase_depth/2)*sn;
+        bl.y = seg.y + (-wheelbase_width/2)*sn + (-wheelbase_depth/2)*cs;
+        br.x = seg.x + (wheelbase_width/2)*cs - (-wheelbase_depth/2)*sn;
+        br.y = seg.y + (wheelbase_width/2)*sn + (-wheelbase_depth/2)*cs;
+        
+        front_left[i] = fl;
+        front_right[i] = fr;
+        back_left[i] = bl;
+        back_right[i] = br;
+    }
+}

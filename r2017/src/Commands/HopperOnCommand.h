@@ -14,11 +14,11 @@
 class HopperOnCommand : public InstantCommand {
 public:
 	HopperOnCommand() : InstantCommand("Hopper On Command"){
-		Requires(CommandBase::m_hopper.get());
+		Requires(CommandBase::m_superStructure.get());
 	}
 
 	void Initialize(){
-		CommandBase::m_hopper->StartFeeding();
+		CommandBase::m_superStructure->StartFeeding();
 	}
 };
 

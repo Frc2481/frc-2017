@@ -16,18 +16,17 @@
 		#define BACK_RIGHT_DRIVE 5
 		#define BACK_RIGHT_STEER 6
 
-//GearLoader
+//GearFlicker
 		#define GEAR_FLICKER 1
-
-//Hopper
-		#define HOPPER_MOTOR 11
-		#define LIFT_MOTOR 12
+		#define GEAR_LID 2
 
 //Intake
 		#define INTAKE_MOTOR 13
 
-//Shooter
+//SuperStructure
+		#define HOPPER_MOTOR 11
 		#define SHOOTER_MOTOR 14
-		#define FEEDER_MOTOR 15
+		#define LOADER_MOTOR 15
+		#define HOOD_SOLENOID 16
 
 #endif

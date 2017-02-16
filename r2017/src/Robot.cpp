@@ -58,12 +58,15 @@ private:
 		SmartDashboard::PutNumber("Steer P", CommandBase::m_driveTrain->GetSteerP());
 		SmartDashboard::PutNumber("Steer I", CommandBase::m_driveTrain->GetSteerI());
 		SmartDashboard::PutNumber("Steer D", CommandBase::m_driveTrain->GetSteerD());
-		SmartDashboard::PutNumber("Shooter P", CommandBase::m_shooter->GetP());
-		SmartDashboard::PutNumber("Shooter I", CommandBase::m_shooter->GetI());
-		SmartDashboard::PutNumber("Shooter D", CommandBase::m_shooter->GetD());
-		SmartDashboard::PutNumber("Hopper Speed", CommandBase::m_hopper->GetSpeed());
+
 		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
+
+		SmartDashboard::PutNumber("Shooter P", CommandBase::m_superStructure->GetP());
+		SmartDashboard::PutNumber("Shooter I", CommandBase::m_superStructure->GetI());
+		SmartDashboard::PutNumber("Shooter D", CommandBase::m_superStructure->GetD());
+		SmartDashboard::PutNumber("Hopper Speed", CommandBase::m_superStructure->GetSpeed());
 		SmartDashboard::PutData(new ToggleOptimizedCommand());
+
 		SmartDashboard::PutData(new DriveTrainSetPIDCommand());
 		SmartDashboard::PutData(new ShooterIncreaseSpeedCommand());
 		SmartDashboard::PutData(new ShooterDecreaseSpeedCommand());
@@ -139,8 +142,8 @@ private:
 	void AutonomousPeriodic()
 	{
 		Scheduler::GetInstance()->Run();
-		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_shooter->GetShooterSetpoint());
-		SmartDashboard::PutNumber("Feeder Speed", CommandBase::m_shooter->GetFeederSpeed());
+		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_superStructure->GetShooterSetpoint());
+		SmartDashboard::PutNumber("Loader Speed", CommandBase::m_superStructure->GetLoaderSpeed());
 	}
 
 	void TeleopInit()
@@ -149,6 +152,7 @@ private:
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
+
 		if (autonomousCommand != NULL)
 			autonomousCommand->Cancel();
 		CommandBase::m_driveTrain->SetGyroCorrection(false);
@@ -167,6 +171,7 @@ private:
 		SmartDashboard::PutNumber("Current BL Error", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetError());
 		SmartDashboard::PutNumber("BL Encoder Value", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetAngle());
 		SmartDashboard::PutNumber("Gyro Angle", CommandBase::m_driveTrain->GetHeading());
+		SmartDashboard::PutNumber("Shooter Speed", CommandBase::m_superStructure->GetSpeed());
 	}
 
 	void TestPeriodic()
