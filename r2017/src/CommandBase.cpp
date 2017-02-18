@@ -8,6 +8,7 @@ std::unique_ptr<GearFlicker> CommandBase::m_gearFlicker;
 std::unique_ptr<Intake> CommandBase::m_intake;
 std::unique_ptr<SuperStructure> CommandBase::m_superStructure;
 std::unique_ptr<OI> CommandBase::oi;
+bool CommandBase::m_pause;
 
 CommandBase::CommandBase(const std::string &name) :
 		Command(name)
@@ -30,6 +31,7 @@ void CommandBase::init()
 	m_intake.reset(new Intake());
 	m_superStructure.reset(new SuperStructure());
 
+	m_pause = false;
 
 	//oi goes last!!!
 	oi.reset(new OI());
