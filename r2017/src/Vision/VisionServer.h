@@ -9,11 +9,11 @@ class VisionMessage;
 
 class VisionServer {
 protected	:
-	bool mIsConnect = false;
-	bool mWantsAppRestart = false;
-	bool mRunning = true;
-	int mPort;
-	char* mPortStr;
+	bool m_isConnect = false;
+	bool m_wantsAppRestart = false;
+	bool m_running = true;
+	int m_port;
+	char* m_portStr;
 	AdbBridge* m_adb;
 	std::vector<VisionUpdateReceiver*> m_receivers;
 
@@ -23,9 +23,8 @@ public:
 	class ServerThread
 	{
 	private:
-		int commfd;
-		std::vector<char>* recvBuf;
-		std::vector<std::string> split(std::string &text, char sep);
+		int m_commfd;
+		std::vector<char> m_recvBuf;
 		VisionServer* m_visionServer;
 	public:
 		ServerThread(int fd, VisionServer* outer);

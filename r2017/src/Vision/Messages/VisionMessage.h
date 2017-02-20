@@ -8,13 +8,15 @@
 #ifndef SRC_VISION_MESSAGES_VISIONMESSAGE_H_
 #define SRC_VISION_MESSAGES_VISIONMESSAGE_H_
 
+#include <string>
+
 class VisionMessage {
 public:
 	VisionMessage();
 	virtual ~VisionMessage();
-	virtual const char* getType() = 0;
-	virtual const char* getMessage() = 0;
-	const char* toJson();
+	virtual const std::string getType() = 0;
+	virtual const std::string getMessage() = 0;
+	const std::string toJson();
 };
 
 #endif /* SRC_VISION_MESSAGES_VISIONMESSAGE_H_ */

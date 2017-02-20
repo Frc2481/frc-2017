@@ -11,22 +11,27 @@ using namespace nlohmann;
 
 OffWireMessage::OffWireMessage(std::string message) {
 	json obj;
-	obj = json::parse(message);
+	try {
+		obj = json::parse(message);
 
-	if(obj.find("type") == obj.end()){
-		m_valid = false;
-		return;
+		if(obj.find("type") == obj.end()){
+			m_valid = false;
+			return;
+		}
+
+		m_type = obj["type"];
+
+		if(obj.find("message") == obj.end()){
+			m_valid = false;
+			return;
+		}
+
+		m_message = obj["message"];
+		m_valid = true;
 	}
-
-	m_type = obj["type"];
-
-	if(obj.find("message") == obj.end()){
+	catch (...) {
 		m_valid = false;
-		return;
 	}
-
-	m_message = obj["message"];
-	m_valid = true;
 }
 
 OffWireMessage::~OffWireMessage() {
@@ -37,10 +42,10 @@ bool OffWireMessage::isValid() const {
 	return m_valid;
 }
 
-const char* OffWireMessage::getType() {
-	return m_type.c_str();
+const std::string OffWireMessage::getType() {
+	return m_type;
 }
 
-const char* OffWireMessage::getMessage() {
-	return m_message.c_str();
+const std::string OffWireMessage::getMessage() {
+	return m_message;
 }
