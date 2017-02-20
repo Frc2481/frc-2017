@@ -16,9 +16,11 @@ private:
 	SwerveModule* m_brWheel;
 	SwerveModule* m_flWheel;
 	SwerveModule* m_frWheel;
+	double m_distance;
 public:
-	GenerateGearRotationPathCommand(): DriveTrainFollowPathCommand("GenerateGearRotationPathCommand"){
+	GenerateGearRotationPathCommand(double distance): DriveTrainFollowPathCommand("GenerateGearRotationPathCommand"){
 		Requires(CommandBase::m_driveTrain.get());
+		m_distance = distance;
 		m_blWheel = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE);
 		m_brWheel = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE);
 		m_flWheel = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE);
@@ -38,8 +40,9 @@ public:
 //		GeneratePath(path, 3);
 		//CommandBase::m_driveTrain->PerformMotionMagic(1000/*params.getDistance()*/);
 		//CommandBase::m_driveTrain->Drive(0.0,0.0,0.1);
-		double arcLength = (90.0/*params.getTargetAngle().getDegrees()*/ / 360.0) * (CIRCUMFERENCE_OF_ROTATION);
-		CommandBase::m_driveTrain->PerformMotionMagic(arcLength);
+		double arcLength = (60.0/*params.getTargetAngle().getDegrees()*/ / 360.0) * (CIRCUMFERENCE_OF_ROTATION);
+		double convertedLength = CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(arcLength);
+		CommandBase::m_driveTrain->PerformMotionMagic(m_distance);//convertedLength);
 	}
 	void Execute(){}
 	bool IsFinished(){
@@ -47,7 +50,7 @@ public:
 		bool brIsOnTarget = fabs(m_brWheel->GetDistance() - CommandBase::m_driveTrain->GetMotionMagicSetpoint()) <= 0.3;
 		bool flIsOnTarget = fabs(m_flWheel->GetDistance() - CommandBase::m_driveTrain->GetMotionMagicSetpoint()) <= 0.3;
 		bool frIsOnTarget = fabs(m_frWheel->GetDistance() - CommandBase::m_driveTrain->GetMotionMagicSetpoint()) <= 0.3;
-		if(blIsOnTarget){ //Add the other ontargets later
+		if(flIsOnTarget){ //Add the other ontargets later
 			return true;
 		}
 		else{
@@ -56,9 +59,12 @@ public:
 	}
 	void End(){
 		//Reset other modules and enc pos laters
-		m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetControlMode(CANTalon::kPercentVbus);
+		m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetControlMode(CANTalon::kPercentVbus);
+		m_frWheel->SetMagicBool(false);
+		m_flWheel->SetMagicBool(false);
 		m_blWheel->SetMagicBool(false);
-		m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
+		m_brWheel->SetMagicBool(false);
+		m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
 		//printf("drive set to percentVbus\n");
 	}
 	void Interrupted(){

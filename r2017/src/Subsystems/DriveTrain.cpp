@@ -6,13 +6,14 @@
 #include <algorithm>
 #include "RobotParameters.h"
 #include "Components/PersistedSettings.h"
+#include "RoboUtils.h"
 
 DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_flWheel(new SwerveModule(FRONT_LEFT_DRIVE, FRONT_LEFT_STEER)),
 	m_frWheel(new SwerveModule(FRONT_RIGHT_DRIVE, FRONT_RIGHT_STEER)),
 	m_brWheel(new SwerveModule(BACK_RIGHT_DRIVE, BACK_RIGHT_STEER)),
 	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER)),
-	m_shifter(new Solenoid(0)),
+	m_shifter(new Solenoid(SHIFTER)),
 	m_serialPort(new SerialPort(57600,SerialPort::kMXP)),
 	m_imu(new AHRS(SerialPort::kMXP)),
 //		imu(new IMU(serialPort,update_rate_hz)),
@@ -149,16 +150,16 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 	double FWD;
 	double STR;
 
-	float gyroAngle = m_imu->GetYaw();
+	float gyroAngle = m_imu->GetYaw();//RoboUtils::constrainDeg180From(m_imu->GetYaw(), m_gyroCorrectionOffset);
 
 	//stop Gryo from correcting while sitting still
 	if (m_gyroCorrection) {
 //		if(m_XPos != 0 || m_YPos != 0) {
-//			gyroAngle -= m_gyroCorrectionOffset;
+			gyroAngle -= m_gyroCorrectionOffset;
 //			gyroAngle = std::max(std::min(gyroAngle, 30.0f), -30.0f);
 //			m_gyroAccumError += (gyroAngle * 2.0);
 //			m_gyroAccumError = std::max(std::min(m_gyroAccumError, 5.0), -5.0);
-			float P = SmartDashboard::GetNumber("Gyro Correction P", 0.0);//0.008; // mPIDGyro->GetP();
+			float P = .04;//SmartDashboard::GetNumber("Gyro Correction P", 0.0);//0.008; // mPIDGyro->GetP();
 //			float I = SmartDashboard::GetNumber("Gyro Correction I", 0.0); // mPIDGyro->GetI() * .1;
 //			twist = gyroAngle * P + m_gyroAccumError * I;
 //			twist *= sqrt((m_XPos * m_XPos) + (m_YPos * m_YPos));
@@ -177,8 +178,8 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 //		}
 //		else {
 			twist = twist * .05;   //limit twist speed while not in field centric
-			FWD = -yPos;
-			STR = xPos;
+			FWD = yPos;
+			STR = -xPos;
 			SmartDashboard::PutNumber("DriveTrain Twist", twist);
 //		}
 
@@ -335,9 +336,9 @@ void DriveTrain::PerformMotionMagic(double setpoint) {
 	//m_frWheel->SetMotionMagic(m_motionSetpoint);
 	//m_flWheel->SetMotionMagic(m_motionSetpoint);
 	//m_brWheel->SetMotionMagic(m_motionSetpoint);
-	m_blWheel->SetMotionMagic(m_motionSetpoint);
+	m_flWheel->SetMotionMagic(m_motionSetpoint);
 	m_brWheel->SetMagicBool(true);
-	m_flWheel->SetMagicBool(true);
+	m_blWheel->SetMagicBool(true);
 	m_frWheel->SetMagicBool(true);
 }
 
@@ -346,28 +347,30 @@ double DriveTrain::GetMotionMagicSetpoint() {
 }
 
 void DriveTrain::SetSlaveTalons() {
-	//m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(false);
+	//m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(false);
 	//m_brWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(false);
-	m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(false);
-	m_blWheel->SetOptimized(false);
-	m_flWheel->SetSlaveMotor(BACK_LEFT_DRIVE);
-	m_frWheel->SetSlaveMotor(BACK_LEFT_DRIVE);
-	m_brWheel->SetSlaveMotor(BACK_LEFT_DRIVE);
+	//m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(false);
+	m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(false);
+	m_flWheel->SetOptimized(false);
+	m_blWheel->SetSlaveMotor(FRONT_LEFT_DRIVE);
+	m_frWheel->SetSlaveMotor(FRONT_LEFT_DRIVE);
+	m_brWheel->SetSlaveMotor(FRONT_LEFT_DRIVE);
 }
 
 void DriveTrain::ResetSlaveTalons() {
-	//m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(true);
+	//m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(true);
 	//m_brWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(true);
-	m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(true);
-	m_blWheel->SetOptimized(true);
-	m_flWheel->ResetSlaveMotor();
+	//m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(true);
+	m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetClosedLoopOutputDirection(true);
+	m_flWheel->SetOptimized(true);
+	m_blWheel->ResetSlaveMotor();
 	m_frWheel->ResetSlaveMotor();
 	m_brWheel->ResetSlaveMotor();
 }
 
 double DriveTrain::ComputeDriveDistanceInchestoEncoderRotations(double inches) {
 	double final;
-	final = inches - 23;
+	final = inches;
 	final /= INCHES_PER_REV;
 	final *= ENCODER_REV_PER_WHEEL_REV;
 	return final;

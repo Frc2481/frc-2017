@@ -9,7 +9,9 @@
 
 GearFlicker::GearFlicker() : Subsystem("GearFlicker") {
 	m_flickerSolenoid = new Solenoid(GEAR_FLICKER);
+	m_flickerSolenoid2 = new Solenoid(GEAR_FLICKER_2);
 	m_gearLidSolenoid = new Solenoid(GEAR_LID);
+	m_gearLidSolenoid2 = new Solenoid(GEAR_LID_2);
 }
 
 GearFlicker::~GearFlicker() {
@@ -18,11 +20,13 @@ GearFlicker::~GearFlicker() {
 }
 
 void GearFlicker::FlickGear(){
-	m_flickerSolenoid->Set(true);
+	m_flickerSolenoid->Set(false);
+	m_flickerSolenoid2->Set(true);
 }
 
 void GearFlicker::ResetGear(){
-	m_flickerSolenoid->Set(false);
+	m_flickerSolenoid->Set(true);
+	m_flickerSolenoid2->Set(false);
 }
 
 bool GearFlicker::IsUnloaded(){
@@ -30,11 +34,13 @@ bool GearFlicker::IsUnloaded(){
 }
 
 void GearFlicker::OpenLid() {
-	m_gearLidSolenoid->Set(true);
+	m_gearLidSolenoid->Set(false);
+	m_gearLidSolenoid2->Set(true);
 }
 
 void GearFlicker::CloseLid() {
-	m_gearLidSolenoid->Set(false);
+	m_gearLidSolenoid->Set(true);
+	m_gearLidSolenoid2->Set(false);
 }
 
 bool GearFlicker::IsOpen() {

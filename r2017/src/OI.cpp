@@ -59,8 +59,8 @@ OI::OI() {
 	m_shooterHoodToggleButton = SHOOTER_HOOD_TOOGLE_BUTTON;
 	m_shooterHoodToggleButton->WhenPressed(new ShooterHoodToggleCommand());
 
-	//m_fireTrigger = FIRE_TRIGGER;
-	//m_fireTrigger->WhileHeld(new ShooterFireCommand());
+	m_fireTrigger = FIRE_TRIGGER;
+	m_fireTrigger->WhileHeld(new ShooterFireCommand());
 
 
 }

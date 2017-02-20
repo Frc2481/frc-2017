@@ -18,6 +18,7 @@ private:
 	CANTalon *m_loaderMotor;
 	CANTalon *m_hopperMotor;
 	Solenoid *m_hoodSolenoid;
+	Solenoid *m_hoodSolenoid2;
 	double m_p;
 	double m_i;
 	double m_d;
@@ -50,6 +51,9 @@ public:
 	void LowerHood();
 	bool IsRaised();
 	void SetShooterSpeed(double speed);
+	void SetShooterSpeedOpenLoop(double speed);
+	void SetShooterControlMode(CANTalon::ControlMode mode);
+	double GetHopperCurrent();
 };
 
 #endif /* SRC_SUBSYSTEMS_SUPERSTRUCTURE_H_ */
