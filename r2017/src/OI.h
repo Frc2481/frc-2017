@@ -14,7 +14,7 @@ private:
 
 	Button* m_shifterButton;
 	Button* m_flickerGearButton;
-	Button* m_climberButton;
+	AnalogJoystickButton* m_climberButton;
 	Button* m_gearLidButton;
 	Button* m_shooterMaxSpeed;
 
@@ -24,7 +24,7 @@ private:
 	Button* m_incShooterButton;
 	Button* m_decShooterButton;
 	Button* m_shooterHoodToggleButton;
-	//AnalogJoystickButton* m_fireTrigger;
+	AnalogJoystickButton* m_fireTrigger;
 
 public:
 	OI();

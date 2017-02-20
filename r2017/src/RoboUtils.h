@@ -15,6 +15,7 @@ public:
 	virtual ~RoboUtils();
 	static double constrainDeg0To360(double deg);
 	static double constrainDegNeg180To180(double deg);
+	static double constrainDeg180From(double deg, double center);
 	template < typename T >
 	static T constrain(T val, T minVal, T maxVal) {
 		return std::min(std::max(val, minVal),maxVal);

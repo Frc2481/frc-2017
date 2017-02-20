@@ -6,10 +6,15 @@
 
 class DriveTrainEnableGyroCorrectionCommand: public CommandBase
 {
+private:
+	double m_angle;
 public:
-	DriveTrainEnableGyroCorrectionCommand() : CommandBase("DriveTrainEnableGyroCorrectionCommand") {}
+	DriveTrainEnableGyroCorrectionCommand(double angle) : CommandBase("DriveTrainEnableGyroCorrectionCommand") {
+		m_angle = angle;
+	}
 	void Initialize() {
-		CommandBase::m_driveTrain->ZeroYaw();
+		//CommandBase::m_driveTrain->ZeroYaw();
+		CommandBase::m_driveTrain->SetGyroCorrectionOffset(m_angle);
 		CommandBase::m_driveTrain->SetGyroCorrection(true);
 	}
 	void Execute() {}

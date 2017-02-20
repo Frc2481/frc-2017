@@ -13,7 +13,7 @@
 class LoaderOnCommand : public InstantCommand {
 public:
 	LoaderOnCommand() : InstantCommand("Loader On Command") {
-		Requires(CommandBase::m_superStructure.get());
+		//Requires(CommandBase::m_superStructure.get());
 	}
 	void Initialize() {
 		CommandBase::m_superStructure->TurnLoaderOn();

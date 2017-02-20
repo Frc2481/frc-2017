@@ -13,17 +13,19 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_loaderMotor = new CANTalon(LOADER_MOTOR);
 	m_hopperMotor = new CANTalon(HOPPER_MOTOR);
 	m_hoodSolenoid = new Solenoid(HOOD_SOLENOID);
+	m_hoodSolenoid2 = new Solenoid(HOOD_SOLENOID_2);
 	m_shooterMotor->SetClosedLoopOutputDirection(true);
 	m_shooterMotor->SelectProfileSlot(0);
 	m_shooterMotor->SetControlMode(CANTalon::kSpeed);
 //	m_shooterMotor->SetPID(0, 0, 0, 0);
 	m_shooterMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
 	m_shooterMotor->SetSensorDirection(true);
+	m_shooterMotor->ConfigPeakOutputVoltage(12,-12);
 //	m_shooterMotor->SetInverted(true);
-	m_loaderSpeed = 0.5;
+	m_loaderSpeed = 1;
 	m_loaderMotor->SetInverted(true);
 	m_onTargetCounter = 0;
-	m_speed = 0.2;
+	m_speed = 1;
 }
 
 SuperStructure::~SuperStructure(){
@@ -123,10 +125,12 @@ double SuperStructure::GetSpeed(){
 
 void SuperStructure::RaiseHood() {
 	m_hoodSolenoid->Set(true);
+	m_hoodSolenoid2->Set(false);
 }
 
 void SuperStructure::LowerHood() {
 	m_hoodSolenoid->Set(false);
+	m_hoodSolenoid2->Set(true);
 }
 
 bool SuperStructure::IsRaised() {
@@ -134,7 +138,22 @@ bool SuperStructure::IsRaised() {
 }
 
 void SuperStructure::SetShooterSpeed(double speed) {
-	m_shooterMotor->Set(speed);
 	m_shooterMotor->Enable();
-	printf("PID enabled\n");
+	m_shooterMotor->SetControlMode(CANTalon::kSpeed);
+	m_shooterMotor->Set(speed);
+//	m_shooterMotor->Enable();
+//	printf("PID enabled\n");
+}
+
+void SuperStructure::SetShooterSpeedOpenLoop(double speed) {
+	m_shooterMotor->SetControlMode(CANTalon::kPercentVbus);
+	m_shooterMotor->Set(speed);
+}
+
+void SuperStructure::SetShooterControlMode(CANTalon::ControlMode mode) {
+	m_shooterMotor->SetControlMode(mode);
+}
+
+double SuperStructure::GetHopperCurrent() {
+	return m_hopperMotor->GetOutputCurrent();
 }

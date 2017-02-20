@@ -30,3 +30,14 @@ double RoboUtils::constrainDegNeg180To180(double deg) {
 	return constrainDeg0To360(deg + 180) - 180;
 }
 
+double RoboUtils::constrainDeg180From(double deg, double center) {
+	//while(center - deg > 180){
+	while(deg < center - 180){
+		deg += 360;
+	}
+	//while(center - deg < 180){
+	while(deg > center + 180){
+		deg -= 360;
+	}
+	return deg;
+}

@@ -23,7 +23,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerD = 40;
 	m_isSpeedPIDEnabled = false;
 	m_driveDistanceOffset = 0.0;
-	m_velocity = RPM * ENCODER_REV_PER_WHEEL_REV;
+	m_velocity = (RPM * ENCODER_REV_PER_WHEEL_REV) * .9;
 	m_accel = m_velocity / 1.233;
 	m_motionMagic = false;
 
@@ -50,7 +50,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerMotor->SetSensorDirection(true);
 	m_steerMotor->SetClosedLoopOutputDirection(false);
 	m_steerMotor->SetPulseWidthPosition(m_steerMotor->GetPulseWidthPosition() & 0xFFF);
-	m_steerMotor->SetAllowableClosedLoopErr(.25);
+	m_steerMotor->SetAllowableClosedLoopErr(.5);
 	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
 	m_steerMotor->Enable();
 }

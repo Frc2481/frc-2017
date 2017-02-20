@@ -20,7 +20,7 @@ public:
 	AutoDriveToGearCommandGroup() : CommandGroup("AutoDriveToGearCommandGroup"){
 		AddSequential(new ToggleCoastToBrakeCommand(false));
 		AddSequential(new DriveTrainZeroYawCommand());
-		AddSequential(new DriveTrainEnableGyroCorrectionCommand());
+		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new SetAngleOptimizedCommand(false));
 //		AddSequential(new DriveTrainSetGyroOffsetCommand(30));
 //		AddSequential(new DriveTrainWaitForHeadingCommand(30));
@@ -30,7 +30,7 @@ public:
 		//AddSequential(new GeneratePathToTargetCommand());
 		AddSequential(new DriveToDistanceEncoderCommand());
 		AddSequential(new GearFlickCommandGroup());
-		AddSequential(new AutoDriveCommand(-0.5,0,0,.5));
+		AddSequential(new AutoDriveCommand(0,0.5,0,.5));
 		AddSequential(new ToggleCoastToBrakeCommand(true));
 		AddSequential(new DriveTrainDisableGyroCorrectionCommand());
 		AddSequential(new SetAngleOptimizedCommand(true));

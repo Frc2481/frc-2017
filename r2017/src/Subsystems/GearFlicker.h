@@ -15,7 +15,9 @@
 class GearFlicker : public Subsystem {
 private:
 	Solenoid *m_flickerSolenoid;
+	Solenoid *m_flickerSolenoid2;
 	Solenoid *m_gearLidSolenoid;
+	Solenoid *m_gearLidSolenoid2;
 
 public:
 GearFlicker();
