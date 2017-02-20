@@ -29,6 +29,8 @@ public:
 	static std::unique_ptr<Intake> m_intake;
 	static std::unique_ptr<SuperStructure> m_superStructure;
 	static std::unique_ptr<OI> oi;
+
+	static bool m_pause;
 };
 
 #endif
