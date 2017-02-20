@@ -12,10 +12,10 @@ HeartbeatMessage::HeartbeatMessage() {}
 
 HeartbeatMessage::~HeartbeatMessage() {}
 
-const char* HeartbeatMessage::getType(){
-	return std::string("heartbeat").c_str();
+const std::string HeartbeatMessage::getType(){
+	return std::string("heartbeat");
 }
 
-const char* HeartbeatMessage::getMessage(){
-	return std::string("{}").c_str();
+const std::string HeartbeatMessage::getMessage(){
+	return std::string("{}");
 }

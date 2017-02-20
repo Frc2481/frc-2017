@@ -16,8 +16,8 @@ public:
 	OffWireMessage(std::string message);
 	virtual ~OffWireMessage();
 	bool isValid() const;
-	const char* getType();
-	const char* getMessage();
+	const std::string getType();
+	const std::string getMessage();
 
 private:
 	bool m_valid;

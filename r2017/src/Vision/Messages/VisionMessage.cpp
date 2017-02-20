@@ -13,9 +13,9 @@ VisionMessage::VisionMessage() {}
 
 VisionMessage::~VisionMessage() {}
 
-const char* VisionMessage::toJson(){
+const std::string VisionMessage::toJson(){
 	json obj;
 	obj["type"] = getType();
 	obj["message"] = getMessage();
-	return obj.dump().c_str();
+	return std::string(obj.dump()).append("\n");
 }
