@@ -13,14 +13,14 @@
 
 class SendSerialCharCommand : public InstantCommand {
 private:
-	char command;
+	char m_command;
 public:
 	SendSerialCharCommand(char c) : InstantCommand("SendSerialCharCommand"){
-		command = c;
+		m_command = c;
 
 	}
 	void Initalize(){
-		SerialRemote::GetInstance()->SendSerialChar(command);
+		SerialRemote::GetInstance()->SendSerialChar(m_command);
 	}
 };
 

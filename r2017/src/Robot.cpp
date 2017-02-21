@@ -45,7 +45,7 @@ private:
 
 	void RobotInit()
 	{
-		birdEyeSetupCommand = new BirdEyeDelayedSetupCommandGroup();
+		birdEyeSetupCommand.reset(new BirdEyeDelayedSetupCommandGroup());
 		birdEyeSetupCommand->Start();
 		//m_visionServer = new VisionServer("8254");
 		SmartDashboard::PutData("Scheduler", m_scheduler->GetInstance());
