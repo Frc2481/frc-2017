@@ -15,7 +15,7 @@
 #include "Commands/GearCloseLidCommand.h"
 #include "Commands/ShooterHoodToggleCommand.h"
 #include "Commands/SetShooterMaxSpeedCommand.h"
-
+#include "Commands/SendSerialCharCommand.h"
 
 OI::OI() {
 	m_driverStick = new Joystick(DRIVE_STICK_PORT);
@@ -37,6 +37,22 @@ OI::OI() {
 
 	m_shooterMaxSpeed = SHOOTER_MAX_SPEED;
 	m_shooterMaxSpeed->WhenPressed(new SetShooterMaxSpeedCommand());
+
+	m_frontCameraButton = FRONT_CAMERA_BUTTON;
+	m_frontCameraButton->WhenPressed(new SendSerialCharCommand('u'));
+
+	m_leftCameraButton = LEFT_CAMERA_BUTTON;
+	m_leftCameraButton->WhenPressed(new SendSerialCharCommand('l'));
+
+	m_rightCameraButton = RIGHT_CAMERA_BUTTON;
+	m_rightCameraButton->WhenPressed(new SendSerialCharCommand('r'));
+
+	m_backCameraButton = BACK_CAMERA_BUTTON;
+	m_backCameraButton->WhenPressed(new SendSerialCharCommand('d'));
+
+	m_cameraMenuButton = CAMERA_MENU_BUTTON;
+	m_cameraMenuButton->WhenPressed(new SendSerialCharCommand('m'));
+
 
 
 	m_hopperButton = HOPPER_BUTTON;

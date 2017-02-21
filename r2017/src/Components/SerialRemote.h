@@ -8,12 +8,6 @@
 #ifndef SRC_COMPONENTS_SERIALREMOTE_H_
 #define SRC_COMPONENTS_SERIALREMOTE_H_
 #include "WPILIb.h"
-#include "IIOProvider.h"
-#include <stdint.h>
-#include "AHRSProtocol.h"
-#include "IMUProtocol.h"
-#include "IIOCompleteNotification.h"
-#include "IBoardCapabilities.h"
 
 class SerialRemote {
 private:
