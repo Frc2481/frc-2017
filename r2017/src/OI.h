@@ -17,6 +17,11 @@ private:
 	AnalogJoystickButton* m_climberButton;
 	Button* m_gearLidButton;
 	Button* m_shooterMaxSpeed;
+	Button* m_frontCameraButton;
+	Button* m_backCameraButton;
+	Button* m_leftCameraButton;
+	Button* m_rightCameraButton;
+	Button* m_cameraMenuButton;
 
 	Button* m_hopperButton;
 	Button* m_loaderButton;

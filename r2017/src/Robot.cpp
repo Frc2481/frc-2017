@@ -29,11 +29,13 @@
 #include "Commands/TurnShooterOnCommand.h"
 #include "Loops/VisionProcessor.h"
 #include "Vision/VisionServer.h"
+#include "Commands/BirdEyeDelayedSetupCommandGroup.h"
 
 class Robot: public IterativeRobot
 {
 private:
 	std::unique_ptr<Command> autonomousCommand;
+	std::unique_ptr<Command> birdEyeSetupCommand;
 	frc::SendableChooser<Command*> *chooser;
 	std::unique_ptr<Compressor> pcm;
 	std::unique_ptr<PowerDistributionPanel> pdp;
@@ -43,6 +45,8 @@ private:
 
 	void RobotInit()
 	{
+		birdEyeSetupCommand.reset(new BirdEyeDelayedSetupCommandGroup());
+		birdEyeSetupCommand->Start();
 		//m_visionServer = new VisionServer("8254");
 		SmartDashboard::PutData("Scheduler", m_scheduler->GetInstance());
 		CommandBase::init();

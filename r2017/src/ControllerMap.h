@@ -10,11 +10,17 @@
 
 #include "XboxController.h"
 #include "Components/AnalogJoystickButton.h"
+#include "Components/POVJoystickButton.h"
 
 #define SHIFTER_BUTTON    				new JoystickButton(m_driverStick, XB_RIGHT_BUMPER)
 #define FLICKER_GEAR_BUTTON				new JoystickButton(m_driverStick, XB_B_BUTTON)
 #define CLIMBER_BUTTON					new AnalogJoystickButton(m_driverStick, XB_RIGHT_TRIGGER, 0.5)
 #define GEAR_LID_BUTTON					new JoystickButton(m_driverStick, XB_X_BUTTON)
+#define FRONT_CAMERA_BUTTON				new POVJoystickButton(m_driverStick, 0, XB_DPAD_TOP)
+#define RIGHT_CAMERA_BUTTON				new POVJoystickButton(m_driverStick, 0, XB_DPAD_RIGHT)
+#define LEFT_CAMERA_BUTTON				new POVJoystickButton(m_driverStick, 0, XB_DPAD_LEFT)
+#define BACK_CAMERA_BUTTON				new POVJoystickButton(m_driverStick, 0, XB_DPAD_BOTTOM)
+#define CAMERA_MENU_BUTTON				new JoystickButton(m_driverStick, XB_BACK_BUTTON)
 
 #define SHOOTER_MAX_SPEED				new JoystickButton(m_driverStick, XB_Y_BUTTON)
 
