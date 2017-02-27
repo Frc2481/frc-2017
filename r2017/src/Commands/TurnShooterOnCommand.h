@@ -7,16 +7,23 @@ class TurnShooterOnCommand : public CommandBase {
 private:
 	double m_setpoint;
 public:
-	TurnShooterOnCommand() : CommandBase("TurnShooterOnCommand"){}
+	TurnShooterOnCommand(double setpoint = 0) : CommandBase("TurnShooterOnCommand"){
+		m_setpoint = setpoint;
+	}
 	void Initialize(){
-		m_setpoint = SmartDashboard::GetNumber("Shooter Setpoint", 0.0);
+		if(m_superStructure->IsRaised()){
+			m_setpoint = 4275;
+		}
+		else{
+			m_setpoint = 4600;
+		}
 		m_superStructure->SetShooterSpeed(m_setpoint);
 	}
 	void Execute(){}
-	bool IsFinished(){}
-	void End(){
-		m_superStructure->TurnShooterOff();
+	bool IsFinished(){
+		return true;
 	}
+	void End(){}
 	void Interrupted(){
 		End();
 	}

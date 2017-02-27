@@ -8,7 +8,7 @@
 #include <Loops/RobotChainLooper.h>
 #include <utils/RobotChains.h>
 
-RobotChainLooper::RobotChainLooper(int interval) : Looper(interval) {
+RobotChainLooper::RobotChainLooper() : Looper(10000) {
 }
 
 RobotChainLooper::~RobotChainLooper() {
@@ -17,6 +17,8 @@ RobotChainLooper::~RobotChainLooper() {
 
 void RobotChainLooper::OnLoop() {
 	double start;
+	m_onLoopCounter++;
+	SmartDashboard::PutNumber("RobotChains OnLoop Counter", m_onLoopCounter);
 	while (true){
 		start = frc::GetFPGATime();
 
@@ -28,10 +30,10 @@ void RobotChainLooper::OnLoop() {
 		double flRotation = flModule->GetAngle();
 		double brRotation = brModule->GetAngle();
 		double blRotation = blModule->GetAngle();
-		Rotation2D frAngle = Rotation2D::fromDegrees(frModule->GetAngle());
-		Rotation2D flAngle = Rotation2D::fromDegrees(flModule->GetAngle());
-		Rotation2D brAngle = Rotation2D::fromDegrees(brModule->GetAngle());
-		Rotation2D blAngle = Rotation2D::fromDegrees(blModule->GetAngle());
+//		Rotation2D frAngle = Rotation2D::fromDegrees(frModule->GetAngle());
+//		Rotation2D flAngle = Rotation2D::fromDegrees(flModule->GetAngle());
+//		Rotation2D brAngle = Rotation2D::fromDegrees(brModule->GetAngle());
+//		Rotation2D blAngle = Rotation2D::fromDegrees(blModule->GetAngle());
 
 		RigidTransform2D odometry = RobotChains::getInstance()->generateOdometryFromSensors(frDistance - m_frPrevDistance,
 				flDistance - m_flPrevDistance, brDistance - m_brPrevDistance, blDistance - m_blPrevDistance,
@@ -53,11 +55,17 @@ void RobotChainLooper::OnLoop() {
 		m_flPrevRotation = flRotation;
 		m_brPrevRotation = brRotation;
 		m_blPrevRotation = blRotation;
+
+		RobotChains::getInstance()->outputToSmartDashboard();
 	}
 }
 
 void RobotChainLooper::OnStart() {
 	if(!Looper::m_started){
+		frModule = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE);
+		flModule = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE);
+		brModule = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE);
+		blModule = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE);
 		m_flPrevDistance = flModule->GetDistance();
 		m_frPrevDistance = frModule->GetDistance();
 		m_blPrevDistance = blModule->GetDistance();
@@ -66,7 +74,7 @@ void RobotChainLooper::OnStart() {
 		m_frPrevRotation = frModule->GetAngle();
 		m_blPrevRotation = blModule->GetAngle();
 		m_brPrevRotation = brModule->GetAngle();
-		//Looper::m_thread = std::thread(&RobotChainLooper::OnLoop, this);
+		Looper::m_thread = std::thread(&RobotChainLooper::Loop, this);
 		m_started = true;
 	}
 }
@@ -75,8 +83,6 @@ void RobotChainLooper::OnStop() {
 }
 
 RobotChainLooper* RobotChainLooper::GetInstance() {
-	if(!m_instance){
-		m_instance = new RobotChainLooper(10000);
-	}
-	return m_instance;
+	static RobotChainLooper instance;
+	return &instance;
 }

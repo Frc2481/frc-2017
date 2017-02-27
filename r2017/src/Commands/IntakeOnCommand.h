@@ -10,7 +10,7 @@
 
 #include "Commands/InstantCommand.h"
 
-class IntakeOnCommand : public InstantCommand {
+class IntakeOnCommand : public frc::InstantCommand {
 public:
 	IntakeOnCommand() : InstantCommand("Intake On Command"){
 		Requires(CommandBase::m_intake.get());

@@ -2,6 +2,7 @@
 #include "utils/Rotation2D.h"
 #include "utils/RigidTransform2D.h"
 #include "math.h"
+#include "pathfinder.h"
 
 class AimingParameters /*:public Subsystems*/{
 private:

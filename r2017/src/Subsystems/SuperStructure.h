@@ -19,12 +19,10 @@ private:
 	CANTalon *m_hopperMotor;
 	Solenoid *m_hoodSolenoid;
 	Solenoid *m_hoodSolenoid2;
-	double m_p;
-	double m_i;
-	double m_d;
 	double m_loaderSpeed;
 	int m_onTargetCounter;
 	double m_speed;
+	double m_shooterOffset;
 
 public:
 	SuperStructure();
@@ -54,6 +52,8 @@ public:
 	void SetShooterSpeedOpenLoop(double speed);
 	void SetShooterControlMode(CANTalon::ControlMode mode);
 	double GetHopperCurrent();
+	void IncShooterOffset();
+	void DecShooterOffset();
 };
 
 #endif /* SRC_SUBSYSTEMS_SUPERSTRUCTURE_H_ */

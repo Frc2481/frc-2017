@@ -5,7 +5,7 @@
 #include "RoboUtils.h"
 
 class RotateToAngleGyroCommand : public CommandBase {
-private:
+protected:
 	InterpolatingMap<InterpolatingDouble, InterpolatingDouble> m_pMap;
 	double m_angle;
 	double m_p;
@@ -31,12 +31,12 @@ public:
 	}
 	void Initialize(){
 		//m_angle = SmartDashboard::GetNumber("RotateToAngle Angle", 0.0);
-		m_p = SmartDashboard::GetNumber("Gyro Rotation P",0.0);
-		if(m_p == 0.0){
-			m_p = m_pMap.getInterpolated(InterpolatingDouble(fabs(m_angle - m_driveTrain->GetHeading()))).m_value;
-		}
+		m_p = -0.02;// = SmartDashboard::GetNumber("Gyro Rotation P",0.0);
+//		if(m_p == 0.0){
+//			m_p = m_pMap.getInterpolated(InterpolatingDouble(fabs(m_angle - m_driveTrain->GetHeading()))).m_value;
+//		}
 		m_i = SmartDashboard::GetNumber("Gyro Rotation I", 0.0);
-		m_d = /*13 * m_p;*/SmartDashboard::GetNumber("Gyro Rotation D", 0.0);
+		m_d = 1300;///*13 * m_p;*/SmartDashboard::GetNumber("Gyro Rotation D", 0.0);
 		m_prevTime = frc::GetFPGATime();
 	}
 	void Execute(){
@@ -68,6 +68,8 @@ public:
 		return m_loopCounter == 5;
 	}
 	void End(){
+		printf("Target Rotate Angle %f\n", m_angle);
+		printf("Real Rotate Angle %f\n", CommandBase::m_driveTrain->GetHeading());
 		CommandBase::m_driveTrain->Drive(0,0,0);
 		SmartDashboard::PutNumber("TimeSinceRotateStart", TimeSinceInitialized());
 	}
@@ -76,4 +78,35 @@ public:
 	}
 };
 
+class CameraRotateToAngle : public RotateToAngleGyroCommand{
+private:
+	bool m_skew;
+public:
+	CameraRotateToAngle(bool skew = false) : RotateToAngleGyroCommand(0){
+		m_skew = skew;
+	}
+	void Initialize(){
+		double time = frc::GetFPGATime();
+		std::list<AimingParameters> params = RobotChains::getInstance()->getGearAimingParameters(time);
+		if(!m_skew){
+			m_angle = params.begin()->getRobotAngle();
+		}
+		else{
+			m_angle = params.begin()->getTargetAngle().getDegrees();
+		}
+		RotateToAngleGyroCommand::Initialize();
+	}
+	void Execute(){
+		RotateToAngleGyroCommand::Execute();
+	}
+	bool IsFinished(){
+		return RotateToAngleGyroCommand::IsFinished();
+	}
+	void End(){
+		RotateToAngleGyroCommand::End();
+	}
+	void Interrupted(){
+		End();
+	}
+};
 #endif  // RotateToAngleGyroCommand_H

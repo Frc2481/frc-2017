@@ -14,7 +14,7 @@
 class HopperOnCommand : public InstantCommand {
 public:
 	HopperOnCommand() : InstantCommand("Hopper On Command"){
-		Requires(CommandBase::m_superStructure.get());
+		//Requires(CommandBase::m_superStructure.get());
 	}
 
 	void Initialize(){

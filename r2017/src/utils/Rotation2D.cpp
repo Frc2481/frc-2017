@@ -3,10 +3,8 @@
 #include <math.h>
 #include <limits>
 
-Rotation2D::Rotation2D()
-{
-	Rotation2D(0, 1, false);
-}
+Rotation2D::Rotation2D() : m_cos(1), m_sin(0)
+{}
 
 Rotation2D::Rotation2D(double x, double y, bool normalized)
 	: m_cos(x), m_sin(y) {

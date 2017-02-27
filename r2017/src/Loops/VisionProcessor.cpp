@@ -19,28 +19,38 @@ VisionProcessor::~VisionProcessor() {
 
 void VisionProcessor::OnStart() {
 	if(!Looper::m_started){
-		//Looper::m_thread = std::thread(&VisionProcessor::LoopMe, this);
+		Looper::m_thread = std::thread(&VisionProcessor::LoopMe, this);
 	}
 }
 
 void VisionProcessor::OnLoop() {
 	if(!m_processed){
-		VisionUpdate update = m_update;
+		m_onLoopCounter++;
+		SmartDashboard::PutNumber("Vision OnLoop Counter", m_onLoopCounter);
+		VisionUpdate update;
 		{
 			std::lock_guard<std::mutex> lk(m_mutex);
 			m_processed = true;
+			update = m_update;
 		}
 		std::list<TargetInfo> infos = update.getTargets();
+		SmartDashboard::PutNumber("Info Size", infos.size());
 		for(auto iit = infos.begin(); iit != infos.end(); iit++){
 			for(auto jit = iit; jit != infos.end(); jit++){
 				if(iit != jit){
-					double deltaY = fabs(iit->getY()) - fabs(jit->getY());
-					double deltaZ = fabs(iit->getZ()) - fabs(jit->getZ());
+					double deltaY = fabs(iit->getY() - jit->getY());
+					double deltaZ = fabs(iit->getZ() - jit->getZ());
 
 					//Check for two targets of relatively equal height in image using Y value for gearTarget
-					if(fabs(deltaY) < Constants::kGearYPosThreshold &&
-						fabs(deltaZ) < Constants::kGearCameraWidth / 2.0){
-						LiftTarget gearTarget(*iit, *jit);
+					if(deltaY < Constants::kGearYPosThreshold &&
+						deltaZ < Constants::kGearCameraWidth / 2.0){
+						TargetInfo &leftTarget = *iit;
+						TargetInfo &rightTarget = *jit;
+						if (leftTarget.getY() > rightTarget.getY()){
+							leftTarget = *jit;
+							rightTarget = *iit;
+						}
+						LiftTarget gearTarget(leftTarget, rightTarget);
 						RobotChains::getInstance()->addVisionUpdateGear(update.getCapturedAtTimestamp(), gearTarget);
 					}
 //					else if(fabs(deltaZ) < Constants::kBoilerZPosThreshold &&
@@ -51,6 +61,7 @@ void VisionProcessor::OnLoop() {
 				}
 			}
 		}
+		std::list<AimingParameters> params = RobotChains::getInstance()->getGearAimingParameters(frc::GetFPGATime());
 	}
 	else{
 		return;
@@ -66,6 +77,8 @@ VisionProcessor* VisionProcessor::GetInstance() {
 }
 
 void VisionProcessor::gotUpdate(VisionUpdate update) {
+	m_updatecounter++;
+	SmartDashboard::PutNumber("GotUpdate Counter", m_updatecounter);
 	m_update = update;
 	m_processed = false;
 }
