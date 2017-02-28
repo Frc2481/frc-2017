@@ -3,10 +3,10 @@
 
 RobotChains::RobotChains() : m_vehicleVelocity(0,0,0) {
 	reset(0, RigidTransform2D(), Rotation2D());
-	m_skewAngleMap.put(InterpolatingDouble(0),InterpolatingDouble(0));
-	m_skewAngleMap.put(InterpolatingDouble(5),InterpolatingDouble(15));
-	m_skewAngleMap.put(InterpolatingDouble(10),InterpolatingDouble(30));
-	m_skewAngleMap.put(InterpolatingDouble(15),InterpolatingDouble(45));
+	m_skewAngleMap.put(InterpolatingDouble(-0.52),InterpolatingDouble(0));
+	m_skewAngleMap.put(InterpolatingDouble(1.838),InterpolatingDouble(15));
+	m_skewAngleMap.put(InterpolatingDouble(6.78),InterpolatingDouble(30));
+	m_skewAngleMap.put(InterpolatingDouble(12.58),InterpolatingDouble(45));
 //	m_instance = RobotState();
 }
 //
@@ -14,7 +14,7 @@ RobotChains::RobotChains() : m_vehicleVelocity(0,0,0) {
 //	return m_instance;
 //}
 
-void RobotChains::reset(double startTime, RigidTransform2D initialFieldToVehicle, Rotation2D initialTurretRotation) {
+void RobotChains::reset(double startTime, const RigidTransform2D &initialFieldToVehicle, const Rotation2D &initialTurretRotation) {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	m_fieldToVehicle = InterpolatingMap<InterpolatingDouble, RigidTransform2D>(kObservationBufferSize);
 	m_fieldToVehicle.put(InterpolatingDouble(startTime), initialFieldToVehicle);
@@ -84,12 +84,21 @@ void RobotChains::addVisionUpdateGear(double timeStamp, LiftTarget gearTarget) {
 	double xPitch = zYaw * m_cameraPitchCorrection.getSin() + xYaw * m_cameraPitchCorrection.getCos();
 	double yPitch = yYaw;
 	double zPitch = zYaw * m_cameraPitchCorrection.getCos() - xYaw * m_cameraPitchCorrection.getSin();
+	printf("XPitch %d\n", xPitch);
+	printf("YPitch %d\n", yPitch);
+	printf("ZPitch %d\n", zPitch);
 
-	if (zPitch > 0) {
+	if (zPitch < 0) {
 		double scaling = m_differentialHeight / zPitch;
 		double distance = hypot(xPitch, yPitch) * scaling;
+		SmartDashboard::PutNumber("VisionUpdate Distance", distance);
+		m_distance = distance;
 		Rotation2D robotAngle = Rotation2D(xPitch, yPitch, true);
 		Rotation2D targetAngle = Rotation2D::fromDegrees(m_skewAngleMap.getInterpolated(gearTarget.GetSkew().getDegrees()).m_value);
+		SmartDashboard::PutNumber("AngleOfRobot", robotAngle.getDegrees());
+		m_currentAngle = robotAngle.getDegrees();
+		SmartDashboard::PutNumber("AngleToTarget", gearTarget.GetSkew().getDegrees());
+		m_targetAngle = gearTarget.GetSkew().getDegrees();
 		RigidTransform2D fieldToGoal = (fieldToCamera.transformBy(RigidTransform2D(
 			Translation2D(distance * robotAngle.getCos(), distance * robotAngle.getSin()),
 				targetAngle)));
@@ -100,18 +109,22 @@ void RobotChains::addVisionUpdateGear(double timeStamp, LiftTarget gearTarget) {
 std::list<AimingParameters> RobotChains::getGearAimingParameters(double currentTimeStamp) {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	std::list<AimingParameters> rv;
-	const std::set<GoalTracker::TrackReport> &reports(m_goalLiftTracker.getTracks());
-
-	RigidTransform2D latestGearFlickerFixedToField = getPredictedFieldToVehicle(Constants::kAutoAimPredictionTime).transformBy(kVehicleToGearFlickerFixed).inverse();
-
-	for (GoalTracker::TrackReport report : reports) {
-		if (currentTimeStamp - report.m_latestTimestamp > kMaxTargetAge) {
-			continue;
-		}
-		RigidTransform2D latestGearFlickerFixedToGoal = latestGearFlickerFixedToField.transformBy(report.m_fieldToGoal);
-
-		rv.push_back(AimingParameters(latestGearFlickerFixedToGoal, report.m_id));
-	}
+//	const std::set<GoalTracker::TrackReport> &reports(m_goalLiftTracker.getTracks());
+//
+//	RigidTransform2D latestGearFlickerFixedToField = getPredictedFieldToVehicle(Constants::kAutoAimPredictionTime).
+//			transformBy(kVehicleToGearFlickerFixed).inverse();
+//	//printf("GearFlickerToField %d\n", latestGearFlickerFixedToField.)
+//
+//	for (GoalTracker::TrackReport report : reports) {
+//		if (currentTimeStamp - report.m_latestTimestamp > kMaxTargetAge) {
+//			continue;
+//		}
+//		RigidTransform2D latestGearFlickerFixedToGoal = latestGearFlickerFixedToField.transformBy(report.m_fieldToGoal);
+//
+//		rv.push_back(AimingParameters(latestGearFlickerFixedToGoal, report.m_id));
+//	}
+	rv.push_back(AimingParameters(RigidTransform2D(Translation2D(0, m_distance).rotateBy(Rotation2D::fromDegrees(m_currentAngle)),
+			Rotation2D::fromDegrees(m_targetAngle)),0));
 	return rv;
 }
 
@@ -131,11 +144,11 @@ void RobotChains::resetVision() {
 }
 
 RigidTransform2D RobotChains::generateOdometryFromSensors(double frEncoderDeltaDistance, double flEncoderDeltaDistance, double brEncoderDeltaDistance,
-	double blEncoderDeltaDistance, double frRotationDeltaDistance, double flRotationDeltaDistance, double brRotationDeltaDistance, double blRotationDeltaDistance, Rotation2D currentGyroAngle) {
+	double blEncoderDeltaDistance, double frRotationDelta, double flRotationDelta, double brRotationDelta, double blRotationDelta, Rotation2D currentGyroAngle) {
 	std::lock_guard<std::recursive_mutex> lk(m_mutex);
 	RigidTransform2D lastMeasurement = getLatestFieldToVehicle();
 	return Kinematics::integrateForwardKinematics(lastMeasurement, frEncoderDeltaDistance, flEncoderDeltaDistance, brEncoderDeltaDistance, blEncoderDeltaDistance,
-		frRotationDeltaDistance, flRotationDeltaDistance, brRotationDeltaDistance, blRotationDeltaDistance, currentGyroAngle);
+		frRotationDelta, flRotationDelta, brRotationDelta, blRotationDelta, currentGyroAngle);
 }
 
 RigidTransform2D RobotChains::getLatestFieldToVehicle() {
@@ -166,4 +179,17 @@ GoalTracker RobotChains::getGoalTracker() {
 RobotChains* RobotChains::getInstance() {
 	static RobotChains instance;
 	return &instance;
+}
+
+void RobotChains::outputToSmartDashboard() {
+	const RigidTransform2D &odometry = getLatestFieldToVehicle();
+	SmartDashboard::PutNumber("Robot Pose X", odometry.getTranslation().getX());
+	SmartDashboard::PutNumber("Robot Pose Y", odometry.getTranslation().getY());
+	SmartDashboard::PutNumber("Robot Pose Theta", odometry.getRotation().getDegrees());
+	std::list<RigidTransform2D> poses = getCaptureTimeFieldToGoal();
+	for(RigidTransform2D pose : poses){
+		SmartDashboard::PutNumber("Goal Pose X", pose.getTranslation().getX());
+		SmartDashboard::PutNumber("Goal Pose Y", pose.getTranslation().getY());
+		break;
+	}
 }

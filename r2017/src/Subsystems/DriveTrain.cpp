@@ -14,7 +14,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_brWheel(new SwerveModule(BACK_RIGHT_DRIVE, BACK_RIGHT_STEER)),
 	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER)),
 	m_shifter(new Solenoid(SHIFTER)),
-	m_serialPort(new SerialPort(57600,SerialPort::kMXP)),
+	m_serialPort(new SerialPort(57600,SerialPort::kUSB)),
 	m_imu(new AHRS(SerialPort::kMXP)),
 //		imu(new IMU(serialPort,update_rate_hz)),
 	m_isFieldCentric(false),
@@ -168,6 +168,8 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 		twist = gyroAngle * P;
 	}
 //
+		SmartDashboard::PutNumber("DriveTrain X", m_XPos);
+		SmartDashboard::PutNumber("DriveTrain Y", m_YPos);
 		SmartDashboard::PutBoolean("GYRO Correction", m_gyroCorrection);
 //
 		twist = -twist;
@@ -337,9 +339,12 @@ void DriveTrain::PerformMotionMagic(double setpoint) {
 	//m_flWheel->SetMotionMagic(m_motionSetpoint);
 	//m_brWheel->SetMotionMagic(m_motionSetpoint);
 	m_flWheel->SetMotionMagic(m_motionSetpoint);
-	m_brWheel->SetMagicBool(true);
-	m_blWheel->SetMagicBool(true);
-	m_frWheel->SetMagicBool(true);
+	m_frWheel->SetMotionMagic(-m_motionSetpoint);
+	m_blWheel->SetMotionMagic(m_motionSetpoint);
+	m_brWheel->SetMotionMagic(-m_motionSetpoint);
+//	m_brWheel->SetMagicBool(true);
+//	m_blWheel->SetMagicBool(true);
+//	m_frWheel->SetMagicBool(true);
 }
 
 double DriveTrain::GetMotionMagicSetpoint() {
@@ -373,5 +378,6 @@ double DriveTrain::ComputeDriveDistanceInchestoEncoderRotations(double inches) {
 	final = inches;
 	final /= INCHES_PER_REV;
 	final *= ENCODER_REV_PER_WHEEL_REV;
+	SmartDashboard::PutNumber("DistanceFromInches", final);
 	return final;
 }

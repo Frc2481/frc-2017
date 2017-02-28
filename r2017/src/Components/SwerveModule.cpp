@@ -50,9 +50,9 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerMotor->SetSensorDirection(true);
 	m_steerMotor->SetClosedLoopOutputDirection(false);
 	m_steerMotor->SetPulseWidthPosition(m_steerMotor->GetPulseWidthPosition() & 0xFFF);
-	m_steerMotor->SetAllowableClosedLoopErr(.5);
-	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
 	m_steerMotor->Enable();
+	m_steerMotor->SetAllowableClosedLoopErr(40);
+	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
 }
 
 SwerveModule::~SwerveModule() {
@@ -196,9 +196,11 @@ void SwerveModule::SetAngle(float angle, bool forced) {
 		if (m_optimized && fabs(angle - currentAngle) > 90 && fabs(angle - currentAngle) < 270) {
 			angle = ((int)angle + 180) % 360;
 			m_angleOptimized = true;
+			//m_driveMotor->SetClosedLoopOutputDirection(true);
 		}
 		else{
 			m_angleOptimized = false;
+			//m_driveMotor->SetClosedLoopOutputDirection(false);
 		}
 
 		//If we are moving slowly, don't change the angle to keep things stable (rotating wheels when speed is small can induce lateral movement)

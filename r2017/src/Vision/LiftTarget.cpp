@@ -14,7 +14,7 @@ LiftTarget::LiftTarget() : TargetInfo(0, 0){
 }
 
 LiftTarget::LiftTarget(TargetInfo& a, TargetInfo& b)
-	: TargetInfo(a, b), m_skew(a.getZ() - b.getZ(), a.getY() - b.getY(), false){
+	: TargetInfo(a, b), m_skew(b.getY() - a.getY(),b.getZ() - a.getZ(), false){
 }
 
 LiftTarget::~LiftTarget() {

@@ -6,16 +6,19 @@
 #include "Commands/HopperOnCommand.h"
 #include "Commands/LoaderOnCommand.h"
 #include "Commands/LoaderOffCommand.h"
-#include "Commands/ShooterToggleCommand.h"
 #include "Commands/ShooterIncreaseSpeedCommand.h"
 #include "Commands/ShooterDecreaseSpeedCommand.h"
-#include "Commands/ShooterFireCommand.h"
 #include "Commands/ClimberUpCommand.h"
 #include "Commands/GearOpenLidCommand.h"
 #include "Commands/GearCloseLidCommand.h"
 #include "Commands/ShooterHoodToggleCommand.h"
-#include "Commands/SetShooterMaxSpeedCommand.h"
 #include "Commands/SendSerialCharCommand.h"
+#include "Commands/StopFiringCommandGroup.h"
+#include "Commands/FireBallsCommandGroup.h"
+#include "Commands/DecOurGearCounterCommand.h"
+#include "Commands/DecTheirGearCounterCommand.h"
+#include "Commands/IncOurGearCounterCommand.h"
+#include "Commands/IncTheirGearCounterCommand.h"
 
 OI::OI() {
 	m_driverStick = new Joystick(DRIVE_STICK_PORT);
@@ -32,11 +35,11 @@ OI::OI() {
 	m_climberButton->WhileHeld(new ClimberUpCommand());
 
 	m_gearLidButton = GEAR_LID_BUTTON;
-	m_gearLidButton->WhenPressed(new GearOpenLidCommand());
-	m_gearLidButton->WhenReleased(new GearCloseLidCommand());
+	m_gearLidButton->WhenPressed(new GearCloseLidCommand());
+	m_gearLidButton->WhenReleased(new GearOpenLidCommand());
 
-	m_shooterMaxSpeed = SHOOTER_MAX_SPEED;
-	m_shooterMaxSpeed->WhenPressed(new SetShooterMaxSpeedCommand());
+//	m_shooterMaxSpeed = SHOOTER_MAX_SPEED;
+//	m_shooterMaxSpeed->WhenPressed(new SetShooterMaxSpeedCommand());
 
 	m_frontCameraButton = FRONT_CAMERA_BUTTON;
 	m_frontCameraButton->WhenPressed(new SendSerialCharCommand('u'));
@@ -53,18 +56,11 @@ OI::OI() {
 	m_cameraMenuButton = CAMERA_MENU_BUTTON;
 	m_cameraMenuButton->WhenPressed(new SendSerialCharCommand('m'));
 
+	m_shooterOnButton = SHOOTER_ON_BUTTON;
+	m_shooterOnButton->WhenPressed(new TurnShooterOnCommand());
 
-
-	m_hopperButton = HOPPER_BUTTON;
-	m_hopperButton->WhenPressed(new HopperOnCommand());
-	m_hopperButton->WhenReleased(new HopperOffCommand());
-
-	m_loaderButton = LOADER_BUTTON;
-	m_loaderButton->WhenPressed(new LoaderOnCommand());
-	m_loaderButton->WhenReleased(new LoaderOffCommand());
-
-	m_shooterToggleButton = SHOOTER_TOGGLE_BUTTON;
-	m_shooterToggleButton->WhenPressed(new ShooterToggleCommand());
+	m_shooterOffButton = SHOOTER_OFF_BUTTON;
+	m_shooterOffButton->WhenPressed(new ShooterOffCommand());
 
 	m_incShooterButton = INC_SHOOTER_BUTTON;
 	m_incShooterButton->WhenPressed(new ShooterIncreaseSpeedCommand());
@@ -76,7 +72,20 @@ OI::OI() {
 	m_shooterHoodToggleButton->WhenPressed(new ShooterHoodToggleCommand());
 
 	m_fireTrigger = FIRE_TRIGGER;
-	m_fireTrigger->WhileHeld(new ShooterFireCommand());
+	m_fireTrigger->WhenPressed(new FireBallsCommandGroup());
+	m_fireTrigger->WhenReleased(new StopFiringCommandGroup());
+
+//	m_incOurGear = INC_OUR_GEAR_COUNTER;
+//	m_incOurGear->WhenPressed(new IncOurGearCounterCommand());
+//
+//	m_decOurGear = DEC_OUR_GEAR_COUNTER;
+//	m_decOurGear->WhenPressed(new DecOurGearCounterCommand());
+//
+//	m_incTheirGear = INC_THEIR_GEAR_COUNTER;
+//	m_incTheirGear->WhenPressed(new IncTheirGearCounterCommand());
+//
+//	m_decTheirGear = DEC_THEIR_GEAR_COUNTER;
+//	m_decTheirGear->WhenPressed(new DecTheirGearCounterCommand());
 
 
 }

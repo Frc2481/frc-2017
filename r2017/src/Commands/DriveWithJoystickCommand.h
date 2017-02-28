@@ -28,7 +28,7 @@ public:
 		if (fabs(z) < .2) z = 0;
 
 		if (!DriverStation::GetInstance().IsAutonomous()) {
-			m_driveTrain->Drive(x,y,z);
+			m_driveTrain->Drive(x,y,-z);
 		}
 	}
 	bool IsFinished(){
