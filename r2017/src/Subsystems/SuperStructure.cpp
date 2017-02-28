@@ -22,10 +22,12 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_shooterMotor->SetSensorDirection(true);
 	m_shooterMotor->ConfigPeakOutputVoltage(12,-12);
 //	m_shooterMotor->SetInverted(true);
-	m_loaderSpeed = 1;
+	m_loaderSpeed = .9;
 	m_loaderMotor->SetInverted(true);
+	m_loaderMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
 	m_onTargetCounter = 0;
 	m_speed = 1;
+	m_shooterOffset = 0;
 }
 
 SuperStructure::~SuperStructure(){
@@ -52,22 +54,19 @@ void SuperStructure::SetShooterSetpoint(double setpoint) {
 }
 
 void SuperStructure::SetPID(double p, double i, double d) {
-	m_p = p;
-	m_i = i;
-	m_d = d;
-	m_shooterMotor->SetPID(m_p, m_i, m_d);
+	m_shooterMotor->SetPID(p, i, d);
 }
 
 double SuperStructure::GetP() {
-	return m_p;
+	return m_shooterMotor->GetP();
 }
 
 double SuperStructure::GetI() {
-	return m_i;
+	return m_shooterMotor->GetI();
 }
 
 double SuperStructure::GetD() {
-	return m_d;
+	return m_shooterMotor->GetD();
 }
 
 double SuperStructure::GetShooterSetpoint() {
@@ -96,7 +95,7 @@ bool SuperStructure::IsShooterOn() {
 }
 
 bool SuperStructure::IsOnTarget() {
-	if(m_shooterMotor->GetSpeed() > 1000 && fabs(m_shooterMotor->GetSpeed() - m_shooterMotor->GetSetpoint() > 20)){
+	if(m_shooterMotor->GetSpeed() > 1000 && fabs(m_shooterMotor->GetSpeed() - m_shooterMotor->GetSetpoint()) < 20){
 		m_onTargetCounter++;
 	}
 
@@ -140,7 +139,9 @@ bool SuperStructure::IsRaised() {
 void SuperStructure::SetShooterSpeed(double speed) {
 	m_shooterMotor->Enable();
 	m_shooterMotor->SetControlMode(CANTalon::kSpeed);
-	m_shooterMotor->Set(speed);
+	double total = speed + m_shooterOffset;
+	SmartDashboard::PutNumber("Shooter Setpoint Speed", total);
+	m_shooterMotor->Set(total);
 //	m_shooterMotor->Enable();
 //	printf("PID enabled\n");
 }
@@ -156,4 +157,12 @@ void SuperStructure::SetShooterControlMode(CANTalon::ControlMode mode) {
 
 double SuperStructure::GetHopperCurrent() {
 	return m_hopperMotor->GetOutputCurrent();
+}
+
+void SuperStructure::IncShooterOffset() {
+	m_shooterOffset += 25;
+}
+
+void SuperStructure::DecShooterOffset() {
+	m_shooterOffset -= 25;
 }

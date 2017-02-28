@@ -14,7 +14,7 @@
 class Looper {
 protected:
 	std::atomic<bool> m_active;
-	//std::thread m_thread;
+	std::thread m_thread;
 	int m_interval;
 	bool m_started;
 public:

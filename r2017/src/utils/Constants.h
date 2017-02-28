@@ -12,11 +12,11 @@ public:
 	static constexpr double kTrackLengthInches = 8.265;
 	static constexpr double kTrackWidthInches = 23.8;
 	static constexpr double kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;
-	static constexpr double kCameraPitchAngleDegrees = -17;
-	static constexpr double kCameraYawAngleDegrees = -1.0; //Again, Probably Wrong
-	static constexpr double kCenterOfTargetHeight = 15.75; //Really Probably Wrong
+	static constexpr double kCameraPitchAngleDegrees = -20;
+	static constexpr double kCameraYawAngleDegrees = 0.0;
+	static constexpr double kCenterOfTargetHeight = 13;
 	static constexpr double kCameraZOffset = 19;
-	static constexpr double kCameraXOffset = -6.454; //Probably Wrong
+	static constexpr double kCameraXOffset = 13;
 	static constexpr double kCameraYOffset = 0.0; //Maybe Wrong
 	static constexpr double kTurretXOffset = -7.376; //Probably Wrong
 	static constexpr double kTurretYOffset = 0.0; //Maybe Wrong

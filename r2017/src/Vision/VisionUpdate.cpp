@@ -14,6 +14,7 @@ VisionUpdate::VisionUpdate()
 VisionUpdate VisionUpdate::generateFromJsonString(double currentTime, std::string updateString) {
 	VisionUpdate update;
 	json obj = json::parse(updateString);
+	printf("JSON String %s\n", updateString.c_str());
 	if(obj.find("capturedAgoMs") == obj.end()){
 		update.m_valid = false;
 		return update;

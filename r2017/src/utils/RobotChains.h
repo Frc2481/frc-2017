@@ -1,4 +1,5 @@
 #pragma once
+#include "WPILib.h"
 #include <utils/Constants.h>
 #include <utils/GoalTracker.h>
 #include <utils/InterpolatingDouble.h>
@@ -23,6 +24,9 @@ private:
 	RigidTransform2D kVehicleToGearFlickerFixed;
 	Rotation2D m_angle;
 	std::recursive_mutex m_mutex;
+	double m_currentAngle;
+	double m_targetAngle;
+	double m_distance;
 
 protected:
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_fieldToVehicle;
@@ -39,7 +43,7 @@ public:
 	const double kMaxTargetAge = 0.4;
 	//const RigidTransform2D kVehicleToTurretFixed = RigidTransform2D(Translation2D(Constants::kTurretXOffset, Constants::kTurretYOffset), Rotation2D::fromDegrees(Constants::kTurretAngleOffsetDegrees));
 	//const RigidTransform2D kTurretRotatingToCamera = RigidTransform2D(Translation2D(Constants::kCameraXOffset, Constants::kCameraYOffset), Rotation2D());
-	void reset(double startTime, RigidTransform2D initialFieldToVehicle, Rotation2D initialTurretRotation);
+	void reset(double startTime, const RigidTransform2D &initialFieldToVehicle, const Rotation2D &initialTurretRotation);
 	RigidTransform2D getFieldToVehicle(double timeStamp);
 	RigidTransform2D getPredictedFieldToVehicle(double lookAheadTime);
 	Rotation2D getTurretRotation(double timeStamp);

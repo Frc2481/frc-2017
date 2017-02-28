@@ -16,7 +16,7 @@ AdbBridge::~AdbBridge() {
 }
 
 void AdbBridge::start() {
-	runCommand("start");
+	runCommand("start-server");
 }
 
 void AdbBridge::stop() {
@@ -42,17 +42,18 @@ void AdbBridge::reversePortForward(int remotePort, int localPort) {
 
 void AdbBridge::restartApp() {
 	runCommand("shell am force-stop com.team254.cheezdroid");
-	runCommand("am start com.team254.cheezdroid/com.team254.cheezdroid.VisionTrackerActivity");
+	runCommand("shell am start com.team254.cheezdroid/com.team254.cheezdroid.VisionTrackerActivity");
 }
 
 bool AdbBridge::runCommand(const std::string &args) {
 	std::stringstream ss;
 	ss << m_binLocation << " " << args << " 0> /dev/null 1> /dev/null 2> /dev/null";
-	FILE* adbStream = popen(ss.str().c_str(), "r");
-	if (adbStream == NULL) {
-		printf("Run Command Failed: %d\t%s", errno, ss.str().c_str());
-		return false;
-	}
-	pclose(adbStream);
+	system(ss.str().c_str());
+//	FILE* adbStream = popen(ss.str().c_str(), "r");
+//	if (adbStream == NULL) {
+//		printf("Run Command Failed: %d\t%s", errno, ss.str().c_str());
+//		return false;
+//	}
+//	pclose(adbStream);
 	return true;
 }

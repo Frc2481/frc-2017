@@ -22,14 +22,16 @@
 #define BACK_CAMERA_BUTTON				new POVJoystickButton(m_driverStick, 0, XB_DPAD_BOTTOM)
 #define CAMERA_MENU_BUTTON				new JoystickButton(m_driverStick, XB_BACK_BUTTON)
 
-#define SHOOTER_MAX_SPEED				new JoystickButton(m_driverStick, XB_Y_BUTTON)
+//#define SHOOTER_MAX_SPEED				new JoystickButton(m_driverStick, XB_Y_BUTTON)
 
-#define HOPPER_BUTTON					new JoystickButton(m_operatorStick, XB_X_BUTTON)
-#define LOADER_BUTTON					new JoystickButton(m_operatorStick, XB_B_BUTTON)
-#define SHOOTER_TOGGLE_BUTTON			new JoystickButton(m_operatorStick, XB_A_BUTTON)
-#define INC_SHOOTER_BUTTON				new JoystickButton(m_operatorStick, XB_RIGHT_BUMPER)
-#define DEC_SHOOTER_BUTTON				new JoystickButton(m_operatorStick, XB_LEFT_BUMPER)
-#define SHOOTER_HOOD_TOOGLE_BUTTON		new JoystickButton(m_operatorStick, XB_Y_BUTTON)
+//#define INC_OUR_GEAR_COUNTER			new AnalogJoystickButton(m_operatorStick, XB_LEFT_Y_AXIS, 0.5)
+#define SHOOTER_ON_BUTTON				new JoystickButton(m_operatorStick, XB_RIGHT_BUMPER)
+#define SHOOTER_OFF_BUTTON				new JoystickButton(m_operatorStick, XB_LEFT_BUMPER)
+//#define LOADER_BUTTON					new JoystickButton(m_operatorStick, XB_B_BUTTON)
+//#define SHOOTER_TOGGLE_BUTTON			new JoystickButton(m_operatorStick, XB_A_BUTTON)
+#define INC_SHOOTER_BUTTON				new POVJoystickButton(m_operatorStick,0, XB_DPAD_TOP)
+#define DEC_SHOOTER_BUTTON				new POVJoystickButton(m_operatorStick,0, XB_DPAD_BOTTOM)
+#define SHOOTER_HOOD_TOOGLE_BUTTON		new JoystickButton(m_operatorStick, XB_B_BUTTON)
 #define FIRE_TRIGGER					new AnalogJoystickButton(m_operatorStick, XB_RIGHT_TRIGGER, 0.5)
 
 #endif /* CONTROLLERMAP_H_ */

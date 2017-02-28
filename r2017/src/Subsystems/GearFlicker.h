@@ -18,7 +18,8 @@ private:
 	Solenoid *m_flickerSolenoid2;
 	Solenoid *m_gearLidSolenoid;
 	Solenoid *m_gearLidSolenoid2;
-
+	int m_ourGearCounter;
+	int m_theirGearCounter;
 public:
 GearFlicker();
 ~GearFlicker();
@@ -28,6 +29,10 @@ bool IsUnloaded();
 void OpenLid();
 void CloseLid();
 bool IsOpen();
+void IncOurGear();
+void DecOurGear();
+void IncTheirGear();
+void DecTheirGear();
 };
 
 

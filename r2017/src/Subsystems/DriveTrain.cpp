@@ -168,6 +168,8 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 		twist = gyroAngle * P;
 	}
 //
+		SmartDashboard::PutNumber("DriveTrain X", m_XPos);
+		SmartDashboard::PutNumber("DriveTrain Y", m_YPos);
 		SmartDashboard::PutBoolean("GYRO Correction", m_gyroCorrection);
 //
 		twist = -twist;
@@ -337,9 +339,12 @@ void DriveTrain::PerformMotionMagic(double setpoint) {
 	//m_flWheel->SetMotionMagic(m_motionSetpoint);
 	//m_brWheel->SetMotionMagic(m_motionSetpoint);
 	m_flWheel->SetMotionMagic(m_motionSetpoint);
-	m_brWheel->SetMagicBool(true);
-	m_blWheel->SetMagicBool(true);
-	m_frWheel->SetMagicBool(true);
+	m_frWheel->SetMotionMagic(-m_motionSetpoint);
+	m_blWheel->SetMotionMagic(m_motionSetpoint);
+	m_brWheel->SetMotionMagic(-m_motionSetpoint);
+//	m_brWheel->SetMagicBool(true);
+//	m_blWheel->SetMagicBool(true);
+//	m_frWheel->SetMagicBool(true);
 }
 
 double DriveTrain::GetMotionMagicSetpoint() {
@@ -373,5 +378,6 @@ double DriveTrain::ComputeDriveDistanceInchestoEncoderRotations(double inches) {
 	final = inches;
 	final /= INCHES_PER_REV;
 	final *= ENCODER_REV_PER_WHEEL_REV;
+	SmartDashboard::PutNumber("DistanceFromInches", final);
 	return final;
 }

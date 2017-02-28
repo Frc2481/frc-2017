@@ -74,7 +74,7 @@ VisionServer::VisionServer(char* port)
 
 	pthread_t accepterThread;
 	pthread_create(&accepterThread, NULL, &VisionServer::runAccepterThreadWrapper, this);
-	m_adb->start();
+	//m_adb->restartAdb();
 	m_adb->reversePortForward(atoi(port), atoi(port));
 	m_adb->restartApp();
 }

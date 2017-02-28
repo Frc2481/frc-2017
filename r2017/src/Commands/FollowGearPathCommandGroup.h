@@ -3,8 +3,6 @@
 
 #include <Commands/CommandGroup.h>
 #include "../CommandBase.h"
-#include "Commands/GenerateGearRotationPathCommand.h"
-#include "Commands/GeneratePathToTargetCommand.h"
 #include "Commands/AutoDriveCommand.h"
 #include "Commands/SwerveModuleRotateToAngleCommand.h"
 #include "Commands/SetDriveTalonToSlaveCommand.h"

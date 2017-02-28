@@ -17,7 +17,7 @@ public:
 	}
 
 	void Initialize(){
-		CommandBase::m_superStructure->SetShooterSetpoint(CommandBase::m_superStructure->GetShooterSetpoint()-100);
+		CommandBase::m_superStructure->DecShooterOffset();
 	}
 };
 

@@ -15,13 +15,15 @@
 #include "utils/RobotChains.h"
 #include "Components/Looper.h"
 
-class VisionProcessor : public Looper, VisionUpdateReceiver {
+class VisionProcessor : public Looper, public VisionUpdateReceiver {
 private:
 	VisionProcessor();
 	VisionUpdate m_update;
 	bool m_processed;
 	bool m_eligible;
 	std::mutex m_mutex;
+	int m_updatecounter;
+	int m_onLoopCounter;
 public:
 	virtual ~VisionProcessor();
 	static VisionProcessor* GetInstance();
