@@ -1,5 +1,5 @@
-#ifndef BLUEPutGearOnBeforeShootTenBallsCommandGroup_H
-#define BLUEPutGearOnBeforeShootTenBallsCommandGroup_H
+#ifndef REDPutGearOnBeforeShootTenBallsCommandGroup_H
+#define REDPutGearOnBeforeShootTenBallsCommandGroup_H
 
 #include <Commands/CommandGroup.h>
 #include "../CommandBase.h"
@@ -22,15 +22,14 @@
 #include "Commands/HopperOffCommand.h"
 #include "Commands/PauseCommand.h"
 #include "Commands/DriveTrainWaitForHeadingCommand.h"
-#include "Commands/PauseCommand.h"
 
-class BLUEPutGearOnBeforeShootTenBallsCommandGroup : public CommandGroup {
+class REDPutGearOnBeforeShootTenBallsCommandGroup : public CommandGroup {
 public:
-	BLUEPutGearOnBeforeShootTenBallsCommandGroup() : CommandGroup("BLUEPutGearOnBeforeShootTenBallsCommandGroup"){
+	REDPutGearOnBeforeShootTenBallsCommandGroup() : CommandGroup("REDPutGearOnBeforeShootTenBallsCommandGroup"){
 		AddSequential(new ToggleCoastToBrakeCommand(false));
 		AddSequential(new DriveTrainZeroYawCommand());
 		AddSequential(new SetAngleOptimizedCommand(false));
-		AddSequential(new SwerveModuleRotateToAngleCommand(270, false));
+		AddSequential(new SwerveModuleRotateToAngleCommand(90, false));
 		AddSequential(new WaitCommand(.5));
 		AddSequential(new DriveTrainZeroDriveEncodersCommand());
 		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
@@ -38,10 +37,10 @@ public:
 
 		AddSequential(new DriveTrainDisableGyroCorrectionCommand());
 		AddSequential(new SetAngleOptimizedCommand(true));
-		AddSequential(new DriveTrainEnableGyroCorrectionCommand(-30));
-		AddSequential(new DriveTrainWaitForHeadingCommand(-30), 1.25);
+		AddSequential(new DriveTrainEnableGyroCorrectionCommand(30));
+		AddSequential(new DriveTrainWaitForHeadingCommand(30), 1.25);
 		AddSequential(new SetAngleOptimizedCommand(false));
-    
+
 		AddSequential(new SwerveModuleRotateToAngleCommand(0,false));
 		AddSequential(new WaitCommand(.5));
 		AddSequential(new DriveTrainZeroDriveEncodersCommand());
@@ -52,4 +51,4 @@ public:
 	}
 };
 
-#endif  // PutGearOnBeforeShootTenBallsCommandGroup_H
+#endif  // REDPutGearOnBeforeShootTenBallsCommandGroup_H

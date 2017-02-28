@@ -1,4 +1,3 @@
-
 #include "WPILib.h"
 #include "Commands/Command.h"
 #include "CommandBase.h"
@@ -34,13 +33,16 @@
 #include "Commands/OneGearTenBallAuto.h"
 #include "Commands/ResumeCommand.h"
 #include "Commands/BLUEPutGearOnBeforeShootTenBallsCommandGroup.h"
+#include "Commands/REDPutGearOnBeforeShootTenBallsCommandGroup.h"
+#include "Commands/FortyKPAHypoAutoCommandGroup.h"
+#include "Commands/FortyKPAHypoAutoMirrorCommandGroup.h"
 
 class Robot: public IterativeRobot
 {
 private:
 	std::unique_ptr<Command> autonomousCommand;
 	std::unique_ptr<Command> birdEyeSetupCommand;
-	frc::SendableChooser<Command*> *chooser;
+	frc::SendableChooser<Command*> chooser;
 	std::unique_ptr<Compressor> pcm;
 	std::unique_ptr<PowerDistributionPanel> pdp;
 	VisionProcessor* m_visionProcessor = VisionProcessor::GetInstance();
@@ -61,7 +63,6 @@ private:
 		CommandBase::m_driveTrain->SetLengthAndWidth(ROBOT_LENGTH, ROBOT_WIDTH);
 		VisionProcessor::GetInstance()->OnStart();
 		RobotChainLooper::GetInstance()->OnStart();
-		chooser = new frc::SendableChooser<Command*>();
 		pcm.reset(new Compressor());
 		pcm->SetClosedLoopControl(true);
 		pdp.reset(new PowerDistributionPanel());
@@ -71,7 +72,6 @@ private:
 		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
 //		chooser->AddDefault("Default Auto", new ExampleCommand());
 		//chooser->AddObject("My Auto", new MyAutoCommand());
-		SmartDashboard::PutData("Auto Modes", chooser);
 //		SmartDashboard::PutNumber("Speed P", CommandBase::m_driveTrain->GetSpeedP());
 //		SmartDashboard::PutNumber("Speed I", CommandBase::m_driveTrain->GetSpeedI());
 //		SmartDashboard::PutNumber("Speed D", CommandBase::m_driveTrain->GetSpeedD());
@@ -86,13 +86,15 @@ private:
 //		SmartDashboard::PutNumber("Shooter D", CommandBase::m_superStructure->GetD());
 		SmartDashboard::PutNumber("Hopper Speed", CommandBase::m_superStructure->GetSpeed());
 
-		chooser->AddObject("BLUE 40 KPA No Gear", new FortyKPAHypoAutoMirrorCommandGroup());
-		chooser->AddObject("BLUE One Gear + 10 Ball", new OneGearTenBallAuto());
-		chooser->AddObject("RED 40 KPA No Gear", new FortyKPAHypoAutoCommandGroup());
-		chooser->AddObject("RED Right Gear to Hopper", new FollowGearPathCommandGroup());
-		chooser->AddObject("Middle Gear Only", new MiddleGearAutoCommandGroup());
+		chooser.AddDefault("Nothing", NULL);
+		chooser.AddObject("RED 40 KPA No Gear", new FortyKPAHypoAutoCommandGroup());
+		chooser.AddObject("BLUE 40 KPA No Gear", new FortyKPAHypoAutoMirrorCommandGroup());
+		chooser.AddObject("RED One Gear + 10 Ball", new REDPutGearOnBeforeShootTenBallsCommandGroup());
+		chooser.AddObject("BLUE One Gear + 10 Ball", new BLUEPutGearOnBeforeShootTenBallsCommandGroup());
+		chooser.AddObject("RED Right Gear to Hopper", new FollowGearPathCommandGroup());
+		chooser.AddObject("Middle Gear Only", new MiddleGearAutoCommandGroup());
 
-		SmartDashboard::PutData("Autonomous Chooser", chooser);
+		SmartDashboard::PutData("Autonomous Chooser", &chooser);
 
 		SmartDashboard::PutData(new ToggleOptimizedCommand());
 		SmartDashboard::PutData(new ResumeCommand());
@@ -116,15 +118,10 @@ private:
 		SmartDashboard::PutData(new DriveTrainZeroYawCommand());
 		SmartDashboard::PutData(new RotateToAngleGyroCommand(-60));
 		SmartDashboard::PutData(new MiddleGearAutoCommandGroup());
+		SmartDashboard::PutData(new TurnShooterOnCommand());
 		//SmartDashboard::PutData(new SetShooterOpenLoopFullSpeed());
 		//SmartDashboard::PutData(new TurnShooterOnCommand(4350));
 		//SmartDashboard::PutData(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(24), false));
-		SmartDashboard::PutData(new FortyKPAAutoNoGearCommandGroup());
-		SmartDashboard::PutData(new FortyKPAHypoAutoCommandGroup());
-		SmartDashboard::PutData(new FortyKPAHypoAutoMirrorCommandGroup());
-		SmartDashboard::PutData(new DriveToCameraTargetCommandGroup());
-		SmartDashboard::PutData(new OneGearTenBallAuto());
-		SmartDashboard::PutData(new BLUEPutGearOnBeforeShootTenBallsCommandGroup());
 
 //		SmartDashboard::PutNumber("EncoderConfig InitPos", 0);
 //		SmartDashboard::PutNumber("EncoderConfig P", 0.0);
@@ -174,7 +171,7 @@ private:
 			autonomousCommand.reset(new ExampleCommand());
 		} */
 
-		autonomousCommand.reset((Command *)chooser->GetSelected());
+		autonomousCommand.reset(chooser.GetSelected());
 
 		if (autonomousCommand != NULL)
 			autonomousCommand->Start();
