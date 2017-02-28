@@ -18,8 +18,6 @@
 #include "Commands/GearResetCommand.h"
 #include "Commands/PrintCommand.h"
 #include "Commands/WaitCommand.h"
-#include "Commands/LoaderOnCommand.h"
-#include "Commands/HopperOnCommand.h"
 #include "Commands/LoaderOffCommand.h"
 #include "Commands/HopperOffCommand.h"
 #include "Commands/PauseCommand.h"

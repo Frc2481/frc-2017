@@ -20,6 +20,10 @@
 #include "Commands/RotateToAngleGyroCommand.h"
 #include "Commands/MiddleGearAutoCommandGroup.h"
 #include "Commands/TurnShooterOnCommand.h"
+#include "Commands/DriveMotionMagicDistanceCommand.h"
+#include "Commands/FortyKPAAutoNoGearCommandGroup.h"
+#include "Commands/FortyKPAHypoAutoCommandGroup.h"
+#include "Commands/FortyKPAHypoAutoMirrorCommandGroup.h"
 #include "Loops/VisionProcessor.h"
 #include "Loops/RobotChainLooper.h"
 #include "Vision/VisionServer.h"
@@ -57,7 +61,6 @@ private:
 		SmartDashboard::PutData("Scheduler", m_scheduler->GetInstance());
 		CommandBase::init();
 		CommandBase::m_driveTrain->SetLengthAndWidth(ROBOT_LENGTH, ROBOT_WIDTH);
-		m_visionProcessor->OnStart();
 		VisionProcessor::GetInstance()->OnStart();
 		RobotChainLooper::GetInstance()->OnStart();
 		pcm.reset(new Compressor());
@@ -94,24 +97,31 @@ private:
 		SmartDashboard::PutData("Autonomous Chooser", &chooser);
 
 		SmartDashboard::PutData(new ToggleOptimizedCommand());
+		SmartDashboard::PutData(new ResumeCommand());
 
 		SmartDashboard::PutData(new ShooterIncreaseSpeedCommand());
 		SmartDashboard::PutData(new ShooterDecreaseSpeedCommand());
 		SmartDashboard::PutData(new ShooterOnCommand());
 		SmartDashboard::PutData(new ShooterOffCommand());
 		SmartDashboard::PutData(new CalibrateEncoderOffsetsCommand());
-		SmartDashboard::PutData(new SetEncoderConfigsCommand());
+		//SmartDashboard::PutData(new SetEncoderConfigsCommand());
+		//SmartDashboard::PutData(new FollowFakePathCommand());
+		//SmartDashboard::PutData(new SwerveModuleTestClosedLoopVelocityCommand());
+		//SmartDashboard::PutData(new GenerateGearRotationPathCommand(30));
 		SmartDashboard::PutData(new FollowGearPathCommandGroup());
-		SmartDashboard::PutData(new SetDriveTalonToSlaveCommand(true));
+		//SmartDashboard::PutData(new SetDriveTalonToSlaveCommand(true));
 		SmartDashboard::PutData(new AutoDriveToGearCommandGroup());
-		SmartDashboard::PutData(new TimeAccelAndDecelCommandGroup());
-		SmartDashboard::PutData(new DriveTrainEnableGyroCorrectionCommand(0));
+		//SmartDashboard::PutData(new TimeAccelAndDecelCommandGroup());
+		SmartDashboard::PutData(new DriveTrainEnableGyroCorrectionCommand(60));
 		SmartDashboard::PutData(new DriveTrainDisableGyroCorrectionCommand());
-		SmartDashboard::PutData(new DriveToDistanceEncoderCommand());
+		//SmartDashboard::PutData(new DriveToDistanceEncoderCommand());
 		SmartDashboard::PutData(new DriveTrainZeroYawCommand());
 		SmartDashboard::PutData(new RotateToAngleGyroCommand(-60));
 		SmartDashboard::PutData(new MiddleGearAutoCommandGroup());
 		SmartDashboard::PutData(new TurnShooterOnCommand());
+		//SmartDashboard::PutData(new SetShooterOpenLoopFullSpeed());
+		//SmartDashboard::PutData(new TurnShooterOnCommand(4350));
+		//SmartDashboard::PutData(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(24), false));
 
 //		SmartDashboard::PutNumber("EncoderConfig InitPos", 0);
 //		SmartDashboard::PutNumber("EncoderConfig P", 0.0);
@@ -201,6 +211,14 @@ private:
 //		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_shooter->GetShooterSetpoint());
 //		SmartDashboard::PutNumber("Feeder Speed", CommandBase::m_shooter->GetFeederSpeed());
 		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
+//		SmartDashboard::PutNumber("FLSteerCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
+//				GetMotor(SwerveModule::STEER_MOTOR)->GetOutputCurrent());
+//		SmartDashboard::PutNumber("FRSteerCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->
+//				GetMotor(SwerveModule::STEER_MOTOR)->GetOutputCurrent());
+//		SmartDashboard::PutNumber("BLSteerCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->
+//				GetMotor(SwerveModule::STEER_MOTOR)->GetOutputCurrent());
+//		SmartDashboard::PutNumber("BRSteerCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->
+//				GetMotor(SwerveModule::STEER_MOTOR)->GetOutputCurrent());
 		SmartDashboard::PutNumber("DriveTrain Distance", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetDistance());
 //		SmartDashboard::PutNumber("Drive Velocity", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetSpeed());
 //		SmartDashboard::PutNumber("GetFLClosedLoopError", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
