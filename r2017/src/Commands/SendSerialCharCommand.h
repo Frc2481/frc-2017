@@ -16,10 +16,11 @@ private:
 	char m_command;
 public:
 	SendSerialCharCommand(char c) : InstantCommand("SendSerialCharCommand"){
+		SetRunWhenDisabled(true);
 		m_command = c;
 
 	}
-	void Initalize(){
+	void Initialize(){
 		SerialRemote::GetInstance()->SendSerialChar(m_command);
 	}
 };
