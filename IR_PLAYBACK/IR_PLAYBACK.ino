@@ -6,17 +6,20 @@
 elapsedMicros elapsedTime;
 
 void setup() {
+ Serial1.begin(115200);
  Serial.begin(115200);
  delay(500);
  pinMode(IR_PIN,OUTPUT);  
+ pinMode(13,OUTPUT);
  digitalWrite(IR_PIN,HIGH);
  Serial.println("Starting");
 }
 
 void loop() {
-  if (Serial.available()){
-    char incomingLetter = Serial.read();
+  if (Serial1.available()){
+    char incomingLetter = Serial1.read();
     pressButton(incomingLetter);
+    Serial.println(incomingLetter);
     digitalWrite(IR_PIN, HIGH);
   }
   delay(100);
@@ -24,7 +27,7 @@ void loop() {
 
 void pressButton(char c) {
   bool* buttonCmd;
-  int len;
+  int len = 0;
   if(c=='p'){
     buttonCmd = button1Cmd; 
     len = sizeof(button1Cmd);
@@ -97,17 +100,21 @@ void pressButton(char c) {
     buttonCmd = button18Cmd; 
     len = sizeof(button18Cmd);
   }
+  if(len >0){
+    digitalWrite(13,HIGH);
+  }
   for(int i=0; i<len; i++){   
     elapsedTime=0;
     if(buttonCmd[i]){
       digitalWrite(IR_PIN,HIGH);
-     Serial.println(1);
+    // Serial.println(1);
     }
      else{
       digitalWrite(IR_PIN,LOW);
-     Serial.println(0);
+     //Serial.println(0);
     }
     while (elapsedTime<200);
 
   } 
+  digitalWrite(13, LOW);
 }

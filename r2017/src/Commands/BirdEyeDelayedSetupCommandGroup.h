@@ -15,7 +15,7 @@ class  BirdEyeDelayedSetupCommandGroup: public CommandGroup {
 
 public:
 	BirdEyeDelayedSetupCommandGroup() : CommandGroup("BirdEyeDelayedSetupCommandgroup"){
-
+		SetRunWhenDisabled(true);
 		AddSequential(new WaitCommand(20));
 		AddSequential(new SendSerialCharCommand('p'));
 		AddSequential(new WaitCommand(5));
