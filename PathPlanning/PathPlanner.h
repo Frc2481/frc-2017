@@ -22,19 +22,13 @@ private:
     vector<vector<double>*>* smoother(vector<vector<double>*>* path, double weight_data, double weight_smooth, double tolerance);
     int* injectionCounter2Steps(double numNodeOnlyPoints, double maxTimeToComplete, double timeStep);
     void Paths(vector<vector<double>*>* smoothPath, double robotTrackWidth, double robotTrackLength);
-    void computeMotionProfile(vector<vector<double>*>* path, double maxA, double dt);
-    double distance(vector<vector<double>*>* path);
-    
+
 public:
     vector<vector<double>*>* smoothPath;
     vector<double*>* leftUpperPath;
     vector<double*>* rightUpperPath;
     vector<double*>* leftLowerPath;
     vector<double*>* rightLowerPath;
-
-    vector<double>* acceleration;
-    vector<double>* velocity;
-    vector<double>* position;
 
     PathPlanner();
     ~PathPlanner();

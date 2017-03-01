@@ -20,10 +20,6 @@ PathPlanner::PathPlanner()
     this->rightLowerPath = new vector<double*>();
     this->leftUpperPath = new vector<double*>();
     this->rightUpperPath = new vector<double*>();
-    
-    position = new vector<double>();
-    velocity = new vector<double>();
-    acceleration = new vector<double>();
 }
 
 PathPlanner::~PathPlanner()
@@ -42,17 +38,12 @@ PathPlanner::~PathPlanner()
       delete this->leftUpperPath->operator[](i);
       delete this->rightUpperPath->operator[](i);
     }
-    
+
     delete this->smoothPath;
     delete this->leftLowerPath;
     delete this->rightLowerPath;
     delete this->leftUpperPath;
     delete this->rightUpperPath;
-    
-    delete this->position;
-    delete this->velocity;
-    delete this->acceleration;
-    //cout << "Done!" << endl;
 }
 
 vector<vector<double>*>* PathPlanner::doubleArrayCopy(vector<vector<double>*>* arr)
@@ -243,40 +234,6 @@ void PathPlanner::Paths(vector<vector<double>*>* smoothPath, double robotTrackWi
     }
 }
 
-void PathPlanner::computeMotionProfile(vector<vector<double>*>* path, double maxA, double dt)
-{
-    this->time = sqrt(2*M_PI*distance(path)/maxA);
-    double k1 = 2*M_PI/this->time;
-    double k2 = maxA / k1;
-    double k3 = 1/k1;
-
-    double steps = time/dt;
-
-    position->resize((int)ceil(steps));
-    velocity->resize((int)ceil(steps));
-    acceleration->resize((int)ceil(steps));
-
-    for(int i=0;i<steps;i++)
-    {
-        acceleration->operator[](i) = maxA*sin(k1*i*dt);
-        velocity->operator[](i) = k2*(1-cos(k1*i*dt));
-        position->operator[](i) = k2*(i*dt - k3*sin(k1*i*dt));
-    }
-}
-
-double PathPlanner::distance(vector<vector<double>*>* path)
-{
-    double distance = 0.0;
-    for(int i=0;i<path->size()-1;i++)
-    {
-        double dx = path->operator[](i+1)->operator[](0) - path->operator[](i)->operator[](0);
-        double dy = path->operator[](i+1)->operator[](1) - path->operator[](i)->operator[](1);
-
-        distance += sqrt(dx*dx + dy*dy);
-    }
-    return distance;
-}
-
 void PathPlanner::calculate(double totalTime, double timeStep, double robotTrackWidth, double robotTrackLength, double maxA)
 {
     //cout << "Beginning calculate()" << endl;
@@ -293,9 +250,6 @@ void PathPlanner::calculate(double totalTime, double timeStep, double robotTrack
 
     //cout << "Generating individual paths" << endl;
     Paths(smoothPath, robotTrackWidth, robotTrackLength);
-
-    //cout << "Computing motion profile" << endl;
-    computeMotionProfile(smoothPath, maxA, timeStep);
 
     delete toInject;
 }
