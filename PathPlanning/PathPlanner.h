@@ -7,7 +7,6 @@ using namespace std;
 
 class PathPlanner {
 private:
-  
     vector<vector<double>*>* origPath;
 
     double time;
@@ -15,7 +14,7 @@ private:
     double pathBeta;
     double pathTolerance;
     double gradientDescentEscape;
-    
+
     vector<vector<double>*>* doubleArrayCopy(vector<vector<double>*>* arr);
     void doubleArrayDelete(vector<vector<double>*>* arr);
     vector<vector<double>*>* inject(vector<vector<double>*>* orig, int numToInject);
@@ -32,8 +31,10 @@ public:
 
     PathPlanner();
     ~PathPlanner();
+    double distance(vector<vector<double>*>* path);
     void calculate(double totalTime, double timeStep, double robotTrackWidth, double robotTrackLength, double maxA);
     void addWaypoint(double x, double y, double heading);
+    double estimateTime(double maxV, double a);
 };
 
 #endif

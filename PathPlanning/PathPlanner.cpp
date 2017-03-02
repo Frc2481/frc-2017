@@ -9,12 +9,12 @@ using namespace std;
 PathPlanner::PathPlanner()
 {
     this->origPath = new vector<vector<double>*>();
-    
+
     this->pathAlpha = 0.7;
     this->pathBeta = 0.3;
     this->pathTolerance = 0.0000001;
     this->gradientDescentEscape = 100;
-    
+
     this->smoothPath = new vector<vector<double>*>();
     this->leftLowerPath = new vector<double*>();
     this->rightLowerPath = new vector<double*>();
@@ -29,7 +29,7 @@ PathPlanner::~PathPlanner()
         delete this->origPath->operator[](i);
     }
     delete this->origPath;
-    
+
     for(int i=0;i<this->smoothPath->size();i++)
     {
       delete this->smoothPath->operator[](i);
@@ -206,7 +206,7 @@ void PathPlanner::Paths(vector<vector<double>*>* smoothPath, double robotTrackWi
     this->rightUpperPath->resize(this->smoothPath->size());
     this->leftUpperPath->resize(this->smoothPath->size());
     this->rightLowerPath->resize(this->smoothPath->size());
-    
+
     for(int i=0;i<smoothPath->size();i++)
     {
         //cout << smoothPath->operator[](i)->operator[](0) << " " << smoothPath->operator[](i)->operator[](1) << " " << smoothPath->operator[](i)->operator[](2) << endl;
@@ -234,6 +234,18 @@ void PathPlanner::Paths(vector<vector<double>*>* smoothPath, double robotTrackWi
     }
 }
 
+double PathPlanner::distance(vector<vector<double>*>* path)
+{
+    double distance = 0.0;
+    for(int i=0;i<path->size()-1;i++)
+    {
+        double dx = path->operator[](i+1)->operator[](0) - path->operator[](i)->operator[](0);
+        double dy = path->operator[](i+1)->operator[](1) - path->operator[](i)->operator[](1);
+
+        distance += sqrt(dx*dx + dy*dy);
+    }
+    return distance;
+}
 void PathPlanner::calculate(double totalTime, double timeStep, double robotTrackWidth, double robotTrackLength, double maxA)
 {
     //cout << "Beginning calculate()" << endl;
@@ -261,4 +273,22 @@ void PathPlanner::addWaypoint(double x, double y, double heading)
     this->origPath->operator[](idx)->push_back(x);
     this->origPath->operator[](idx)->push_back(y);
     this->origPath->operator[](idx)->push_back(heading);
+}
+
+double PathPlanner::estimateTime(double Vmax, double a)
+{
+    double dist = distance(this->origPath);
+    double total_time;
+    double ad_dist = (Vmax*Vmax)/a;
+    if(ad_dist < dist)
+    {
+        //Trapezoidal, do cruise
+        total_time = 2*(Vmax/a) + ((dist-ad_dist)/Vmax);
+    }
+    else
+    {
+        //Triangular
+        total_time = 2*sqrt(dist/a);
+    }
+    return total_time;
 }
