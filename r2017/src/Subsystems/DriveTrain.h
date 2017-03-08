@@ -19,7 +19,7 @@ private:
 	SwerveModule *m_blWheel;
 	Solenoid *m_shifter;
 	const uint8_t k_updateRateHz = 50;
-	SerialPort* m_serialPort;
+	//SerialPort* m_serialPort;
 	AHRS* m_imu;
 	const double k_pi = 3.14159;
 	double m_baseWidth;
@@ -107,6 +107,10 @@ public:
 
 	void SetSlaveTalons();
 	void ResetSlaveTalons();
+
+	void SetMotionMagicAccel(double accel);
+
+	bool IsSteerOnTarget(double angle);
 };
 
 #endif  // DriveTrain_H

@@ -36,6 +36,9 @@
 #include "Commands/REDPutGearOnBeforeShootTenBallsCommandGroup.h"
 #include "Commands/FortyKPAHypoAutoCommandGroup.h"
 #include "Commands/FortyKPAHypoAutoMirrorCommandGroup.h"
+#include "Commands/BLUEGearToRedLaunchPadCommandGroup.h"
+#include "Commands/REDGearToBlueLaunchPadCommandGroup.h"
+#include "Commands/SendSerialPRMCommandGroup.h"
 
 class Robot: public IterativeRobot
 {
@@ -91,10 +94,14 @@ private:
 		chooser.AddObject("BLUE 40 KPA No Gear", new FortyKPAHypoAutoMirrorCommandGroup());
 		chooser.AddObject("RED One Gear + 10 Ball", new REDPutGearOnBeforeShootTenBallsCommandGroup());
 		chooser.AddObject("BLUE One Gear + 10 Ball", new BLUEPutGearOnBeforeShootTenBallsCommandGroup());
-		chooser.AddObject("RED Right Gear to Hopper", new FollowGearPathCommandGroup());
+		chooser.AddObject("RED Gear To Blue Launchpad", new REDGearToBlueLaunchPadCommandGroup());
+		chooser.AddObject("BLUE Gear To Red Launchpad", new BLUEGearToRedLaunchPadCommandGroup());
+		//chooser.AddObject("RED Right Gear to Hopper", new FollowGearPathCommandGroup());
 		chooser.AddObject("Middle Gear Only", new MiddleGearAutoCommandGroup());
 
 		SmartDashboard::PutData("Autonomous Chooser", &chooser);
+
+		CommandBase::m_gearFlicker->CloseLid();
 
 		SmartDashboard::PutData(new ToggleOptimizedCommand());
 		SmartDashboard::PutData(new ResumeCommand());
@@ -119,6 +126,7 @@ private:
 		SmartDashboard::PutData(new RotateToAngleGyroCommand(-60));
 		SmartDashboard::PutData(new MiddleGearAutoCommandGroup());
 		SmartDashboard::PutData(new TurnShooterOnCommand());
+		SmartDashboard::PutData(new SendSerialPRMCommandGroup());
 		//SmartDashboard::PutData(new SetShooterOpenLoopFullSpeed());
 		//SmartDashboard::PutData(new TurnShooterOnCommand(4350));
 		//SmartDashboard::PutData(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(24), false));
@@ -151,6 +159,7 @@ private:
 	void DisabledPeriodic()
 	{
 		Scheduler::GetInstance()->Run();
+		SmartDashboard::PutNumber("Gyro Angle", CommandBase::m_driveTrain->GetHeading());
 	}
 
 	/**
@@ -171,6 +180,7 @@ private:
 			autonomousCommand.reset(new ExampleCommand());
 		} */
 
+		CommandBase::m_gearFlicker->CloseLid();
 		autonomousCommand.reset(chooser.GetSelected());
 
 		if (autonomousCommand != NULL)
@@ -193,8 +203,18 @@ private:
 
 		if (autonomousCommand != NULL)
 			autonomousCommand->Cancel();
+		CommandBase::m_gearFlicker->OpenLid();
+		CommandBase::m_driveTrain->SetOrigin(0.0, 0.0);
 		CommandBase::m_driveTrain->SetGyroCorrection(false);
 		CommandBase::m_driveTrain->ResetSlaveTalons();
+		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->SetOptimized(true);
+		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->SetOptimized(true);
+		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->SetOptimized(true);
+		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->SetOptimized(true);
+		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
+		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
+		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
+		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
@@ -223,14 +243,14 @@ private:
 //		SmartDashboard::PutNumber("Drive Velocity", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetSpeed());
 //		SmartDashboard::PutNumber("GetFLClosedLoopError", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
 //				GetMotor(SwerveModule::DRIVE_MOTOR)->GetClosedLoopError());
-//		SmartDashboard::PutNumber("GetFLPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
-//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
-//		SmartDashboard::PutNumber("GetFRPosition",CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->
-//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
-//		SmartDashboard::PutNumber("GetBLPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->
-//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
-//		SmartDashboard::PutNumber("GetBRPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->
-//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+		SmartDashboard::PutNumber("GetFLPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
+				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+		SmartDashboard::PutNumber("GetFRPosition",CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->
+				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+		SmartDashboard::PutNumber("GetBLPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->
+				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+		SmartDashboard::PutNumber("GetBRPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->
+				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
 //		SmartDashboard::PutNumber("GetFLError+Position", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
 //				GetMotor(SwerveModule::DRIVE_MOTOR)->GetClosedLoopError() + CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
 //				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());

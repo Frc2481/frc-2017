@@ -18,7 +18,7 @@ public:
 		SetRunWhenDisabled(true);
 		AddSequential(new WaitCommand(20));
 		AddSequential(new SendSerialCharCommand('p'));
-		AddSequential(new WaitCommand(5));
+		AddSequential(new WaitCommand(12));
 		AddSequential(new SendSerialCharCommand('r'));
 		AddSequential(new SendSerialCharCommand('m'));
 

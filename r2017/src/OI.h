@@ -27,6 +27,8 @@ private:
 	Button* m_incShooterButton;
 	Button* m_decShooterButton;
 	Button* m_shooterHoodToggleButton;
+	Button* m_gearLidButtonOP;
+	Button* m_flickerGearButtonOP;
 	AnalogJoystickButton* m_fireTrigger;
 	AnalogJoystickButton* m_incOurGear;
 	AnalogJoystickButton* m_decOurGear;

@@ -19,6 +19,8 @@
 #include "Commands/DecTheirGearCounterCommand.h"
 #include "Commands/IncOurGearCounterCommand.h"
 #include "Commands/IncTheirGearCounterCommand.h"
+#include "Commands/GearFlickCommand.h"
+#include "Commands/GearResetCommand.h"
 
 OI::OI() {
 	m_driverStick = new Joystick(DRIVE_STICK_PORT);
@@ -74,6 +76,14 @@ OI::OI() {
 	m_fireTrigger = FIRE_TRIGGER;
 	m_fireTrigger->WhenPressed(new FireBallsCommandGroup());
 	m_fireTrigger->WhenReleased(new StopFiringCommandGroup());
+
+	m_gearLidButtonOP = GEAR_LID_BUTTON_OP;
+	m_gearLidButtonOP->WhenPressed(new GearCloseLidCommand());
+	m_gearLidButtonOP->WhenReleased(new GearOpenLidCommand());
+
+	m_flickerGearButtonOP = FLICKER_GEAR_BUTTON_OP;
+	m_flickerGearButtonOP->WhenPressed(new GearFlickCommand());
+	m_flickerGearButtonOP->WhenReleased(new GearResetCommand());
 
 //	m_incOurGear = INC_OUR_GEAR_COUNTER;
 //	m_incOurGear->WhenPressed(new IncOurGearCounterCommand());

@@ -1,5 +1,5 @@
-#ifndef REDPutGearOnBeforeShootTenBallsCommandGroup_H
-#define REDPutGearOnBeforeShootTenBallsCommandGroup_H
+#ifndef REDGearToBlueLaunchPadCommandGroup_H
+#define REDGearToBlueLaunchPadCommandGroup_H
 
 #include <Commands/CommandGroup.h>
 #include "../CommandBase.h"
@@ -23,15 +23,16 @@
 #include "Commands/PauseCommand.h"
 #include "Commands/ShooterSetHoodCommand.h"
 #include "Commands/DriveTrainWaitForHeadingCommand.h"
+#include "Commands/DriveTrainSetOriginCommand.h"
 
-class REDPutGearOnBeforeShootTenBallsCommandGroup : public CommandGroup {
+class REDGearToBlueLaunchPadCommandGroup : public CommandGroup {
 public:
-	REDPutGearOnBeforeShootTenBallsCommandGroup() : CommandGroup("REDPutGearOnBeforeShootTenBallsCommandGroup"){
+	REDGearToBlueLaunchPadCommandGroup() : CommandGroup("REDGearToBlueLaunchPadCommandGroup"){
 		AddSequential(new ToggleCoastToBrakeCommand(false));
 		AddSequential(new DriveTrainZeroYawCommand());
 		AddSequential(new SetAngleOptimizedCommand(false));
 		AddSequential(new ShooterSetHoodCommand(false));
-		AddSequential(new SwerveModuleRotateToAngleCommand(90, false));
+		AddSequential(new SwerveModuleRotateToAngleCommand(90, false),.5);
 		AddSequential(new DriveTrainZeroDriveEncodersCommand());
 		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(94), false), 4);
@@ -47,8 +48,18 @@ public:
 		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(27), false), 2);
 		AddSequential(new GearFlickCommand());
 		AddSequential(new DriveTrainZeroDriveEncodersCommand());
-		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(-18), false), 2);
+		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(-30), false), 2);
+		AddSequential(new SetAngleOptimizedCommand(true));
+		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
+		AddSequential(new DriveTrainWaitForHeadingCommand(0));
+		AddSequential(new SetAngleOptimizedCommand(false));
+		AddSequential(new DriveTrainDisableGyroCorrectionCommand());
+		AddSequential(new SwerveModuleRotateToAngleCommand(90, false),.5);
+		AddSequential(new GearResetCommand());
+		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
+		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(277.4),false),6);
+		AddSequential(new RotateToAngleGyroCommand(120));
 	}
 };
 
-#endif  // REDPutGearOnBeforeShootTenBallsCommandGroup_H
+#endif  // REDGearToBlueLaunchPadCommandGroup_H
