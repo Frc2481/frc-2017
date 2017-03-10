@@ -2,27 +2,49 @@
 #include "IR_Commands.h"
 
 #define IR_PIN 3
+#define SWITCH_PIN 4
 
 elapsedMicros elapsedTime;
+bool m_prevState = false;
 
 void setup() {
  Serial1.begin(115200);
  Serial.begin(115200);
  delay(500);
  pinMode(IR_PIN,OUTPUT);  
+ pinMode(SWITCH_PIN, INPUT_PULLDOWN);
  pinMode(13,OUTPUT);
  digitalWrite(IR_PIN,HIGH);
  Serial.println("Starting");
+ delay(120000);
+ pressButton('p');
+ delay(1000);
+ pressButton('r');
+ delay(1000);
+ pressButton('m');
+ delay(2000);
+ pressButton('p');
 }
 
 void loop() {
-  if (Serial1.available()){
-    char incomingLetter = Serial1.read();
-    pressButton(incomingLetter);
-    Serial.println(incomingLetter);
-    digitalWrite(IR_PIN, HIGH);
-  }
-  delay(100);
+//  //if (Serial1.available()){
+//    char incomingLetter = Serial1.read();
+//    pressButton(incomingLetter);
+//    Serial.println(incomingLetter);
+//    digitalWrite(IR_PIN, HIGH);
+//  }
+//  delay(100);
+bool currentState = digitalRead(SWITCH_PIN);
+if(currentState && !m_prevState){
+  pressButton('p');
+  delay(1000);
+  pressButton('r');
+  delay(1000);
+  pressButton('m');
+  m_prevState = true;
+}
+m_prevState = currentState;
+delay(100);
 }
 
 void pressButton(char c) {

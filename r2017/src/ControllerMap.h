@@ -27,6 +27,8 @@
 //#define INC_OUR_GEAR_COUNTER			new AnalogJoystickButton(m_operatorStick, XB_LEFT_Y_AXIS, 0.5)
 #define SHOOTER_ON_BUTTON				new JoystickButton(m_operatorStick, XB_RIGHT_BUMPER)
 #define SHOOTER_OFF_BUTTON				new JoystickButton(m_operatorStick, XB_LEFT_BUMPER)
+#define GEAR_LID_BUTTON_OP				new JoystickButton(m_operatorStick, XB_A_BUTTON)
+#define FLICKER_GEAR_BUTTON_OP			new JoystickButton(m_operatorStick, XB_X_BUTTON)
 //#define LOADER_BUTTON					new JoystickButton(m_operatorStick, XB_B_BUTTON)
 //#define SHOOTER_TOGGLE_BUTTON			new JoystickButton(m_operatorStick, XB_A_BUTTON)
 #define INC_SHOOTER_BUTTON				new POVJoystickButton(m_operatorStick,0, XB_DPAD_TOP)

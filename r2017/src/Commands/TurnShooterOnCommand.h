@@ -11,8 +11,8 @@ public:
 		m_setpoint = setpoint;
 	}
 	void Initialize(){
-		if(m_superStructure->IsRaised()){
-			m_setpoint = 4275;
+		if(!m_superStructure->IsRaised()){
+			m_setpoint = 4350;
 		}
 		else{
 			m_setpoint = 4600;

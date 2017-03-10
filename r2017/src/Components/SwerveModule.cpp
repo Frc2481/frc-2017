@@ -24,7 +24,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_isSpeedPIDEnabled = false;
 	m_driveDistanceOffset = 0.0;
 	m_velocity = (RPM * ENCODER_REV_PER_WHEEL_REV) * .9;
-	m_accel = m_velocity / 1.233;
+	m_accel = (RPM * ENCODER_REV_PER_WHEEL_REV) / 1.233;
 	m_motionMagic = false;
 
 	m_driveMotor->SelectProfileSlot(0);
@@ -253,6 +253,11 @@ void SwerveModule::SetMagicBool(bool magic) {
 	m_motionMagic = magic;
 }
 
+void SwerveModule::SetMagicAccel(double accel) {
+	m_accel *= accel;
+	m_driveMotor->SetMotionMagicAcceleration(m_accel);
+}
+
 CANTalon* SwerveModule::GetMotor(CANTalonType motor) {
 	if(motor == SwerveModule::DRIVE_MOTOR){
 		return m_driveMotor;
@@ -271,4 +276,8 @@ void SwerveModule::SetSlaveMotor(int id) {
 void SwerveModule::ResetSlaveMotor() {
 	m_optimized = true;
 	m_driveMotor->SetControlMode(CANTalon::kPercentVbus);
+}
+
+bool SwerveModule::IsOnTarget(double angle) {
+	return fabs(RoboUtils::constrainDegNeg180To180(GetAngle()) - angle) <= 3;
 }

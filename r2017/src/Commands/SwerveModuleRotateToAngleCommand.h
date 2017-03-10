@@ -39,7 +39,7 @@ public:
 	}
 	void Execute(){}
 	bool IsFinished(){
-		return true;
+		return CommandBase::m_driveTrain->IsSteerOnTarget(m_angle);
 	}
 	void End(){}
 	void Interrupted(){}

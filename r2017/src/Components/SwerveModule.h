@@ -72,6 +72,9 @@ public:
 
 	void SetMotionMagic(double setpoint);
 	void SetMagicBool(bool magic);
+	void SetMagicAccel(double accel);
+
+	bool IsOnTarget(double angle);
 
 	CANTalon* GetMotor(enum CANTalonType motor);
 };

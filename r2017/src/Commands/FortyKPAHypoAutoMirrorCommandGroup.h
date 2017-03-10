@@ -11,6 +11,8 @@
 #include "Commands/TurnShooterOnCommand.h"
 #include "Commands/LoaderOnCommand.h"
 #include "Commands/HopperOnCommand.h"
+#include "Commands/ShooterSetHoodCommand.h"
+#include "Commands/DriveTrainSetAccelCommand.h"
 
 class FortyKPAHypoAutoMirrorCommandGroup : public CommandGroup {
 public:
@@ -18,20 +20,19 @@ public:
 		AddSequential(new ToggleCoastToBrakeCommand(false));
 		AddSequential(new DriveTrainZeroYawCommand());
 		AddSequential(new DriveTrainZeroDriveEncodersCommand());
+		AddSequential(new ShooterSetHoodCommand(true));
 		AddSequential(new TurnShooterOnCommand());
 		//AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new SetAngleOptimizedCommand(false));
-		AddSequential(new SwerveModuleRotateToAngleCommand(-17,false));
-		AddSequential(new WaitCommand(.2));
+		AddSequential(new SwerveModuleRotateToAngleCommand(-17,false), 3);
 		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
-		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(81), false), 3.0);
+		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(84), false), 3.0);
+		AddSequential(new DriveTrainSetAccelCommand(3));
 		AddSequential(new DriveTrainDisableGyroCorrectionCommand());
-		AddSequential(new SwerveModuleRotateToAngleCommand(270,false));
-		AddSequential(new WaitCommand(.3));
-		AddSequential(new DriveTrainEnableGyroCorrectionCommand(6));
-		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(10.5),true),.5);
+		AddSequential(new SwerveModuleRotateToAngleCommand(270,false), .5);
+		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
+		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(120),true),2.5);
 		AddSequential(new LoaderOnCommand());
-		AddSequential(new WaitCommand(.1));
 		AddSequential(new HopperOnCommand());
 		AddParallel(new SetAngleOptimizedCommand(true));
 		AddSequential(new ToggleCoastToBrakeCommand(true));

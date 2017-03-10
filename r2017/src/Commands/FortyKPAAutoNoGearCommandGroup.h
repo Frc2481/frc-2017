@@ -25,7 +25,6 @@ public:
 		//AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new SetAngleOptimizedCommand(false));
 		AddSequential(new SwerveModuleRotateToAngleCommand(0,false));
-		AddSequential(new WaitCommand(.2));
 		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(-(100-24)), false), 3.0);
 		AddSequential(new DriveTrainDisableGyroCorrectionCommand());
 		AddSequential(new SwerveModuleRotateToAngleCommand(270,false));

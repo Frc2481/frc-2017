@@ -14,7 +14,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_brWheel(new SwerveModule(BACK_RIGHT_DRIVE, BACK_RIGHT_STEER)),
 	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER)),
 	m_shifter(new Solenoid(SHIFTER)),
-	m_serialPort(new SerialPort(57600,SerialPort::kUSB)),
+	//m_serialPort(new SerialPort(57600,SerialPort::kUSB)),
 	m_imu(new AHRS(SerialPort::kMXP)),
 //		imu(new IMU(serialPort,update_rate_hz)),
 	m_isFieldCentric(false),
@@ -380,4 +380,16 @@ double DriveTrain::ComputeDriveDistanceInchestoEncoderRotations(double inches) {
 	final *= ENCODER_REV_PER_WHEEL_REV;
 	SmartDashboard::PutNumber("DistanceFromInches", final);
 	return final;
+}
+
+bool DriveTrain::IsSteerOnTarget(double angle) {
+	return m_flWheel->IsOnTarget(angle) && m_frWheel->IsOnTarget(angle)
+			&& m_blWheel->IsOnTarget(angle) && m_brWheel->IsOnTarget(angle);
+}
+
+void DriveTrain::SetMotionMagicAccel(double accel) {
+	m_flWheel->SetMagicAccel(accel);
+	m_frWheel->SetMagicAccel(accel);
+	m_blWheel->SetMagicAccel(accel);
+	m_brWheel->SetMagicAccel(accel);
 }
