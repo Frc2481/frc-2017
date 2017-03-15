@@ -231,6 +231,7 @@ void* VisionServer::ServerThread::runServerThread()
 					handleMessage(parsedMessage, 0);  //timestamp
 				}
 				it = std::find(m_recvBuf.begin(), m_recvBuf.end(), '\n');
+				delete parsedMessage;
 			}
 			m_recvBuf.resize(512);
 		}

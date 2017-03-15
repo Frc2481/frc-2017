@@ -17,7 +17,7 @@ private:
 public:
 	DriveTrainShiftCommand(bool shiftUp) :
 		InstantCommand("DriveTrainShiftCommand"), m_shiftUp(shiftUp) {
-			Requires(CommandBase::m_driveTrain.get());
+			//Requires(CommandBase::m_driveTrain.get());
 	}
 
 	void Initialize() {

@@ -17,12 +17,14 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_shooterMotor->SetClosedLoopOutputDirection(true);
 	m_shooterMotor->SelectProfileSlot(0);
 	m_shooterMotor->SetControlMode(CANTalon::kSpeed);
+//	m_shooterMotor->DisableNominalClosedLoopVoltage();
+//	m_shooterMotor->SetNominalClosedLoopVoltage(12.0f);
 //	m_shooterMotor->SetPID(0, 0, 0, 0);
 	m_shooterMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
 	m_shooterMotor->SetSensorDirection(true);
 	m_shooterMotor->ConfigPeakOutputVoltage(12,-12);
 //	m_shooterMotor->SetInverted(true);
-	m_loaderSpeed = .9;
+	m_loaderSpeed = 1;
 	m_loaderMotor->SetInverted(true);
 	m_loaderMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
 	m_onTargetCounter = 0;

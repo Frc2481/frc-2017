@@ -12,7 +12,7 @@ public:
 	static constexpr double kTrackLengthInches = 8.265;
 	static constexpr double kTrackWidthInches = 23.8;
 	static constexpr double kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;
-	static constexpr double kCameraPitchAngleDegrees = -20;
+	static constexpr double kCameraPitchAngleDegrees = -21; //Change back to -20 for real
 	static constexpr double kCameraYawAngleDegrees = 0.0;
 	static constexpr double kCenterOfTargetHeight = 13;
 	static constexpr double kCameraZOffset = 19;

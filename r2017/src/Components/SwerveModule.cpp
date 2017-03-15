@@ -24,8 +24,9 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_isSpeedPIDEnabled = false;
 	m_driveDistanceOffset = 0.0;
 	m_velocity = (RPM * ENCODER_REV_PER_WHEEL_REV) * .9;
-	m_accel = (RPM * ENCODER_REV_PER_WHEEL_REV) / 1.233;
+	m_accel = (RPM * ENCODER_REV_PER_WHEEL_REV) / 0.622; //OLD: 1.233
 	m_motionMagic = false;
+	m_angleSetpoint = 0;
 
 	m_driveMotor->SelectProfileSlot(0);
 	m_driveMotor->SetControlMode(CANTalon::kPercentVbus);
@@ -45,6 +46,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 
 	m_steerMotor->SelectProfileSlot(0);
 	m_steerMotor->SetControlMode(CANTalon::kPosition);
+	m_steerMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
 	m_steerMotor->SetPID(m_steerP, m_steerI, m_steerD);
 	m_steerMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Absolute);
 	m_steerMotor->SetSensorDirection(true);
@@ -189,6 +191,7 @@ void SwerveModule::SetClosedLoopSpeed(float speed) {
 
 void SwerveModule::SetAngle(float angle, bool forced) {
 	float currentAngle = GetAngle();
+	m_angleSetpoint = angle;
 
 		angle = RoboUtils::constrainDeg0To360(angle);
 		currentAngle = RoboUtils::constrainDeg0To360(currentAngle);
@@ -224,6 +227,7 @@ void SwerveModule::SetAngle(float angle, bool forced) {
 		else if (error > 2048){
 			angle += 4096;
 		}
+
 		m_steerMotor->SetSetpoint(angle / 4096.0);
 }
 
@@ -256,6 +260,10 @@ void SwerveModule::SetMagicBool(bool magic) {
 void SwerveModule::SetMagicAccel(double accel) {
 	m_accel *= accel;
 	m_driveMotor->SetMotionMagicAcceleration(m_accel);
+}
+
+double SwerveModule::GetAngleSetpoint() {
+	return m_angleSetpoint;
 }
 
 CANTalon* SwerveModule::GetMotor(CANTalonType motor) {

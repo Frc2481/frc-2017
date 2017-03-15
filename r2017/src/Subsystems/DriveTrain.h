@@ -90,6 +90,7 @@ public:
 	void PeriodicUpdate();
 	void SetBrake(bool brake);
 	void Shift(bool state);
+	bool IsShifted();
 	SwerveModule* GetModule(DriveTrain::SwerveModuleType module);
 	Rotation2D GetAngle();
 	void PerformMotionMagic(double setpoint);
@@ -109,6 +110,7 @@ public:
 	void ResetSlaveTalons();
 
 	void SetMotionMagicAccel(double accel);
+	double GetDriveDistance();
 
 	bool IsSteerOnTarget(double angle);
 };

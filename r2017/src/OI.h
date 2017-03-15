@@ -9,10 +9,11 @@ class OI
 private:
 	static const int DRIVE_STICK_PORT = 0;
 	static const int OPERATOR_STICK_PORT = 1;
-	Joystick* m_driverStick;
+	Joystick2481* m_driverStick;
 	Joystick* m_operatorStick;
 
 	Button* m_shifterButton;
+	Button* m_fieldCentricButton;
 	Button* m_flickerGearButton;
 	AnalogJoystickButton* m_climberButton;
 	Button* m_gearLidButton;
@@ -37,7 +38,7 @@ private:
 
 public:
 	OI();
-	Joystick* GetDriverStick();
+	Joystick2481* GetDriverStick();
 };
 
 #endif

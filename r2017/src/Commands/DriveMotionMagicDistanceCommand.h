@@ -3,12 +3,14 @@
 
 #include "../CommandBase.h"
 #include "RoboUtils.h"
+#include "utils/RobotChains.h"
 
 class DriveMotionMagicDistanceCommand : public CommandBase {
 protected:
 	double m_angle;
 	double m_distance;
 	bool m_sideways;
+	bool m_currentLoop;
 	SwerveModule* m_blWheel;
 	SwerveModule* m_brWheel;
 	SwerveModule* m_flWheel;
@@ -17,6 +19,7 @@ public:
 	DriveMotionMagicDistanceCommand(double distance, bool sideways) : CommandBase("DriveMotionMagicDistance"){
 		m_distance = distance;
 		m_sideways = sideways;
+		m_currentLoop = 0;
 		Requires(CommandBase::m_driveTrain.get());
 		m_blWheel = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE);
 		m_brWheel = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE);
@@ -24,21 +27,36 @@ public:
 		m_frWheel = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE);
 	}
 	void Initialize(){
+		m_currentLoop = 0;
 		m_driveTrain->PerformMotionMagic(m_distance);
-		m_angle = (RoboUtils::constrainDegNeg180To180(m_flWheel->GetAngle())
-				+ RoboUtils::constrainDegNeg180To180(m_frWheel->GetAngle())
-				+ RoboUtils::constrainDegNeg180To180(m_blWheel->GetAngle())
-				+ RoboUtils::constrainDegNeg180To180(m_brWheel->GetAngle())) / 4.0;
-		printf("FL Angle %f\n", RoboUtils::constrainDegNeg180To180(m_flWheel->GetAngle()));
-		printf("FR Angle %f\n", RoboUtils::constrainDegNeg180To180(m_frWheel->GetAngle()));
-		printf("BL Angle %f\n", RoboUtils::constrainDegNeg180To180(m_blWheel->GetAngle()));
+		m_angle = (RoboUtils::constrainDegNeg180To180(m_flWheel->GetAngleSetpoint())
+				+ RoboUtils::constrainDegNeg180To180(m_frWheel->GetAngleSetpoint())
+				+ RoboUtils::constrainDegNeg180To180(m_blWheel->GetAngleSetpoint())
+				+ RoboUtils::constrainDegNeg180To180(m_brWheel->GetAngleSetpoint())) / 4.0;
+		printf("FL Angle %f ", RoboUtils::constrainDegNeg180To180(m_flWheel->GetAngle()));
+		printf("FR Angle %f ", RoboUtils::constrainDegNeg180To180(m_frWheel->GetAngle()));
+		printf("BL Angle %f ", RoboUtils::constrainDegNeg180To180(m_blWheel->GetAngle()));
 		printf("BR Angle %f\n", RoboUtils::constrainDegNeg180To180(m_brWheel->GetAngle()));
 	}
 	void Execute(){
 		SmartDashboard::PutNumber("Wheel Angle", m_angle);
+		m_angle = (RoboUtils::constrainDegNeg180To180(m_flWheel->GetAngleSetpoint())
+				+ RoboUtils::constrainDegNeg180To180(m_frWheel->GetAngleSetpoint())
+				+ RoboUtils::constrainDegNeg180To180(m_blWheel->GetAngleSetpoint())
+				+ RoboUtils::constrainDegNeg180To180(m_brWheel->GetAngleSetpoint())) / 4.0;
 		if(CommandBase::m_driveTrain->IsGyroCorrection()){
 			CommandBase::m_driveTrain->Drive(sin((m_angle) * (M_PI/180)), -cos((m_angle) * (M_PI/180)), 0);
 			//CommandBase::m_driveTrain->Drive(-0.3, -0.95, 0);
+		}
+		if(m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent() > 45 ||
+			m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent() > 45 ||
+			m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent() > 45 ||
+			m_brWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent() > 45)
+		{
+			m_currentLoop++;
+		}
+		else{
+			m_currentLoop = 0;
 		}
 	}
 	bool IsFinished(){
@@ -46,7 +64,7 @@ public:
 		bool brIsOnTarget = fabs(m_brWheel->GetDistance() - CommandBase::m_driveTrain->GetMotionMagicSetpoint()) <= 0.3;
 		bool flIsOnTarget = fabs(m_flWheel->GetDistance() - CommandBase::m_driveTrain->GetMotionMagicSetpoint()) <= 0.3;
 		bool frIsOnTarget = fabs(m_frWheel->GetDistance() - CommandBase::m_driveTrain->GetMotionMagicSetpoint()) <= 0.3;
-		return flIsOnTarget || frIsOnTarget || blIsOnTarget || brIsOnTarget;
+		return flIsOnTarget || frIsOnTarget || blIsOnTarget || brIsOnTarget || m_currentLoop >= 5;
 	}
 	void End(){
 		printf("Target Drive Distance %f\n", m_distance);

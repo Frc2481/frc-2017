@@ -6,16 +6,18 @@
 class TurnShooterOnCommand : public CommandBase {
 private:
 	double m_setpoint;
+	int m_loopCount;
 public:
 	TurnShooterOnCommand(double setpoint = 0) : CommandBase("TurnShooterOnCommand"){
 		m_setpoint = setpoint;
+		m_loopCount = 0;
 	}
 	void Initialize(){
 		if(!m_superStructure->IsRaised()){
-			m_setpoint = 4350;
+			m_setpoint = 4350;//RED
 		}
 		else{
-			m_setpoint = 4600;
+			m_setpoint = 4600;//BLUE
 		}
 		m_superStructure->SetShooterSpeed(m_setpoint);
 	}
