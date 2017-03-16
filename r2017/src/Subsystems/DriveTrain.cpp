@@ -173,17 +173,19 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 		SmartDashboard::PutBoolean("GYRO Correction", m_gyroCorrection);
 //
 		twist = -twist;
-//		if (isFieldCentric) {
-//			heading = -gyroAngle;
-//			FWD = yPos * cos(heading * pi / 180) + xPos *sin(heading * pi / 180);
-//			STR = xPos * cos(heading * pi / 180) - yPos * sin(heading * pi / 180);
-//		}
-//		else {
-			twist = twist * .05;   //limit twist speed while not in field centric
+		if (m_isFieldCentric) {
+			m_heading = -gyroAngle;
+			FWD = yPos * std::cos(m_heading * M_PI / 180) + xPos *std::sin(m_heading * M_PI / 180);
+			STR = -(xPos * std::cos(m_heading * M_PI / 180) - yPos * std::sin(m_heading * M_PI / 180));
+			twist = twist * 0.1;
+		}
+		else {
+			  //limit twist speed while not in field centric
 			FWD = yPos;
 			STR = -xPos;
 			SmartDashboard::PutNumber("DriveTrain Twist", twist);
-//		}
+			twist = twist * .05;
+		}
 
 		if (m_isForward) {
 			FWD = -FWD;
@@ -392,4 +394,12 @@ void DriveTrain::SetMotionMagicAccel(double accel) {
 	m_frWheel->SetMagicAccel(accel);
 	m_blWheel->SetMagicAccel(accel);
 	m_brWheel->SetMagicAccel(accel);
+}
+
+double DriveTrain::GetDriveDistance() {
+	return fabs(m_flWheel->GetDistance());
+}
+
+bool DriveTrain::IsShifted() {
+	return m_shifter->Get();
 }

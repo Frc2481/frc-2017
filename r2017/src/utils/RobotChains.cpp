@@ -3,6 +3,9 @@
 
 RobotChains::RobotChains() : m_vehicleVelocity(0,0,0) {
 	reset(0, RigidTransform2D(), Rotation2D());
+	m_skewAngleMap.put(InterpolatingDouble(-12.58), InterpolatingDouble(-45));
+	m_skewAngleMap.put(InterpolatingDouble(-6.78),InterpolatingDouble(-30));
+	m_skewAngleMap.put(InterpolatingDouble(-1.838), InterpolatingDouble(-15));
 	m_skewAngleMap.put(InterpolatingDouble(-0.52),InterpolatingDouble(0));
 	m_skewAngleMap.put(InterpolatingDouble(1.838),InterpolatingDouble(15));
 	m_skewAngleMap.put(InterpolatingDouble(6.78),InterpolatingDouble(30));
@@ -91,14 +94,15 @@ void RobotChains::addVisionUpdateGear(double timeStamp, LiftTarget gearTarget) {
 	if (zPitch < 0) {
 		double scaling = m_differentialHeight / zPitch;
 		double distance = hypot(xPitch, yPitch) * scaling;
-		SmartDashboard::PutNumber("VisionUpdate Distance", distance);
-		m_distance = distance;
 		Rotation2D robotAngle = Rotation2D(xPitch, yPitch, true);
 		Rotation2D targetAngle = Rotation2D::fromDegrees(m_skewAngleMap.getInterpolated(gearTarget.GetSkew().getDegrees()).m_value);
-		SmartDashboard::PutNumber("AngleOfRobot", robotAngle.getDegrees());
+		m_distance = distance;
 		m_currentAngle = robotAngle.getDegrees();
-		SmartDashboard::PutNumber("AngleToTarget", gearTarget.GetSkew().getDegrees());
-		m_targetAngle = gearTarget.GetSkew().getDegrees();
+		m_targetAngle = targetAngle.getDegrees();
+		SmartDashboard::PutNumber("VisionUpdate Distance", m_distance);
+		SmartDashboard::PutNumber("AngleOfRobot", m_currentAngle);
+		SmartDashboard::PutNumber("AngleToTarget", m_targetAngle);
+
 		RigidTransform2D fieldToGoal = (fieldToCamera.transformBy(RigidTransform2D(
 			Translation2D(distance * robotAngle.getCos(), distance * robotAngle.getSin()),
 				targetAngle)));

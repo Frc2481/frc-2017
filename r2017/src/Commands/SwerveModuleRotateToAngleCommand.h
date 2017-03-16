@@ -13,7 +13,7 @@ private:
 	bool m_useParams;
 public:
 	SwerveModuleRotateToAngleCommand(double targetAngle, bool useAimingParams) : CommandBase("SwerveModuleRotateToAngleCommand"){
-		Requires(CommandBase::m_driveTrain.get());
+		//Requires(CommandBase::m_driveTrain.get());
 		m_angle = targetAngle;
 		m_useParams = useAimingParams;
 		m_flWheel = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE);

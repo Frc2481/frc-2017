@@ -21,14 +21,19 @@
 #include "Commands/IncTheirGearCounterCommand.h"
 #include "Commands/GearFlickCommand.h"
 #include "Commands/GearResetCommand.h"
+#include "Commands/SetFieldCentricCommand.h"
 
 OI::OI() {
-	m_driverStick = new Joystick(DRIVE_STICK_PORT);
+	m_driverStick = new Joystick2481(DRIVE_STICK_PORT);
 	m_operatorStick = new Joystick(OPERATOR_STICK_PORT);
 
 	m_shifterButton = SHIFTER_BUTTON;
 	m_shifterButton->WhenPressed(new DriveTrainShiftSequenceCommand(true));
 	m_shifterButton->WhenReleased(new DriveTrainShiftSequenceCommand(false));
+
+	m_fieldCentricButton = FIELD_CENTRIC_BUTTON;
+	m_fieldCentricButton->WhenPressed(new SetFieldCentricCommand(true));
+	m_fieldCentricButton->WhenReleased(new SetFieldCentricCommand(false));
 
 	m_flickerGearButton = FLICKER_GEAR_BUTTON;
 	m_flickerGearButton->WhenPressed(new GearFlickCommandGroup());
@@ -100,6 +105,6 @@ OI::OI() {
 
 }
 
-Joystick* OI::GetDriverStick(){
+Joystick2481* OI::GetDriverStick(){
 	return m_driverStick;
 }

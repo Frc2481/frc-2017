@@ -11,8 +11,10 @@
 #include "XboxController.h"
 #include "Components/AnalogJoystickButton.h"
 #include "Components/POVJoystickButton.h"
+#include "Components/Joystick2481.h"
 
 #define SHIFTER_BUTTON    				new JoystickButton(m_driverStick, XB_RIGHT_BUMPER)
+#define FIELD_CENTRIC_BUTTON			new JoystickButton(m_driverStick, XB_LEFT_BUMPER)
 #define FLICKER_GEAR_BUTTON				new JoystickButton(m_driverStick, XB_B_BUTTON)
 #define CLIMBER_BUTTON					new AnalogJoystickButton(m_driverStick, XB_RIGHT_TRIGGER, 0.5)
 #define GEAR_LID_BUTTON					new JoystickButton(m_driverStick, XB_X_BUTTON)

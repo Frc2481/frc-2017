@@ -26,6 +26,7 @@ private:
 	double m_velocity;
 	double m_accel;
 	bool m_motionMagic;
+	double m_angleSetpoint;
 
 public:
 	enum CANTalonType{
@@ -73,6 +74,7 @@ public:
 	void SetMotionMagic(double setpoint);
 	void SetMagicBool(bool magic);
 	void SetMagicAccel(double accel);
+	double GetAngleSetpoint();
 
 	bool IsOnTarget(double angle);
 

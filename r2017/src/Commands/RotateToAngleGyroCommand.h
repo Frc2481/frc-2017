@@ -2,6 +2,9 @@
 #define RotateToAngleGyroCommand_H
 
 #include "../CommandBase.h"
+#include "utils/InterpolatingDouble.h"
+#include "utils/InterpolatingMap.h"
+#include "utils/RobotChains.h"
 #include "RoboUtils.h"
 
 class RotateToAngleGyroCommand : public CommandBase {
@@ -31,12 +34,12 @@ public:
 	}
 	void Initialize(){
 		//m_angle = SmartDashboard::GetNumber("RotateToAngle Angle", 0.0);
-		m_p = -0.02;// = SmartDashboard::GetNumber("Gyro Rotation P",0.0);
+		m_p = /*-0.04;*/ SmartDashboard::GetNumber("Gyro Rotation P",0.0);
 //		if(m_p == 0.0){
 //			m_p = m_pMap.getInterpolated(InterpolatingDouble(fabs(m_angle - m_driveTrain->GetHeading()))).m_value;
 //		}
 		m_i = SmartDashboard::GetNumber("Gyro Rotation I", 0.0);
-		m_d = 1300;///*13 * m_p;*/SmartDashboard::GetNumber("Gyro Rotation D", 0.0);
+		m_d = /*200;*/SmartDashboard::GetNumber("Gyro Rotation D", 0.0);
 		m_prevTime = frc::GetFPGATime();
 	}
 	void Execute(){
@@ -90,9 +93,11 @@ public:
 		std::list<AimingParameters> params = RobotChains::getInstance()->getGearAimingParameters(time);
 		if(!m_skew){
 			m_angle = params.begin()->getRobotAngle();
+			m_prevError = m_angle;
 		}
 		else{
 			m_angle = params.begin()->getTargetAngle().getDegrees();
+			m_prevError = m_angle;
 		}
 		RotateToAngleGyroCommand::Initialize();
 	}
