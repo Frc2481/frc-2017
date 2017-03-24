@@ -27,6 +27,8 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_loaderSpeed = 1;
 	m_loaderMotor->SetInverted(true);
 	m_loaderMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
+	m_loaderMotor->SetVoltageRampRate(36);
+	m_hopperMotor->SetVoltageRampRate(36);
 	m_onTargetCounter = 0;
 	m_speed = 1;
 	m_shooterOffset = 0;
@@ -163,8 +165,10 @@ double SuperStructure::GetHopperCurrent() {
 
 void SuperStructure::IncShooterOffset() {
 	m_shooterOffset += 25;
+	SetShooterSpeed(4000);
 }
 
 void SuperStructure::DecShooterOffset() {
 	m_shooterOffset -= 25;
+	SetShooterSpeed(4000);
 }

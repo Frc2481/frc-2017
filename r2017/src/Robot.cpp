@@ -45,6 +45,7 @@
 #include "Commands/REDFortyKPACIRCommandGroup.h"
 #include "Commands/ShooterRampSpeedCommand.h"
 #include "Commands/SwerveModuleRotateToAngleCommand.h"
+#include "Commands/FortyKPA2826Red.h"
 
 class Robot: public IterativeRobot
 {
@@ -102,11 +103,13 @@ private:
 		chooser.AddObject("BLUE One Gear + 10 Ball", new BLUEPutGearOnBeforeShootTenBallsCommandGroup());
 		chooser.AddObject("RED Gear To Blue Launchpad", new REDGearToBlueLaunchPadCommandGroup());//NeedsTuning
 		chooser.AddObject("BLUE Gear To Red Launchpad", new BLUEGearToRedLaunchPadCommandGroup());
+		chooser.AddObject("2826 forty Red", new FortyKPA2826Red());
 		//chooser.AddObject("RED Right Gear to Hopper", new FollowGearPathCommandGroup());
 		chooser.AddObject("Middle Gear Only", new MiddleGearAutoCommandGroup());
 
 		SmartDashboard::PutData(new BLUEFortyBeforeCIR());
 		SmartDashboard::PutData(new REDFortyKPACIRCommandGroup());
+		SmartDashboard::PutData(new FortyKPA2826Red());
 
 		SmartDashboard::PutData("Autonomous Chooser", &chooser);
 
