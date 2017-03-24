@@ -1,5 +1,5 @@
-#ifndef BLUEFortyBeforeCIR_H
-#define BLUEFortyBeforeCIR_H
+#ifndef FortyKPA2826Red_H
+#define FortyKPA2826Red_H
 
 #include <Commands/CommandGroup.h>
 #include "Commands/ToggleCoastToBrakeCommand.h"
@@ -20,22 +20,23 @@
 #include "Commands/FireBallsAtSpeedCommand.h"
 #include "Commands/SetClosedLoopErrorCommand.h"
 
-class BLUEFortyBeforeCIR : public CommandGroup {
+class FortyKPA2826Red : public CommandGroup {
 public:
-	BLUEFortyBeforeCIR() : CommandGroup("BLUEFortyBeforeCIR"){
+	FortyKPA2826Red() : CommandGroup("FortyKPA2826Red"){
+		AddSequential(new WaitCommand(.75));
 		AddSequential(new ToggleCoastToBrakeCommand(false));
 		AddSequential(new DriveTrainZeroYawCommand());
-		AddSequential(new DriveTrainZeroDriveEncodersCommand());
 		AddSequential(new SetClosedLoopErrorCommand());
+		AddSequential(new DriveTrainZeroDriveEncodersCommand());
 		AddSequential(new GearCloseLidCommand());
-		AddSequential(new ShooterSetHoodCommand(true));
-		AddSequential(new TurnShooterOnCommand(4100));
+		AddSequential(new ShooterSetHoodCommand(false));
+		AddSequential(new TurnShooterOnCommand(4250));
 		//AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new SetAngleOptimizedCommand(false));
-		AddSequential(new SwerveModuleRotateToAngleCommand(-17,false), .6);
+		AddSequential(new SwerveModuleRotateToAngleCommand(-163,false), .6);
 		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
-		AddParallel(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(100), false), 3);
-		AddSequential(new DriveTrainWaitForEncoderDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(72)), 5);
+		AddParallel(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(110), false), 3);
+		AddSequential(new DriveTrainWaitForEncoderDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(70)), 3);
 		AddSequential(new SwerveModuleRotateToAngleCommand(270,false), .6);
 		AddSequential(new DriveTrainDisableGyroCorrectionCommand());
 		AddSequential(new SetAngleOptimizedCommand(true));
@@ -43,4 +44,4 @@ public:
 	}
 };
 
-#endif  // BLUEFortyBeforeCIR_H
+#endif  // FortyKPA2826Red_H

@@ -29,13 +29,13 @@ public:
 		AddSequential(new DriveTrainZeroDriveEncodersCommand());
 		AddSequential(new GearCloseLidCommand());
 		AddSequential(new ShooterSetHoodCommand(false));
-		AddSequential(new TurnShooterOnCommand());
+		AddSequential(new TurnShooterOnCommand(4275));
 		//AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new SetAngleOptimizedCommand(false));
 		AddSequential(new SwerveModuleRotateToAngleCommand(-163,false), .6);
 		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
-		AddParallel(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(100), false), 3);
-		AddSequential(new DriveTrainWaitForEncoderDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(72.5)), 3);
+		AddParallel(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(110), false), 3);
+		AddSequential(new DriveTrainWaitForEncoderDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(70)), 3);
 		AddSequential(new SwerveModuleRotateToAngleCommand(270,false), .6);
 		AddSequential(new DriveTrainDisableGyroCorrectionCommand());
 		AddSequential(new SetAngleOptimizedCommand(true));

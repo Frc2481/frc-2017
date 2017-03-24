@@ -13,13 +13,16 @@ public:
 		m_loopCount = 0;
 	}
 	void Initialize(){
-		if(!m_superStructure->IsRaised()){
-			m_setpoint = 4350;//RED
+		double setpoint = m_setpoint;
+		if(m_setpoint < 1){
+			if(!m_superStructure->IsRaised()){
+				setpoint = 4250;
+			}
+			else{
+				setpoint = 4100;
+			}
 		}
-		else{
-			m_setpoint = 4600;//BLUE
-		}
-		m_superStructure->SetShooterSpeed(m_setpoint);
+		m_superStructure->SetShooterSpeed(setpoint);
 	}
 	void Execute(){}
 	bool IsFinished(){
