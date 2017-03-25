@@ -30,7 +30,7 @@ public:
 private:
 	void saveAndApplyEncoderOffset(DriveTrain::SwerveModuleType module, const std::string& key){
 		SwerveModule* swerveModule= CommandBase::m_driveTrain->GetModule(module);
-		float temp = swerveModule->GetRawAngle();
+		float temp = RoboUtils::constrainDeg0To360(swerveModule->GetRawAngle());//verify 0 to 360 not -180 to 180
 		swerveModule->SetOffset(temp);
 		PersistedSettings::GetInstance().Set(key.c_str(),temp);
 	}
