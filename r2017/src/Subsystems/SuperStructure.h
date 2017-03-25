@@ -22,8 +22,8 @@ private:
 	double m_loaderSpeed;
 	int m_onTargetCounter;
 	double m_speed;
-	double m_shooterOffset;
 	double m_shooterSpeed;
+	bool m_hoodRaised;
 
 public:
 	SuperStructure();
