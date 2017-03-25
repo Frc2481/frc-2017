@@ -43,10 +43,8 @@ SuperStructure::~SuperStructure(){
 
 void SuperStructure::TurnShooterOn(){
 	m_shooterMotor->Enable();
-	double targetSpeed = SmartDashboard::GetNumber("Shooter Setpoint", 0.0);
-	SetShooterSetpoint(targetSpeed);
-	printf("Shooter setpoint: %f\n", targetSpeed);
-	printf("Shooter P: %f, I: %f, d: %f\n", m_shooterMotor->GetP(), m_shooterMotor->GetI(), m_shooterMotor->GetP());
+	m_shooterMotor->SetControlMode(CANTalon::kSpeed);
+	m_shooterMotor->Set(m_shooterSpeed);
 }
 
 void SuperStructure::TurnShooterOff(){
@@ -141,13 +139,11 @@ bool SuperStructure::IsRaised() {
 }
 
 void SuperStructure::SetShooterSpeed(double speed) {
-	m_shooterMotor->Enable();
-	m_shooterMotor->SetControlMode(CANTalon::kSpeed);
-	double total = speed + m_shooterOffset;
-	SmartDashboard::PutNumber("Shooter Setpoint Speed", total);
-	m_shooterMotor->Set(total);
-//	m_shooterMotor->Enable();
-//	printf("PID enabled\n");
+	m_shooterSpeed = speed;
+	SmartDashboard::PutNumber("Shooter Setpoint Speed", m_shooterSpeed);
+	if (m_shooterMotor->IsEnabled()) {
+		m_shooterMotor->Set(m_shooterSpeed);
+	}
 }
 
 void SuperStructure::SetShooterSpeedOpenLoop(double speed) {
@@ -163,12 +159,12 @@ double SuperStructure::GetHopperCurrent() {
 	return m_hopperMotor->GetOutputCurrent();
 }
 
-void SuperStructure::IncShooterOffset() {
-	m_shooterOffset += 25;
-	SetShooterSpeed(4000);
+void SuperStructure::IncShooterSpeed() {
+	m_shooterSpeed += 25;
+	SetShooterSpeed(m_shooterSpeed);
 }
 
-void SuperStructure::DecShooterOffset() {
-	m_shooterOffset -= 25;
-	SetShooterSpeed(4000);
+void SuperStructure::DecShooterSpeed() {
+	m_shooterSpeed -= 25;
+	SetShooterSpeed(m_shooterSpeed);
 }

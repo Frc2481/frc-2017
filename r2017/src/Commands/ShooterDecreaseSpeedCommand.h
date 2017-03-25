@@ -17,7 +17,7 @@ public:
 	}
 
 	void Initialize(){
-		CommandBase::m_superStructure->DecShooterOffset();
+		CommandBase::m_superStructure->DecShooterSpeed();
 	}
 };
 

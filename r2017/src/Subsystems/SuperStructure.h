@@ -23,6 +23,7 @@ private:
 	int m_onTargetCounter;
 	double m_speed;
 	double m_shooterOffset;
+	double m_shooterSpeed;
 
 public:
 	SuperStructure();
@@ -52,8 +53,8 @@ public:
 	void SetShooterSpeedOpenLoop(double speed);
 	void SetShooterControlMode(CANTalon::ControlMode mode);
 	double GetHopperCurrent();
-	void IncShooterOffset();
-	void DecShooterOffset();
+	void IncShooterSpeed();
+	void DecShooterSpeed();
 };
 
 #endif /* SRC_SUBSYSTEMS_SUPERSTRUCTURE_H_ */

@@ -22,6 +22,7 @@
 #include "Commands/HopperOffCommand.h"
 #include "Commands/PauseCommand.h"
 #include "Commands/DriveTrainWaitForHeadingCommand.h"
+#include "Commands/SetShooterSpeedCommand.h"
 
 class OneGearTenBallAuto : public CommandGroup {
 public:
@@ -29,6 +30,7 @@ public:
 		AddSequential(new SetAngleOptimizedCommand(false));
 		AddSequential(new ToggleCoastToBrakeCommand(false));
 		AddSequential(new DriveTrainZeroYawCommand());
+		AddSequential(new SetShooterSpeedCommand(4100));
 		AddSequential(new TurnShooterOnCommand());
 
 		AddSequential(new SwerveModuleRotateToAngleCommand(270, false));
