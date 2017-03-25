@@ -53,7 +53,6 @@ private:
 	std::unique_ptr<Command> autonomousCommand;
 	std::unique_ptr<Command> birdEyeSetupCommand;
 	frc::SendableChooser<Command*> chooser;
-	std::unique_ptr<Compressor> pcm;
 	std::unique_ptr<PowerDistributionPanel> pdp;
 	VisionProcessor* m_visionProcessor = VisionProcessor::GetInstance();
 	VisionServer* m_visionServer;
@@ -73,8 +72,6 @@ private:
 		CommandBase::m_driveTrain->SetLengthAndWidth(ROBOT_LENGTH, ROBOT_WIDTH);
 		VisionProcessor::GetInstance()->OnStart();
 		RobotChainLooper::GetInstance()->OnStart();
-		pcm.reset(new Compressor());
-		pcm->SetClosedLoopControl(true);
 		pdp.reset(new PowerDistributionPanel());
 		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);

@@ -17,6 +17,7 @@ public:
 	}
 
 	void Initialize() {
+		CommandBase::m_airCompressor->Start();
 		CommandBase::m_superStructure->TurnShooterOff();
 	}
 };
