@@ -33,10 +33,11 @@ public:
 				+ RoboUtils::constrainDegNeg180To180(m_frWheel->GetAngleSetpoint())
 				+ RoboUtils::constrainDegNeg180To180(m_blWheel->GetAngleSetpoint())
 				+ RoboUtils::constrainDegNeg180To180(m_brWheel->GetAngleSetpoint())) / 4.0;
-		printf("FL Angle %f ", RoboUtils::constrainDegNeg180To180(m_flWheel->GetAngle()));
-		printf("FR Angle %f ", RoboUtils::constrainDegNeg180To180(m_frWheel->GetAngle()));
-		printf("BL Angle %f ", RoboUtils::constrainDegNeg180To180(m_blWheel->GetAngle()));
-		printf("BR Angle %f\n", RoboUtils::constrainDegNeg180To180(m_brWheel->GetAngle()));
+		printf("FL Angle %f FR Angle %f BL Angle %f BR Angle %f\n",
+			RoboUtils::constrainDegNeg180To180(m_flWheel->GetAngle()),
+			RoboUtils::constrainDegNeg180To180(m_frWheel->GetAngle()),
+			RoboUtils::constrainDegNeg180To180(m_blWheel->GetAngle()),
+			RoboUtils::constrainDegNeg180To180(m_brWheel->GetAngle()));
 	}
 	void Execute(){
 		SmartDashboard::PutNumber("Wheel Angle", m_angle);
@@ -67,8 +68,7 @@ public:
 		return flIsOnTarget || frIsOnTarget || blIsOnTarget || brIsOnTarget || m_currentLoop >= 5;
 	}
 	void End(){
-		printf("Target Drive Distance %f\n", m_distance);
-		printf("Real Drive Distance %f\n", m_blWheel->GetDistance());
+		printf("Target Drive Distance %f Real Drive Distance %f\n", m_distance, m_blWheel->GetDistance());
 		m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetControlMode(CANTalon::kPercentVbus);
 		m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetControlMode(CANTalon::kPercentVbus);
 		m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetControlMode(CANTalon::kPercentVbus);
