@@ -7,6 +7,7 @@ std::unique_ptr<Climber> CommandBase::m_climber;
 std::unique_ptr<GearFlicker> CommandBase::m_gearFlicker;
 std::unique_ptr<Intake> CommandBase::m_intake;
 std::unique_ptr<SuperStructure> CommandBase::m_superStructure;
+std::unique_ptr<AirCompressor> CommandBase::m_airCompressor;
 std::unique_ptr<OI> CommandBase::oi;
 bool CommandBase::m_pause;
 
@@ -30,6 +31,7 @@ void CommandBase::init()
 	m_gearFlicker.reset(new GearFlicker());
 	m_intake.reset(new Intake());
 	m_superStructure.reset(new SuperStructure());
+	m_airCompressor.reset(new AirCompressor());
 
 	m_pause = false;
 

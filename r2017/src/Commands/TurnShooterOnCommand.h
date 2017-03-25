@@ -13,6 +13,7 @@ public:
 		m_loopCount = 0;
 	}
 	void Initialize(){
+		m_airCompressor->Stop();
 		double setpoint = m_setpoint;
 		if(m_setpoint < 1){
 			if(!m_superStructure->IsRaised()){
