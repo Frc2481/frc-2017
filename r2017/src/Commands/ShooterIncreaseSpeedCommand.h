@@ -17,7 +17,7 @@ public:
 	}
 
 	void Initialize(){
-		CommandBase::m_superStructure->IncShooterOffset();
+		CommandBase::m_superStructure->IncShooterSpeed();
 	}
 };
 

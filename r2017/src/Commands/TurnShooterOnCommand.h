@@ -2,36 +2,14 @@
 #define TurnShooterOnCommand_H
 
 #include "../CommandBase.h"
+#include "Commands/InstantCommand.h"
 
-class TurnShooterOnCommand : public CommandBase {
-private:
-	double m_setpoint;
-	int m_loopCount;
+class TurnShooterOnCommand : public InstantCommand {
 public:
-	TurnShooterOnCommand(double setpoint = 0) : CommandBase("TurnShooterOnCommand"){
-		m_setpoint = setpoint;
-		m_loopCount = 0;
-	}
+	TurnShooterOnCommand() : InstantCommand("TurnShooterOnCommand"){}
 	void Initialize(){
-		m_airCompressor->Stop();
-		double setpoint = m_setpoint;
-		if(m_setpoint < 1){
-			if(!m_superStructure->IsRaised()){
-				setpoint = 4250;
-			}
-			else{
-				setpoint = 4100;
-			}
-		}
-		m_superStructure->SetShooterSpeed(setpoint);
-	}
-	void Execute(){}
-	bool IsFinished(){
-		return true;
-	}
-	void End(){}
-	void Interrupted(){
-		End();
+		CommandBase::m_airCompressor->Stop();
+		CommandBase::m_superStructure->TurnShooterOn();
 	}
 };
 

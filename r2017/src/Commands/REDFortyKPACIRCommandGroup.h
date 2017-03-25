@@ -19,6 +19,7 @@
 #include "Commands/ShooterRampSpeedCommand.h"
 #include "Commands/FireBallsAtSpeedCommand.h"
 #include "Commands/SetClosedLoopErrorCommand.h"
+#include "Commands/SetShooterSpeedCommand.h"
 
 class REDFortyKPACIRCommandGroup : public CommandGroup {
 public:
@@ -29,7 +30,8 @@ public:
 		AddSequential(new DriveTrainZeroDriveEncodersCommand());
 		AddSequential(new GearCloseLidCommand());
 		AddSequential(new ShooterSetHoodCommand(false));
-		AddSequential(new TurnShooterOnCommand(4275));
+		AddSequential(new SetShooterSpeedCommand(4275));
+		AddSequential(new TurnShooterOnCommand());
 		//AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new SetAngleOptimizedCommand(false));
 		AddSequential(new SwerveModuleRotateToAngleCommand(-163,false), .6);

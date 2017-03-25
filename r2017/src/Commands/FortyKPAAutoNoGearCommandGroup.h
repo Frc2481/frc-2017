@@ -15,6 +15,7 @@
 #include "Commands/WaitCommand.h"
 #include "Commands/HopperOnCommand.h"
 #include "Commands/ShooterOffCommand.h"
+#include "Commands/SetShooterSpeedCommand.h"
 
 class FortyKPAAutoNoGearCommandGroup : public CommandGroup {
 public:
@@ -28,7 +29,8 @@ public:
 		AddSequential(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(-(100-24)), false), 3.0);
 		AddSequential(new DriveTrainDisableGyroCorrectionCommand());
 		AddSequential(new SwerveModuleRotateToAngleCommand(270,false));
-		AddSequential(new TurnShooterOnCommand(4275));
+		AddSequential(new SetShooterSpeedCommand(4275));
+		AddSequential(new TurnShooterOnCommand());
 		AddSequential(new WaitCommand(.3));
 		//AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new DriveTrainZeroDriveEncodersCommand());

@@ -19,6 +19,7 @@
 #include "Commands/ShooterRampSpeedCommand.h"
 #include "Commands/FireBallsAtSpeedCommand.h"
 #include "Commands/SetClosedLoopErrorCommand.h"
+#include "Commands/SetShooterSpeedCommand.h"
 
 class BLUEFortyBeforeCIR : public CommandGroup {
 public:
@@ -29,7 +30,8 @@ public:
 		AddSequential(new SetClosedLoopErrorCommand());
 		AddSequential(new GearCloseLidCommand());
 		AddSequential(new ShooterSetHoodCommand(true));
-		AddSequential(new TurnShooterOnCommand(4100));
+		AddSequential(new SetShooterSpeedCommand(4100));
+		AddSequential(new TurnShooterOnCommand());
 		//AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new SetAngleOptimizedCommand(false));
 		AddSequential(new SwerveModuleRotateToAngleCommand(-17,false), .6);
