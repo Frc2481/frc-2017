@@ -18,6 +18,8 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_shooterMotor->SelectProfileSlot(0);
 	m_shooterMotor->SetControlMode(CANTalon::kSpeed);
 //	m_shooterMotor->DisableNominalClosedLoopVoltage();
+//	m_shooterMotor->SetNominalClosedLoopVoltage(12);
+//	m_shooterMotor->DisableNominalClosedLoopVoltage();
 //	m_shooterMotor->SetNominalClosedLoopVoltage(12.0f);
 //	m_shooterMotor->SetPID(0, 0, 0, 0);
 	m_shooterMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
@@ -31,7 +33,8 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_hopperMotor->SetVoltageRampRate(36);
 	m_onTargetCounter = 0;
 	m_speed = 1;
-	m_shooterOffset = 0;
+	m_shooterSpeed = 4000;
+	m_hoodRaised = false;
 }
 
 SuperStructure::~SuperStructure(){
@@ -57,6 +60,8 @@ void SuperStructure::SetShooterSetpoint(double setpoint) {
 
 void SuperStructure::SetPID(double p, double i, double d) {
 	m_shooterMotor->SetPID(p, i, d);
+	//I 0.000125
+	//I zone 200
 }
 
 double SuperStructure::GetP() {
@@ -125,17 +130,19 @@ double SuperStructure::GetSpeed(){
 }
 
 void SuperStructure::RaiseHood() {
+	m_hoodRaised = true;
 	m_hoodSolenoid->Set(true);
 	m_hoodSolenoid2->Set(false);
 }
 
 void SuperStructure::LowerHood() {
+	m_hoodRaised = false;
 	m_hoodSolenoid->Set(false);
 	m_hoodSolenoid2->Set(true);
 }
 
 bool SuperStructure::IsRaised() {
-	return m_hoodSolenoid->Get();
+	return m_hoodRaised;
 }
 
 void SuperStructure::SetShooterSpeed(double speed) {
