@@ -20,6 +20,10 @@ Looper::~Looper() {
 }
 
 void Looper::Start() {
+	if(!m_started){
+		m_thread = std::thread(&Looper::Loop, this);
+		m_started = true;
+	}
 	OnStart();
 }
 

@@ -61,22 +61,18 @@ void RobotChainLooper::OnLoop() {
 }
 
 void RobotChainLooper::OnStart() {
-	if(!Looper::m_started){
-		frModule = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE);
-		flModule = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE);
-		brModule = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE);
-		blModule = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE);
-		m_flPrevDistance = flModule->GetDistance();
-		m_frPrevDistance = frModule->GetDistance();
-		m_blPrevDistance = blModule->GetDistance();
-		m_brPrevDistance = brModule->GetDistance();
-		m_flPrevRotation = flModule->GetAngle();
-		m_frPrevRotation = frModule->GetAngle();
-		m_blPrevRotation = blModule->GetAngle();
-		m_brPrevRotation = brModule->GetAngle();
-		Looper::m_thread = std::thread(&RobotChainLooper::Loop, this);
-		m_started = true;
-	}
+	frModule = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE);
+	flModule = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE);
+	brModule = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE);
+	blModule = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE);
+	m_flPrevDistance = flModule->GetDistance();
+	m_frPrevDistance = frModule->GetDistance();
+	m_blPrevDistance = blModule->GetDistance();
+	m_brPrevDistance = brModule->GetDistance();
+	m_flPrevRotation = flModule->GetAngle();
+	m_frPrevRotation = frModule->GetAngle();
+	m_blPrevRotation = blModule->GetAngle();
+	m_brPrevRotation = brModule->GetAngle();
 }
 
 void RobotChainLooper::OnStop() {

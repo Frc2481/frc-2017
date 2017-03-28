@@ -17,11 +17,7 @@ VisionProcessor::~VisionProcessor() {
 	// TODO Auto-generated destructor stub
 }
 
-void VisionProcessor::OnStart() {
-	if(!Looper::m_started){
-		Looper::m_thread = std::thread(&VisionProcessor::LoopMe, this);
-	}
-}
+void VisionProcessor::OnStart() {}
 
 void VisionProcessor::OnLoop() {
 	if(!m_processed){

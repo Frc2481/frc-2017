@@ -45,6 +45,7 @@
 #include "Commands/REDFortyKPACIRCommandGroup.h"
 #include "Commands/ShooterRampSpeedCommand.h"
 #include "Commands/SwerveModuleRotateToAngleCommand.h"
+#include "Commands/TestMotionProfileCreationCommand.h"
 
 class Robot: public IterativeRobot
 {
@@ -115,6 +116,8 @@ private:
 		SmartDashboard::PutData(new ResumeCommand());
 
 		SmartDashboard::PutData(new DriveTrainShiftCommand(true));
+
+		SmartDashboard::PutData(new TestMotionProfileCreationCommand());
 
 		SmartDashboard::PutData(new ShooterRampSpeedCommand(5000, 4500, 2.5));
 		SmartDashboard::PutData(new ShooterIncreaseSpeedCommand());
