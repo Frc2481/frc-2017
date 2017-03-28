@@ -10,6 +10,7 @@
 
 #include <Commands/Subsystem.h>
 #include <Components/SwerveModule.h>
+#include "Loops/TrajectoryFollowerLooper.h"
 
 class DriveTrain : public Subsystem {
 private:
@@ -44,6 +45,8 @@ private:
 	bool m_isForward;
 	bool m_gyroCorrection;
 	double m_XPos, m_YPos, m_Twist;
+
+	TrajectoryFollowerLooper *m_trajectoryFollower;
 
 public:
 	enum SwerveModuleType{
@@ -113,6 +116,8 @@ public:
 	double GetDriveDistance();
 
 	bool IsSteerOnTarget(double angle);
+
+	void SetFollowerActive(bool active);
 };
 
 #endif  // DriveTrain_H

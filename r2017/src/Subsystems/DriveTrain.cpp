@@ -17,6 +17,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	//m_serialPort(new SerialPort(57600,SerialPort::kUSB)),
 	m_imu(new AHRS(SerialPort::kMXP)),
 //		imu(new IMU(serialPort,update_rate_hz)),
+	m_trajectoryFollower(new TrajectoryFollowerLooper(5000, this)),
 	m_isFieldCentric(false),
 	m_isForward(true),
 	m_XPos(0), m_YPos(0), m_Twist(0) {
@@ -39,6 +40,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 		Wait(0.3);
 			imu->ZeroYaw();
 	}*/
+	m_trajectoryFollower->Start();
 	printf("Post DriveTrain Constructor \n");
 }
 
@@ -402,4 +404,8 @@ double DriveTrain::GetDriveDistance() {
 
 bool DriveTrain::IsShifted() {
 	return m_shifter->Get();
+}
+
+void DriveTrain::SetFollowerActive(bool active) {
+	m_trajectoryFollower->SetActive(active);
 }
