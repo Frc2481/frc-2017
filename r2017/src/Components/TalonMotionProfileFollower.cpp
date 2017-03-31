@@ -7,13 +7,18 @@
 
 #include "Components/TalonMotionProfileFollower.h"
 #include "Instrumentation.h"
+#include <fstream>
+#include <cstring>
+#include <strstream>
 
-TalonMotionProfileFollower::TalonMotionProfileFollower(CANTalon *talon) {
+TalonMotionProfileFollower::TalonMotionProfileFollower(CANTalon *talon, const std::string talonName, int pidSlot) {
 	m_talon = talon;
 	m_talon->ChangeMotionControlFramePeriod(5);
+	m_pidSlot = pidSlot;
 	m_loopTimeout = 0;
 	m_debug = false;
 	m_started = false;
+	m_talonName = talonName;
 }
 
 TalonMotionProfileFollower::~TalonMotionProfileFollower() {
@@ -33,6 +38,14 @@ void TalonMotionProfileFollower::Periodic() {
 	}
 
 	if(m_started){
+		SmartDashboard::PutNumber("TalonError", m_status.activePoint.velocity - m_talon->GetSpeed());
+		m_outFile << frc::GetFPGATime() << ","
+				<< m_talon->GetClosedLoopError() << ","
+				<< m_talon->GetPosition() << ","
+				<< m_status.activePoint.position << ","
+				<< m_talon->GetSpeed() << ","
+				<< m_status.activePoint.velocity << "\n";
+
 		if(m_status.isUnderrun == false){
 			m_loopTimeout = kNumLoopsTimeout;
 		}
@@ -40,6 +53,7 @@ void TalonMotionProfileFollower::Periodic() {
 			m_loopTimeout = -1;
 			m_started = false;
 			m_talon->Set(CANTalon::SetValueMotionProfileHold);
+			m_outFile.close();
 		}
 	}
 	if(m_debug){
@@ -48,12 +62,21 @@ void TalonMotionProfileFollower::Periodic() {
 }
 
 void TalonMotionProfileFollower::LoadPath(const double profile[][3], int count) {
+	std::stringstream ss;
+	ss << "/home/lvuser/MP" << m_talonName << frc::GetFPGATime() << ".csv";
+	m_outFile.open(ss.str().c_str());
+	m_outFile << "Current Time" << ","
+			<< "ClosedLoopError" << ","
+			<< "Current Pos" << ","
+			<< "Target Pos" << ","
+			<< "Current Speed" << ","
+			<< "Target Speed" << ",\n";
 	CANTalon::TrajectoryPoint point;
 	if(m_status.hasUnderrun){
 		if(m_debug){
 			instrumentation::OnUnderrun();
-			m_talon->ClearMotionProfileHasUnderrun();
 		}
+		m_talon->ClearMotionProfileHasUnderrun();
 	}
 	m_talon->ClearMotionProfileTrajectories();
 	m_talon->SetControlMode(CANSpeedController::kMotionProfile);
@@ -62,7 +85,7 @@ void TalonMotionProfileFollower::LoadPath(const double profile[][3], int count) 
 		point.position = profile[i][0];
 		point.velocity = profile[i][1];
 		point.timeDurMs = (int)profile[i][2];
-		point.profileSlotSelect = 0;
+		point.profileSlotSelect = m_pidSlot;
 		point.velocityOnly = false;
 		point.zeroPos = i == 0;
 		point.isLastPoint = i + 1 == count;

@@ -6,8 +6,8 @@
 		#define CLIMBER_MOTOR 13
 
 //DriveTrain
-		#define FRONT_LEFT_DRIVE 0//3
-		#define FRONT_LEFT_STEER 4//4
+		#define FRONT_LEFT_DRIVE 0
+		#define FRONT_LEFT_STEER 4
 		#define FRONT_RIGHT_DRIVE 1//5
 		#define FRONT_RIGHT_STEER 5//6
 		#define BACK_LEFT_DRIVE 15//1

@@ -41,6 +41,10 @@ void TrajectoryFollowerLooper::OnStart() {
 void TrajectoryFollowerLooper::OnStop() {
 }
 
-void TrajectoryFollowerLooper::SetActive(bool active) {
-	Looper::SetActive(active);
+void TrajectoryFollowerLooper::Enable() {
+	SetActive(true);
+}
+
+void TrajectoryFollowerLooper::Disable() {
+	SetActive(false);
 }

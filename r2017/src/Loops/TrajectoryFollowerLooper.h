@@ -31,7 +31,8 @@ public:
 	void OnStart();
 	void OnLoop();
 	void OnStop();
-	void SetActive(bool active);
+	void Enable();
+	void Disable();
 };
 
 #endif /* SRC_LOOPS_TRAJECTORYFOLLOWERLOOPER_H_ */

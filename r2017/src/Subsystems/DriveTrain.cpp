@@ -406,6 +406,10 @@ bool DriveTrain::IsShifted() {
 	return m_shifter->Get();
 }
 
-void DriveTrain::SetFollowerActive(bool active) {
-	m_trajectoryFollower->SetActive(active);
+void DriveTrain::EnableFollower() {
+	m_trajectoryFollower->Enable();
+}
+
+void DriveTrain::DisableFollower() {
+	m_trajectoryFollower->Disable();
 }
