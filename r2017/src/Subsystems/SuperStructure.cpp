@@ -21,7 +21,9 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 //	m_shooterMotor->SetNominalClosedLoopVoltage(12);
 //	m_shooterMotor->DisableNominalClosedLoopVoltage();
 //	m_shooterMotor->SetNominalClosedLoopVoltage(12.0f);
-//	m_shooterMotor->SetPID(0, 0, 0, 0);
+	m_shooterMotor->SetPID(0.025, 0.0025, 0.0);
+	m_shooterMotor->SetF(0.026);
+	m_shooterMotor->SetIzone(200);
 	m_shooterMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
 	m_shooterMotor->SetSensorDirection(true);
 	m_shooterMotor->ConfigPeakOutputVoltage(12,-12);

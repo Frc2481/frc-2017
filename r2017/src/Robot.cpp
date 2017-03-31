@@ -46,6 +46,8 @@
 #include "Commands/ShooterRampSpeedCommand.h"
 #include "Commands/SwerveModuleRotateToAngleCommand.h"
 #include "Commands/TestMotionProfileCreationCommand.h"
+#include "Commands/TimeSteerMotorAccelAndDecelCommandGroup.h"
+#include "Commands/SwerveModuleNominalVoltageCommand.h"
 
 class Robot: public IterativeRobot
 {
@@ -159,6 +161,9 @@ private:
 		SmartDashboard::PutNumber("Gyro Rotation D", 0.0);
 
 		SmartDashboard::PutNumber("RotateToAngle Angle", 0.0);
+
+		SmartDashboard::PutData(new TimeSteerMotorAccelAndDecelCommandGroup());
+		SmartDashboard::PutData(new SwerveModuleNominalVoltageCommand());
 	}
 
 	/**
@@ -268,7 +273,7 @@ private:
 		SmartDashboard::PutNumber("DriveTrain Distance", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetDistance());
 		SmartDashboard::PutNumber("Drive Velocity", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetSpeed());
 		SmartDashboard::PutNumber("GetFLClosedLoopError", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
-				GetMotor(SwerveModule::DRIVE_MOTOR)->GetClosedLoopError());
+				GetMotor(SwerveModule::STEER_MOTOR)->GetClosedLoopError());
 		SmartDashboard::PutNumber("GetFLPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
 				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
 		SmartDashboard::PutNumber("GetFRPosition",CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->

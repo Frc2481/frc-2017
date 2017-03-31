@@ -78,6 +78,8 @@ public:
 
 	bool IsOnTarget(double angle);
 
+	void SetOpenLoopSteerSpeed(double speed);
+
 	CANTalon* GetMotor(enum CANTalonType motor);
 };
 

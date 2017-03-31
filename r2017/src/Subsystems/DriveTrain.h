@@ -117,7 +117,8 @@ public:
 
 	bool IsSteerOnTarget(double angle);
 
-	void SetFollowerActive(bool active);
+	void EnableFollower();
+	void DisableFollower();
 };
 
 #endif  // DriveTrain_H

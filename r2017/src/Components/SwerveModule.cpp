@@ -15,9 +15,9 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_prevAngle = 0;
 	m_offset = 0;
 	m_optimized = true;
-	m_speedP = 0.5;
-	m_speedI = 0;
-	m_speedD = 0;
+	m_speedP = 1;
+	m_speedI = 0.0005;
+	m_speedD = 10;
 	m_steerP = 3;
 	m_steerI = 0;
 	m_steerD = 40;
@@ -30,7 +30,9 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 
 	m_driveMotor->SelectProfileSlot(0);
 	m_driveMotor->SetControlMode(CANTalon::kPercentVbus);
-	//m_driveMotor->SetPID(m_speedP, m_speedI, m_speedD);
+	m_driveMotor->SetPID(m_speedP, m_speedI, m_speedD);
+	m_driveMotor->SetF(0.1722);
+	m_driveMotor->SetIzone(200);
 	m_driveMotor->SetFeedbackDevice(CANTalon::QuadEncoder);
 	m_driveMotor->SetSensorDirection(true);
 	m_driveMotor->SetClosedLoopOutputDirection(true);
@@ -44,7 +46,8 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 
 	m_driveMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
 
-	m_steerMotor->SelectProfileSlot(0);
+	m_steerMotor->SelectProfileSlot(0); //Profile 1 PIDf are P = 0.2 f = 1.1
+	m_steerMotor->ConfigNominalOutputVoltage(0,0);
 	m_steerMotor->SetControlMode(CANTalon::kPosition);
 	m_steerMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
 	m_steerMotor->SetPID(m_steerP, m_steerI, m_steerD);
@@ -55,6 +58,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerMotor->Enable();
 	m_steerMotor->SetAllowableClosedLoopErr(40);
 	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
+	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateGeneral, 10);
 }
 
 SwerveModule::~SwerveModule() {
@@ -288,4 +292,9 @@ void SwerveModule::ResetSlaveMotor() {
 
 bool SwerveModule::IsOnTarget(double angle) {
 	return fabs(RoboUtils::constrainDegNeg180To180(GetAngle()) - angle) <= 3;
+}
+
+void SwerveModule::SetOpenLoopSteerSpeed(double speed) {
+	m_steerMotor->SetControlMode(CANTalon::kPercentVbus);
+	m_steerMotor->Set(speed);
 }
