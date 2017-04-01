@@ -10,7 +10,7 @@
 
 #include <Commands/Subsystem.h>
 #include <Components/SwerveModule.h>
-#include "Loops/TrajectoryFollowerLooper.h"
+#include "Components/Loops/TrajectoryFollowerLooper.h"
 
 class DriveTrain : public Subsystem {
 private:

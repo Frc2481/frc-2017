@@ -5,7 +5,7 @@
  *      Author: Team2481
  */
 
-#include <Loops/TrajectoryFollowerLooper.h>
+#include <Components/Loops/TrajectoryFollowerLooper.h>
 #include "Components/TrajectoryFollower.h"
 #include "Subsystems/DriveTrain.h"
 

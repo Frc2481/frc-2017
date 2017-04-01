@@ -9,6 +9,7 @@
 #include "utils/Translation2D.h"
 #include "utils/Rotation2D.h"
 #include <math.h>
+#include "CANTalon.h"
 
 MotionProfileConverter::MotionProfileConverter(double interval) {
 	// TODO Auto-generated constructor stub
@@ -19,21 +20,26 @@ MotionProfileConverter::~MotionProfileConverter() {
 	// TODO Auto-generated destructor stub
 }
 
-void MotionProfileConverter::ConvertDrive(double input[][3], double output[][3], int size) {
-	for(int i=0; i<size; i++){
-		double distance = Translation2D(input[i][0], input[i][1]).norm();
-		output[i][0] = distance;
-		output[i][1] = distance / m_timeSegment;
-		output[i][2] = m_timeSegment;
+void MotionProfileConverter::ConvertDrive(std::vector<double*>* input, CANTalon::TrajectoryPoint* output, int size) {
+	double distance = 0;
+	for(int i=0; i<size-1; i++){
+		double deltaDistance = Translation2D(input->at(i+1)[0] - input->at(i)[0], input->at(i+1)[1] - input->at(i)[1]).norm();
+		distance += deltaDistance;
+		output[i].position = distance;
+		output[i].velocity = (deltaDistance / m_timeSegment) * 60;
+		output[i].timeDurMs = m_timeSegment * 1000;
+		//printf("%f\t%f\t%f\t%f\t%f\n", input->at(i)[0], input->at(i)[1], input->at(i+1)[0], input->at(i+1)[1], deltaDistance);
 	}
 }
 
-void MotionProfileConverter::ConvertSteer(double input[][3], double output[][3], int size) {
-	for(int i=0; i<size; i++){
+void MotionProfileConverter::ConvertSteer(std::vector<double*>* input, CANTalon::TrajectoryPoint* output, int size) {
+	for(int i=0; i<size-1; i++){
 		//TODO: Rotate deltaAngle by RobotAngle
-		Rotation2D deltaAngle = Rotation2D(input[i+1][0] - input[i][0], input[i+1][1] - input[i][1], false);
-		output[i][0] = deltaAngle.getDegrees() - input[i][3];
-		output[i][1] = 0;//deltaAngle.getDegrees() / m_timeSegment;
-		output[i][2] = m_timeSegment;
+		Rotation2D deltaAngle = Rotation2D(input->at(i+1)[0] - input->at(i)[0], input->at(i+1)[1] - input->at(i)[1], false);
+		output[i].position = (deltaAngle.getDegrees() - input->at(i)[2]) / 360.0;
+		output[i].velocity = 0;//deltaAngle.getDegrees() / m_timeSegment;
+		output[i].timeDurMs = m_timeSegment * 1000;
+		//printf("%f\t%f\t%f\t%f\t%f\t%f\n", input->at(i)[0], input->at(i)[1], input->at(i+1)[0], input->at(i+1)[1], deltaAngle.getDegrees(), output[i].position);
+
 	}
 }

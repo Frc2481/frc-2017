@@ -3,7 +3,7 @@
 
 #include "../CommandBase.h"
 #include "Commands/InstantCommand.h"
-#include "Loops/VisionProcessor.h"
+#include "Components/Loops/VisionProcessor.h"
 #include "Vision/VisionUpdate.h"
 
 class ToggleOptimizedCommand : public Command {

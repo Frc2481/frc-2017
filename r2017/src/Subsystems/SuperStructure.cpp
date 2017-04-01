@@ -10,8 +10,8 @@
 
 SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_shooterMotor = new CANTalon(SHOOTER_MOTOR);
-	m_loaderMotor = new CANTalon(LOADER_MOTOR);
-	m_hopperMotor = new CANTalon(HOPPER_MOTOR);
+	m_loaderMotor = new CANTalon(LOADER_MOTOR, 100);
+	m_hopperMotor = new CANTalon(HOPPER_MOTOR, 100);
 	m_hoodSolenoid = new Solenoid(HOOD_SOLENOID);
 	m_hoodSolenoid2 = new Solenoid(HOOD_SOLENOID_2);
 	m_shooterMotor->SetClosedLoopOutputDirection(true);
@@ -37,6 +37,24 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_speed = 1;
 	m_shooterSpeed = 4000;
 	m_hoodRaised = false;
+
+	m_loaderMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateAnalogTempVbat, 500);
+	m_loaderMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 500);
+	m_loaderMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateGeneral, 500);
+	m_loaderMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRatePulseWidthMeas, 500);
+	m_loaderMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateQuadEncoder, 500);
+
+	m_shooterMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateAnalogTempVbat, 500);
+	m_shooterMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 500);
+	m_shooterMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateGeneral, 500);
+	m_shooterMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRatePulseWidthMeas, 500);
+	m_shooterMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateQuadEncoder, 500);
+
+	m_hopperMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateAnalogTempVbat, 500);
+	m_hopperMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 500);
+	m_hopperMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateGeneral, 500);
+	m_hopperMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRatePulseWidthMeas, 500);
+	m_hopperMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateQuadEncoder, 500);
 }
 
 SuperStructure::~SuperStructure(){

@@ -81,6 +81,9 @@ public:
 	void SetOpenLoopSteerSpeed(double speed);
 
 	CANTalon* GetMotor(enum CANTalonType motor);
+
+	double GetVelocity();
+	double GetAcceleration();
 };
 
 #endif /*SWERVEMODULE_H_*/

@@ -8,14 +8,17 @@
 #ifndef SRC_COMPONENTS_MOTIONPROFILECONVERTER_H_
 #define SRC_COMPONENTS_MOTIONPROFILECONVERTER_H_
 
+#include <vector>
+#include "CANTalon.h"
+
 class MotionProfileConverter {
 private:
 	double m_timeSegment;
 public:
 	MotionProfileConverter(double interval);
 	virtual ~MotionProfileConverter();
-	void ConvertDrive(double input[][3], double output[][3], int size);
-	void ConvertSteer(double input[][3], double output[][3], int size);
+	void ConvertDrive(std::vector<double*>* input, CANTalon::TrajectoryPoint* output, int size);
+	void ConvertSteer(std::vector<double*>* input, CANTalon::TrajectoryPoint* output, int size);
 };
 
 #endif /* SRC_COMPONENTS_MOTIONPROFILECONVERTER_H_ */

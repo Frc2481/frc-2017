@@ -5,7 +5,7 @@
  *      Author: Team2481
  */
 
-#include <Loops/VisionProcessor.h>
+#include <Components/Loops/VisionProcessor.h>
 #include "Vision/TargetInfo.h"
 
 VisionProcessor::VisionProcessor() : Looper(10000), m_processed(false), m_eligible(false){

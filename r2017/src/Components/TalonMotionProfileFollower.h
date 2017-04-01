@@ -20,6 +20,7 @@ private:
 	int m_loopTimeout;
 	bool m_debug;
 	bool m_started;
+	bool m_writeCSV;
 	static const int kNumLoopsTimeout = 10;
 	static const int kMinPointsInTalon = 5;
 public:
@@ -27,6 +28,7 @@ public:
 	virtual ~TalonMotionProfileFollower();
 	void Periodic();
 	void LoadPath(const double profile[][3], int count);
+	void LoadPath(CANTalon::TrajectoryPoint* profile, int count);
 	void RunPath();
 	bool IsReady();
 	bool IsTimedOut();
