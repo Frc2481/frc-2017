@@ -51,6 +51,10 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerMotor->SetControlMode(CANTalon::kPosition);
 	m_steerMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
 	m_steerMotor->SetPID(m_steerP, m_steerI, m_steerD);
+	m_steerMotor->SelectProfileSlot(1);
+	m_steerMotor->SetPID(0.2,0.0,0.0);
+	m_steerMotor->SetF(1.1);
+	m_steerMotor->SelectProfileSlot(0);
 	m_steerMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Absolute);
 	m_steerMotor->SetSensorDirection(true);
 	m_steerMotor->SetClosedLoopOutputDirection(false);
@@ -58,7 +62,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerMotor->Enable();
 	m_steerMotor->SetAllowableClosedLoopErr(40);
 	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
-	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateGeneral, 10);
+//	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateGeneral, 10);
 }
 
 SwerveModule::~SwerveModule() {
@@ -297,4 +301,12 @@ bool SwerveModule::IsOnTarget(double angle) {
 void SwerveModule::SetOpenLoopSteerSpeed(double speed) {
 	m_steerMotor->SetControlMode(CANTalon::kPercentVbus);
 	m_steerMotor->Set(speed);
+}
+
+double SwerveModule::GetVelocity() {
+	return m_velocity;
+}
+
+double SwerveModule::GetAcceleration() {
+	return m_accel;
 }

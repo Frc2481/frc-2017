@@ -25,8 +25,8 @@
 #include "Commands/FortyKPAAutoNoGearCommandGroup.h"
 #include "Commands/FortyKPAHypoAutoCommandGroup.h"
 #include "Commands/FortyKPAHypoAutoMirrorCommandGroup.h"
-#include "Loops/VisionProcessor.h"
-#include "Loops/RobotChainLooper.h"
+#include "Components/Loops/VisionProcessor.h"
+#include "Components/Loops/RobotChainLooper.h"
 #include "Vision/VisionServer.h"
 #include "Commands/BirdEyeDelayedSetupCommandGroup.h"
 #include "Components/Looper.h"
@@ -48,6 +48,8 @@
 #include "Commands/TestMotionProfileCreationCommand.h"
 #include "Commands/TimeSteerMotorAccelAndDecelCommandGroup.h"
 #include "Commands/SwerveModuleNominalVoltageCommand.h"
+#include "Commands/TestPathPlannerProfilesCommand.h"
+#include "Commands/TestJoshProfilesToTalonProfilesCommand.h"
 
 class Robot: public IterativeRobot
 {
@@ -120,6 +122,8 @@ private:
 		SmartDashboard::PutData(new DriveTrainShiftCommand(true));
 
 		SmartDashboard::PutData(new TestMotionProfileCreationCommand());
+		SmartDashboard::PutData(new TestPathPlannerProfilesCommand());
+		SmartDashboard::PutData(new TestJoshProfilesToTalonProfilesCommand());
 
 		SmartDashboard::PutData(new ShooterRampSpeedCommand(5000, 4500, 2.5));
 		SmartDashboard::PutData(new ShooterIncreaseSpeedCommand());

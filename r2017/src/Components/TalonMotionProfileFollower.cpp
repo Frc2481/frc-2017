@@ -19,6 +19,7 @@ TalonMotionProfileFollower::TalonMotionProfileFollower(CANTalon *talon, const st
 	m_debug = false;
 	m_started = false;
 	m_talonName = talonName;
+	m_writeCSV = false;
 }
 
 TalonMotionProfileFollower::~TalonMotionProfileFollower() {
@@ -39,12 +40,14 @@ void TalonMotionProfileFollower::Periodic() {
 
 	if(m_started){
 		SmartDashboard::PutNumber("TalonError", m_status.activePoint.velocity - m_talon->GetSpeed());
-		m_outFile << frc::GetFPGATime() << ","
+		if(m_writeCSV) {
+			m_outFile << frc::GetFPGATime() << ","
 				<< m_talon->GetClosedLoopError() << ","
 				<< m_talon->GetPosition() << ","
 				<< m_status.activePoint.position << ","
 				<< m_talon->GetSpeed() << ","
 				<< m_status.activePoint.velocity << "\n";
+		}
 
 		if(m_status.isUnderrun == false){
 			m_loopTimeout = kNumLoopsTimeout;
@@ -53,7 +56,10 @@ void TalonMotionProfileFollower::Periodic() {
 			m_loopTimeout = -1;
 			m_started = false;
 			m_talon->Set(CANTalon::SetValueMotionProfileHold);
-			m_outFile.close();
+			if(m_writeCSV)
+				m_outFile.close();
+			m_talon->SetEncPosition(0);
+			m_talon->ChangeMotionControlFramePeriod(100);
 		}
 	}
 	if(m_debug){
@@ -62,15 +68,18 @@ void TalonMotionProfileFollower::Periodic() {
 }
 
 void TalonMotionProfileFollower::LoadPath(const double profile[][3], int count) {
-	std::stringstream ss;
-	ss << "/home/lvuser/MP" << m_talonName << frc::GetFPGATime() << ".csv";
-	m_outFile.open(ss.str().c_str());
-	m_outFile << "Current Time" << ","
-			<< "ClosedLoopError" << ","
-			<< "Current Pos" << ","
-			<< "Target Pos" << ","
-			<< "Current Speed" << ","
-			<< "Target Speed" << ",\n";
+	if(m_writeCSV)
+	{
+		std::stringstream ss;
+		ss << "/home/lvuser/MP" << m_talonName << frc::GetFPGATime() << ".csv";
+		m_outFile.open(ss.str().c_str());
+		m_outFile << "Current Time" << ","
+				<< "ClosedLoopError" << ","
+				<< "Current Pos" << ","
+				<< "Target Pos" << ","
+				<< "Current Speed" << ","
+				<< "Target Speed" << ",\n";
+	}
 	CANTalon::TrajectoryPoint point;
 	if(m_status.hasUnderrun){
 		if(m_debug){
@@ -92,6 +101,40 @@ void TalonMotionProfileFollower::LoadPath(const double profile[][3], int count) 
 		m_talon->PushMotionProfileTrajectory(point);
 	}
 	m_loopTimeout = kNumLoopsTimeout;
+	m_talon->SetEncPosition(0);
+}
+
+void TalonMotionProfileFollower::LoadPath(CANTalon::TrajectoryPoint* profile, int count) {
+	if(m_writeCSV)
+	{
+		std::stringstream ss;
+		ss << "/home/lvuser/MP" << m_talonName << frc::GetFPGATime() << ".csv";
+		m_outFile.open(ss.str().c_str());
+		m_outFile << "Current Time" << ","
+				<< "ClosedLoopError" << ","
+				<< "Current Pos" << ","
+				<< "Target Pos" << ","
+				<< "Current Speed" << ","
+				<< "Target Speed" << ",\n";
+	}
+	if(m_status.hasUnderrun){
+		if(m_debug){
+			instrumentation::OnUnderrun();
+		}
+		m_talon->ClearMotionProfileHasUnderrun();
+	}
+	m_talon->ClearMotionProfileTrajectories();
+	m_talon->SetControlMode(CANSpeedController::kMotionProfile);
+	m_talon->Set(CANTalon::SetValueMotionProfileDisable);
+	for(int i = 0; i < count; i++) {
+		//printf("%f\t %f\n", profile[i].position, profile[i].velocity);
+		profile[i].profileSlotSelect = m_pidSlot;
+		profile[i].velocityOnly = false;
+		profile[i].zeroPos = i == 0;
+		profile[i].isLastPoint = i + 1 == count;
+		m_talon->PushMotionProfileTrajectory(profile[i]);
+	}
+	m_loopTimeout = kNumLoopsTimeout;
 }
 
 bool TalonMotionProfileFollower::IsReady() {
@@ -109,5 +152,6 @@ bool TalonMotionProfileFollower::IsTimedOut() {
 }
 
 bool TalonMotionProfileFollower::IsFinished() {
+	printf("%d %d %d\n", m_loopTimeout, m_status.activePointValid, m_status.activePoint.isLastPoint);
 	return m_loopTimeout == -1 && m_status.activePointValid && m_status.activePoint.isLastPoint;
 }

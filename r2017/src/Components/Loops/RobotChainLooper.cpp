@@ -5,7 +5,7 @@
  *      Author: Team2481
  */
 
-#include <Loops/RobotChainLooper.h>
+#include <Components/Loops/RobotChainLooper.h>
 #include <utils/RobotChains.h>
 
 RobotChainLooper::RobotChainLooper() : Looper(10000) {
