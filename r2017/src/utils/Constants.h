@@ -12,12 +12,18 @@ public:
 	static constexpr double kTrackLengthInches = 8.265;
 	static constexpr double kTrackWidthInches = 23.8;
 	static constexpr double kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;
-	static constexpr double kCameraPitchAngleDegrees = -21; //Change back to -20 for real
-	static constexpr double kCameraYawAngleDegrees = 0.0;
-	static constexpr double kCenterOfTargetHeight = 13;
-	static constexpr double kCameraZOffset = 19;
-	static constexpr double kCameraXOffset = 13;
-	static constexpr double kCameraYOffset = 0.0; //Maybe Wrong
+	static constexpr double kGearCameraPitchAngleDegrees = -21; //Change back to -20 for real
+	static constexpr double kGearCameraYawAngleDegrees = 0.0;
+	static constexpr double kBoilerCameraPitchAngleDegrees = -21; //Change back to -20 for real
+	static constexpr double kBoilerCameraYawAngleDegrees = 0.0;
+	static constexpr double kGearCenterOfTargetHeight = 13;
+	static constexpr double kBoilerCenterOfTargetHeight = 13; //change
+	static constexpr double kGearCameraZOffset = 19;
+	static constexpr double kBoilerCameraZOffset = 19; //change
+	static constexpr double kGearCameraXOffset = 13;
+	static constexpr double kBoilerCameraXOffset = 13; //change
+	static constexpr double kGearCameraYOffset = 0.0; //Maybe Wrong
+	static constexpr double kBoilerCameraYOffset = 0.0; //Maybe Wrong
 	static constexpr double kTurretXOffset = -7.376; //Probably Wrong
 	static constexpr double kTurretYOffset = 0.0; //Maybe Wrong
 	static constexpr double kTurretAngleOffsetDegrees = 0.0;
@@ -27,6 +33,5 @@ public:
 	static constexpr double kGearCameraWidth = 3000; //tune
 	static constexpr double kBoilerYPosThreshold = 20.0; //tune
 	static constexpr double kBoilerZPosThreshold = 100.0; //tune
-
 };
 	

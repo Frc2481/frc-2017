@@ -24,9 +24,12 @@ private:
 	RigidTransform2D kVehicleToGearFlickerFixed;
 	Rotation2D m_angle;
 	std::recursive_mutex m_mutex;
-	double m_currentAngle;
-	double m_targetAngle;
-	double m_distance;
+	double m_gearCurrentAngle;
+	double m_gearTargetAngle;
+	double m_gearDistance;
+	double m_boilerCurrentAngle;
+	double m_boilerTargetAngle;
+	double m_boilerDistance;
 
 protected:
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_fieldToVehicle;
@@ -34,9 +37,13 @@ protected:
 	InterpolatingMap<InterpolatingDouble, Rotation2D> m_turretRotation;
 	GoalTracker m_goalLiftTracker;
 	GoalTracker m_goalBoilerTracker;
-	Rotation2D m_cameraPitchCorrection;
-	Rotation2D m_cameraYawCorrection;
-	double m_differentialHeight;
+	Rotation2D m_gearCameraPitchCorrection;
+	Rotation2D m_gearCameraYawCorrection;
+	Rotation2D m_boilerCameraPitchCorrection;
+	Rotation2D m_boilerCameraYawCorrection;
+	double m_gearDifferentialHeight;
+	double m_boilerDifferentialHeight;
+
 public:
 	//static RobotState getInstance();
 	const int kObservationBufferSize = 100;
@@ -54,7 +61,9 @@ public:
 	void addObservations(double timeStamp, RigidTransform2D field_to_vehicle,/* Rotation2D turret_rotation,*/ RigidTransform2D::Delta velocity);
 	void addVisionUpdate(double timeStamp, TargetInfo visionUpdate);
 	void addVisionUpdateGear(double timeStamp, LiftTarget gearTarget);
+	void addVisionUpdateBoiler(double timeStamp, TargetInfo boilerTarget);
 	std::list<AimingParameters> getGearAimingParameters(double currentTimeStamp); //std::comparator);
+	std::list<AimingParameters> getBoilerAimingParameters(double currentTimeStamp);
 	std::list<RigidTransform2D> getCaptureTimeFieldToGoal();
 	Rotation2D getLatestTurretRotation();
 	RigidTransform2D getLatestFieldToVehicle();
