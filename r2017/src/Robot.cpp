@@ -28,6 +28,7 @@
 #include "Loops/VisionProcessor.h"
 #include "Loops/RobotChainLooper.h"
 #include "Vision/VisionServer.h"
+#include "Loops/BoilerVisionLooper.h"
 #include "Commands/BirdEyeDelayedSetupCommandGroup.h"
 #include "Components/Looper.h"
 #include "Commands/DriveToCameraTargetCommandGroup.h"
@@ -65,8 +66,10 @@ private:
 		birdEyeSetupCommand.reset(new BirdEyeDelayedSetupCommandGroup());
 		birdEyeSetupCommand->Start();
 		//m_visionServer = new VisionServer("8254");
-		m_visionServer = new VisionServer("8254");
-		m_visionServer->addVisionUpdateReceiver(VisionProcessor::GetInstance());
+//		m_visionServer = new VisionServer("8254");
+//		m_visionServer->addVisionUpdateReceiver(VisionProcessor::GetInstance());
+		BoilerVisionLooper::GetInstance()->addVisionUpdateReceiver(VisionProcessor::GetInstance());
+		BoilerVisionLooper::GetInstance()->Start();
 		VisionProcessor::GetInstance()->SetActive(true);
 		RobotChainLooper::GetInstance()->SetActive(true);
 		SmartDashboard::PutData("Scheduler", m_scheduler->GetInstance());

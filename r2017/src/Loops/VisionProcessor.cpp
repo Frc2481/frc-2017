@@ -49,11 +49,13 @@ void VisionProcessor::OnLoop() {
 						LiftTarget gearTarget(leftTarget, rightTarget);
 						RobotChains::getInstance()->addVisionUpdateGear(update.getCapturedAtTimestamp(), gearTarget);
 					}
-//					else if(fabs(deltaZ) < Constants::kBoilerZPosThreshold &&
-//							fabs(deltaY) < Constants::kBoilerYPosThreshold){
-//						TargetInfo boilerTarget(iit, jit);
-//						RobotChains::getInstance()->addVisionUpdateBoiler(update.getCapturedAtTimestamp(), boilerTarget);
-//					}
+					else if(fabs(deltaY) < Constants::kBoilerYPosThreshold){
+						TargetInfo &boilerTarget = *iit;
+						if(jit->getZ() > iit->getZ()){
+							boilerTarget = *jit;
+						}
+						RobotChains::getInstance()->addVisionUpdateBoiler(update.getCapturedAtTimestamp(), boilerTarget);
+					}
 				}
 			}
 		}
@@ -73,6 +75,7 @@ VisionProcessor* VisionProcessor::GetInstance() {
 }
 
 void VisionProcessor::gotUpdate(VisionUpdate update) {
+	std::lock_guard<std::mutex> lk(m_mutex);
 	m_updatecounter++;
 	SmartDashboard::PutNumber("GotUpdate Counter", m_updatecounter);
 	m_update = update;
