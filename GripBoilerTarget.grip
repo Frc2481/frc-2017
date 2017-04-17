@@ -1,120 +1,107 @@
 <grip:Pipeline>
   <sources>
-    <grip:MultiImageFile>
-      <property name="path[31]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH150ftD0Angle0Brightness.jpg"/>
-      <property name="path[2]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH3ftD2Angle0Brightness.jpg"/>
-      <property name="path[5]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH4ftD1Angle0Brightness.jpg"/>
-      <property name="path[8]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH5ftD1Angle0Brightness.jpg"/>
-      <property name="path[20]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH9ftD2Angle0Brightness.jpg"/>
-      <property name="path[23]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH10ftD2Angle0Brightness.jpg"/>
-      <property name="path[26]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH11ftD3Angle0Brightness.jpg"/>
-      <property name="path[29]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH13ftD3Angle0Brightness.jpg"/>
-      <property name="path[12]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH6ftD3Angle0Brightness.jpg"/>
-      <property name="path[15]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH7ftD3Angle0Brightness.jpg"/>
-      <property name="index" value="27"/>
-      <property name="path[18]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH8ftD3Angle0Brightness.jpg"/>
-      <property name="path[0]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH2ftD0Angle0Brightness.jpg"/>
-      <property name="path[3]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH3ftD3Angle0Brightness.jpg"/>
-      <property name="path[6]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH4ftD2Angle0Brightness.jpg"/>
-      <property name="path[9]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH5ftD2Angle0Brightness.jpg"/>
-      <property name="path[21]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH9ftD3Angle0Brightness.jpg"/>
-      <property name="path[24]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH10ftD3Angle0Brightness.jpg"/>
-      <property name="path[27]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH12ftD2Angle0Brightness.jpg"/>
-      <property name="path[10]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH5ftD3Angle0Brightness.jpg"/>
-      <property name="path[13]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH7ftD1Angle0Brightness.jpg"/>
-      <property name="path[16]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH8ftD1Angle0Brightness.jpg"/>
-      <property name="path[19]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH9ftD1Angle0Brightness.jpg"/>
-      <property name="numImages" value="32"/>
-      <property name="path[30]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH14ftD3Angle0Brightness.jpg"/>
-      <property name="path[1]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH3ftD0Angle0Brightness.jpg"/>
-      <property name="path[4]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH4ftD0Angle0Brightness.jpg"/>
-      <property name="path[7]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH4ftD3Angle0Brightness.jpg"/>
-      <property name="path[22]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH10ftD1Angle0Brightness.jpg"/>
-      <property name="path[25]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH11ftD2Angle0Brightness.jpg"/>
-      <property name="path[28]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH12ftD3Angle0Brightness.jpg"/>
-      <property name="path[11]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH6ftD1Angle0Brightness.jpg"/>
-      <property name="path[14]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH7ftD2Angle0Brightness.jpg"/>
-      <property name="path[17]" value="C:\Users\FIRSTMentor\Downloads\2017VisionExample (2)\Vision Images\LED Boiler\1ftH8ftD2Angle0Brightness.jpg"/>
-    </grip:MultiImageFile>
+    <grip:ImageFile>
+      <property name="path" value="C:\Users\Team2481\Downloads\2017VisionExample\Vision Images\LED Boiler\1ftH2ftD0Angle0Brightness - Copy - Copy.jpg"/>
+    </grip:ImageFile>
+    <grip:ImageFile>
+      <property name="path" value="C:\Users\Team2481\Documents\CameraInput.jpg"/>
+    </grip:ImageFile>
   </sources>
   <steps>
-    <grip:Step name="HSV Threshold">
+    <grip:Step name="Resize Image">
       <grip:Input step="0" socket="0"/>
       <grip:Input step="0" socket="1">
+        <value>320.0</value>
+      </grip:Input>
+      <grip:Input step="0" socket="2">
+        <value>240.0</value>
+      </grip:Input>
+      <grip:Input step="0" socket="3">
+        <value>CUBIC</value>
+      </grip:Input>
+      <grip:Output step="0" socket="0" previewed="false"/>
+    </grip:Step>
+    <grip:Step name="HSV Threshold">
+      <grip:Input step="1" socket="0"/>
+      <grip:Input step="1" socket="1">
         <value>
-          <double>59.89208633093525</double>
+          <double>63.12949640287769</double>
           <double>93.63636363636364</double>
         </value>
       </grip:Input>
-      <grip:Input step="0" socket="2">
+      <grip:Input step="1" socket="2">
         <value>
-          <double>149.05575539568343</double>
+          <double>126.12410071942448</double>
           <double>255.0</double>
         </value>
       </grip:Input>
-      <grip:Input step="0" socket="3">
+      <grip:Input step="1" socket="3">
         <value>
-          <double>43.072311167375744</double>
-          <double>156.1122428583866</double>
+          <double>45.86330935251798</double>
+          <double>255.0</double>
         </value>
-      </grip:Input>
-      <grip:Output step="0" socket="0" previewed="true"/>
-    </grip:Step>
-    <grip:Step name="Find Contours">
-      <grip:Input step="1" socket="0"/>
-      <grip:Input step="1" socket="1">
-        <value>false</value>
       </grip:Input>
       <grip:Output step="1" socket="0" previewed="true"/>
     </grip:Step>
-    <grip:Step name="Filter Contours">
+    <grip:Step name="Find Contours">
       <grip:Input step="2" socket="0"/>
       <grip:Input step="2" socket="1">
-        <value>203.0</value>
+        <value>false</value>
       </grip:Input>
-      <grip:Input step="2" socket="2">
+      <grip:Output step="2" socket="0" previewed="true"/>
+    </grip:Step>
+    <grip:Step name="Filter Contours">
+      <grip:Input step="3" socket="0"/>
+      <grip:Input step="3" socket="1">
+        <value>100.0</value>
+      </grip:Input>
+      <grip:Input step="3" socket="2">
         <value>0.0</value>
       </grip:Input>
-      <grip:Input step="2" socket="3">
-        <value>32.0</value>
+      <grip:Input step="3" socket="3">
+        <value>10.0</value>
       </grip:Input>
-      <grip:Input step="2" socket="4">
-        <value>1000.0</value>
+      <grip:Input step="3" socket="4">
+        <value>100.0</value>
       </grip:Input>
-      <grip:Input step="2" socket="5">
-        <value>11.0</value>
+      <grip:Input step="3" socket="5">
+        <value>5.0</value>
       </grip:Input>
-      <grip:Input step="2" socket="6">
-        <value>1000.0</value>
+      <grip:Input step="3" socket="6">
+        <value>50.0</value>
       </grip:Input>
-      <grip:Input step="2" socket="7">
+      <grip:Input step="3" socket="7">
         <value>
           <double>0.0</double>
           <double>100.0</double>
         </value>
       </grip:Input>
-      <grip:Input step="2" socket="8">
+      <grip:Input step="3" socket="8">
         <value>1000000.0</value>
       </grip:Input>
-      <grip:Input step="2" socket="9">
+      <grip:Input step="3" socket="9">
         <value>0.0</value>
       </grip:Input>
-      <grip:Input step="2" socket="10">
+      <grip:Input step="3" socket="10">
         <value>0.0</value>
       </grip:Input>
-      <grip:Input step="2" socket="11">
+      <grip:Input step="3" socket="11">
         <value>1000.0</value>
       </grip:Input>
-      <grip:Output step="2" socket="0" previewed="true"/>
+      <grip:Output step="3" socket="0" previewed="true"/>
     </grip:Step>
   </steps>
   <connections>
     <grip:Connection>
-      <grip:Output step="0" socket="0" previewed="true"/>
+      <grip:Output step="2" socket="0" previewed="true"/>
+      <grip:Input step="3" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="0" socket="0" previewed="false"/>
       <grip:Input step="1" socket="0"/>
     </grip:Connection>
     <grip:Connection>
-      <grip:Output source="0" socket="0" previewed="true"/>
+      <grip:Output source="1" socket="0" previewed="true"/>
       <grip:Input step="0" socket="0"/>
     </grip:Connection>
     <grip:Connection>
@@ -134,8 +121,8 @@
   <codeGenerationSettings>
     <language>C++</language>
     <className>GripBoilerTarget</className>
-    <implementWpilibPipeline>true</implementWpilibPipeline>
-    <saveDir>C:\Users\FIRSTMentor\frc-2017</saveDir>
+    <implementWpilibPipeline>false</implementWpilibPipeline>
+    <saveDir>C:\Users\Team2481\workspace\frc-2017.git\r2017\src\Vision</saveDir>
     <packageName></packageName>
     <moduleName>grip</moduleName>
   </codeGenerationSettings>

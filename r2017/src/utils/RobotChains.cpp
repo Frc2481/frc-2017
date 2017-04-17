@@ -28,7 +28,6 @@ void RobotChains::reset(double startTime, const RigidTransform2D &initialFieldTo
 //	m_goalBoilerTracker = GoalTracker();
 	m_gearCameraPitchCorrection = Rotation2D::fromDegrees(-Constants::kGearCameraPitchAngleDegrees);
 	m_gearCameraYawCorrection = Rotation2D::fromDegrees(-Constants::kGearCameraYawAngleDegrees);
-	m_boilerCameraPitchCorrection = Rotation2D::fromDegrees(-Constants::kBoilerCameraPitchAngleDegrees);
 	m_boilerCameraYawCorrection = Rotation2D::fromDegrees(-Constants::kBoilerCameraYawAngleDegrees);
 	m_gearDifferentialHeight = Constants::kGearCenterOfTargetHeight - Constants::kGearCameraZOffset;
 	m_boilerDifferentialHeight = Constants::kBoilerCenterOfTargetHeight - Constants::kBoilerCameraZOffset;
@@ -91,9 +90,9 @@ void RobotChains::addVisionUpdateGear(double timeStamp, LiftTarget gearTarget) {
 	double xPitch = zYaw * m_gearCameraPitchCorrection.getSin() + xYaw * m_gearCameraPitchCorrection.getCos();
 	double yPitch = yYaw;
 	double zPitch = zYaw * m_gearCameraPitchCorrection.getCos() - xYaw * m_gearCameraPitchCorrection.getSin();
-	printf("XPitch %d\n", xPitch);
-	printf("YPitch %d\n", yPitch);
-	printf("ZPitch %d\n", zPitch);
+//	printf("GearXPitch %d\n", xPitch);
+//	printf("GearYPitch %d\n", yPitch);
+//	printf("GearZPitch %d\n", zPitch);
 
 	if (zPitch < 0) {
 		double scaling = m_gearDifferentialHeight / zPitch;
@@ -191,13 +190,13 @@ RobotChains* RobotChains::getInstance() {
 
 void RobotChains::outputToSmartDashboard() {
 	const RigidTransform2D &odometry = getLatestFieldToVehicle();
-	SmartDashboard::PutNumber("Robot Pose X", odometry.getTranslation().getX());
-	SmartDashboard::PutNumber("Robot Pose Y", odometry.getTranslation().getY());
-	SmartDashboard::PutNumber("Robot Pose Theta", odometry.getRotation().getDegrees());
+//	SmartDashboard::PutNumber("Robot Pose X", odometry.getTranslation().getX());
+//	SmartDashboard::PutNumber("Robot Pose Y", odometry.getTranslation().getY());
+//	SmartDashboard::PutNumber("Robot Pose Theta", odometry.getRotation().getDegrees());
 	std::list<RigidTransform2D> poses = getCaptureTimeFieldToGoal();
 	for(RigidTransform2D pose : poses){
-		SmartDashboard::PutNumber("Goal Pose X", pose.getTranslation().getX());
-		SmartDashboard::PutNumber("Goal Pose Y", pose.getTranslation().getY());
+//		SmartDashboard::PutNumber("Goal Pose X", pose.getTranslation().getX());
+//		SmartDashboard::PutNumber("Goal Pose Y", pose.getTranslation().getY());
 		break;
 	}
 }
@@ -207,19 +206,23 @@ void RobotChains::addVisionUpdateBoiler(double timeStamp, TargetInfo boilerTarge
 		RigidTransform2D fieldToCamera = getFieldToCamera(timeStamp);
 
 		double yDeadBand = (boilerTarget.getY() > -Constants::kCameraDeadBand && boilerTarget.getY() < Constants::kCameraDeadBand) ? 0.0 : boilerTarget.getY();
+//		printf("BoilerTarget ")
 
 		double xYaw = boilerTarget.getX() * m_boilerCameraYawCorrection.getCos() + yDeadBand * m_boilerCameraYawCorrection.getSin();
 		double yYaw = yDeadBand * m_boilerCameraYawCorrection.getCos() - boilerTarget.getX() * m_boilerCameraYawCorrection.getSin();
 		double zYaw = boilerTarget.getZ();
+		SmartDashboard::PutNumber("BoilerXYaw", xYaw);
+		SmartDashboard::PutNumber("BoilerYYaw", yYaw);
+		SmartDashboard::PutNumber("BoilerZYaw", zYaw);
 
 		double xPitch = zYaw * m_boilerCameraPitchCorrection.getSin() + xYaw * m_boilerCameraPitchCorrection.getCos();
 		double yPitch = yYaw;
 		double zPitch = zYaw * m_boilerCameraPitchCorrection.getCos() - xYaw * m_boilerCameraPitchCorrection.getSin();
-		printf("XPitch %d\n", xPitch);
-		printf("YPitch %d\n", yPitch);
-		printf("ZPitch %d\n", zPitch);
+//		printf("BoilerXPitch %f\n", xPitch);
+//		printf("BoilerYPitch %f\n", yPitch);
+//		printf("BoilerZPitch %f\n", zPitch);
 
-		if (zPitch < 0) {
+		//if (zPitch > 0) {
 			double scaling = m_boilerDifferentialHeight / zPitch;
 			double distance = hypot(xPitch, yPitch) * scaling;
 			Rotation2D robotAngle = Rotation2D(xPitch, yPitch, true);
@@ -230,8 +233,8 @@ void RobotChains::addVisionUpdateBoiler(double timeStamp, TargetInfo boilerTarge
 
 			RigidTransform2D fieldToGoal = (fieldToCamera.transformBy(RigidTransform2D::fromTranslation(
 				Translation2D(distance * robotAngle.getCos(), distance * robotAngle.getSin()))));
-			m_goalLiftTracker.update(timeStamp, fieldToGoal);
-		}
+			m_goalBoilerTracker.update(timeStamp, fieldToGoal);
+		//}
 }
 
 std::list<AimingParameters> RobotChains::getBoilerAimingParameters(double currentTimeStamp) {
@@ -239,4 +242,8 @@ std::list<AimingParameters> RobotChains::getBoilerAimingParameters(double curren
 	std::list<AimingParameters> rv;
 	rv.push_back(AimingParameters(RigidTransform2D::fromTranslation(Translation2D(0, m_boilerDistance).rotateBy(Rotation2D::fromDegrees(m_boilerCurrentAngle))), 0));
 	return rv;
+}
+
+void RobotChains::SetBoilerPitchAngle(double angle) {
+	m_boilerCameraPitchCorrection = Rotation2D::fromDegrees(-angle);
 }

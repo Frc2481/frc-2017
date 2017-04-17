@@ -30,6 +30,7 @@ private:
 	double m_boilerCurrentAngle;
 	double m_boilerTargetAngle;
 	double m_boilerDistance;
+	double m_boilerPitchAngle;
 
 protected:
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_fieldToVehicle;
@@ -75,5 +76,6 @@ public:
 	void setTurretRotatingToCamera();
 	GoalTracker getGoalTracker();
 	static RobotChains* getInstance();
+	void SetBoilerPitchAngle(double angle);
 	//double getInterpolatedGearAngle(double skew);
 };

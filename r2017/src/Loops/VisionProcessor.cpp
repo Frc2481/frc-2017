@@ -38,24 +38,26 @@ void VisionProcessor::OnLoop() {
 					double deltaZ = fabs(iit->getZ() - jit->getZ());
 
 					//Check for two targets of relatively equal height in image using Y value for gearTarget
-					if(deltaY < Constants::kGearYPosThreshold &&
-						deltaZ < Constants::kGearCameraWidth / 2.0){
-						TargetInfo &leftTarget = *iit;
-						TargetInfo &rightTarget = *jit;
-						if (leftTarget.getY() > rightTarget.getY()){
-							leftTarget = *jit;
-							rightTarget = *iit;
-						}
-						LiftTarget gearTarget(leftTarget, rightTarget);
-						RobotChains::getInstance()->addVisionUpdateGear(update.getCapturedAtTimestamp(), gearTarget);
-					}
-					else if(fabs(deltaY) < Constants::kBoilerYPosThreshold){
+//					if(deltaY < Constants::kGearYPosThreshold &&
+//						deltaZ < Constants::kGearCameraWidth / 2.0){
+//						TargetInfo &leftTarget = *iit;
+//						TargetInfo &rightTarget = *jit;
+//						if (leftTarget.getY() > rightTarget.getY()){
+//							leftTarget = *jit;
+//							rightTarget = *iit;
+//						}
+//						LiftTarget gearTarget(leftTarget, rightTarget);
+//						RobotChains::getInstance()->addVisionUpdateGear(update.getCapturedAtTimestamp(), gearTarget);
+//					}
+//					else{ //if(fabs(deltaY) < Constants::kBoilerYPosThreshold){
 						TargetInfo &boilerTarget = *iit;
 						if(jit->getZ() > iit->getZ()){
 							boilerTarget = *jit;
 						}
+						SmartDashboard::PutNumber("Boiler Target Y", boilerTarget.getY());
+						SmartDashboard::PutNumber("Boiler Target Z", boilerTarget.getZ());
 						RobotChains::getInstance()->addVisionUpdateBoiler(update.getCapturedAtTimestamp(), boilerTarget);
-					}
+					//}
 				}
 			}
 		}

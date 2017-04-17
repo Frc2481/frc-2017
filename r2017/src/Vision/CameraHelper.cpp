@@ -15,7 +15,7 @@ CameraHelper::~CameraHelper() {}
 
 double CameraHelper::GetFocalLengthPixels() const{
 	double d = hypot(m_width, m_height);
-	return tan(M_PI_2 - (m_dfov/2)  * (M_PI/180.0)) * (d/2);
+	return (d/2) / tan((m_dfov/2)  * (M_PI/180.0));//	return tan(M_PI_2 - (m_dfov/2)  * (M_PI/180.0)) * (d/2);
 }
 
 double CameraHelper::GetCenterColumn() const {

@@ -8,12 +8,19 @@ GripBoilerTarget::GripBoilerTarget() {
 * Runs an iteration of the pipeline and updates outputs.
 */
 void GripBoilerTarget::Process(cv::Mat& source0){
+	//Step Resize_Image0:
+	//input
+	cv::Mat resizeImageInput = source0;
+	double resizeImageWidth = 320.0;  // default Double
+	double resizeImageHeight = 240.0;  // default Double
+	int resizeImageInterpolation = cv::INTER_CUBIC;
+	resizeImage(resizeImageInput, resizeImageWidth, resizeImageHeight, resizeImageInterpolation, this->resizeImageOutput);
 	//Step HSV_Threshold0:
 	//input
-	cv::Mat hsvThresholdInput = source0;
-	double hsvThresholdHue[] = {59.89208633093525, 93.63636363636364};
-	double hsvThresholdSaturation[] = {149.05575539568343, 255.0};
-	double hsvThresholdValue[] = {43.072311167375744, 156.1122428583866};
+	cv::Mat hsvThresholdInput = resizeImageOutput;
+	double hsvThresholdHue[] = {63.12949640287769, 93.63636363636364};
+	double hsvThresholdSaturation[] = {126.12410071942448, 255.0};
+	double hsvThresholdValue[] = {45.86330935251798, 255.0};
 	hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, this->hsvThresholdOutput);
 	//Step Find_Contours0:
 	//input
@@ -23,12 +30,12 @@ void GripBoilerTarget::Process(cv::Mat& source0){
 	//Step Filter_Contours0:
 	//input
 	std::vector<std::vector<cv::Point> > filterContoursContours = findContoursOutput;
-	double filterContoursMinArea = 203.0;  // default Double
+	double filterContoursMinArea = 100.0;  // default Double
 	double filterContoursMinPerimeter = 0.0;  // default Double
-	double filterContoursMinWidth = 32.0;  // default Double
-	double filterContoursMaxWidth = 1000.0;  // default Double
-	double filterContoursMinHeight = 11.0;  // default Double
-	double filterContoursMaxHeight = 1000.0;  // default Double
+	double filterContoursMinWidth = 10.0;  // default Double
+	double filterContoursMaxWidth = 100.0;  // default Double
+	double filterContoursMinHeight = 5.0;  // default Double
+	double filterContoursMaxHeight = 50.0;  // default Double
 	double filterContoursSolidity[] = {0.0, 100.0};
 	double filterContoursMaxVertices = 1000000.0;  // default Double
 	double filterContoursMinVertices = 0.0;  // default Double
@@ -37,6 +44,13 @@ void GripBoilerTarget::Process(cv::Mat& source0){
 	filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, this->filterContoursOutput);
 }
 
+/**
+ * This method is a generated getter for the output of a Resize_Image.
+ * @return Mat output from Resize_Image.
+ */
+cv::Mat* GripBoilerTarget::GetResizeImageOutput(){
+	return &(this->resizeImageOutput);
+}
 /**
  * This method is a generated getter for the output of a HSV_Threshold.
  * @return Mat output from HSV_Threshold.
@@ -58,6 +72,19 @@ std::vector<std::vector<cv::Point> >* GripBoilerTarget::GetFindContoursOutput(){
 std::vector<std::vector<cv::Point> >* GripBoilerTarget::GetFilterContoursOutput(){
 	return &(this->filterContoursOutput);
 }
+	/**
+	 * Scales and image to an exact size.
+	 *
+	 * @param input The image on which to perform the Resize.
+	 * @param width The width of the output in pixels.
+	 * @param height The height of the output in pixels.
+	 * @param interpolation The type of interpolation.
+	 * @param output The image in which to store the output.
+	 */
+	void GripBoilerTarget::resizeImage(cv::Mat &input, double width, double height, int interpolation, cv::Mat &output) {
+		cv::resize(input, output, cv::Size(width, height), 0.0, 0.0, interpolation);
+	}
+
 	/**
 	 * Segment an image based on hue, saturation, and value ranges.
 	 *

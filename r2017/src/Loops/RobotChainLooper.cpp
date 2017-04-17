@@ -19,45 +19,50 @@ void RobotChainLooper::OnLoop() {
 	double start;
 	m_onLoopCounter++;
 	SmartDashboard::PutNumber("RobotChains OnLoop Counter", m_onLoopCounter);
-	while (true){
-		start = frc::GetFPGATime();
 
-		double frDistance = frModule->GetDistance();
-		double flDistance = flModule->GetDistance();
-		double brDistance = brModule->GetDistance();
-		double blDistance = blModule->GetDistance();
-		double frRotation = frModule->GetAngle();
-		double flRotation = flModule->GetAngle();
-		double brRotation = brModule->GetAngle();
-		double blRotation = blModule->GetAngle();
+	start = frc::GetFPGATime();
+
+	double frDistance = frModule->GetDistance();
+	double flDistance = flModule->GetDistance();
+	double brDistance = brModule->GetDistance();
+	double blDistance = blModule->GetDistance();
+	double frRotation = frModule->GetAngle();
+	double flRotation = flModule->GetAngle();
+	double brRotation = brModule->GetAngle();
+	double blRotation = blModule->GetAngle();
 //		Rotation2D frAngle = Rotation2D::fromDegrees(frModule->GetAngle());
 //		Rotation2D flAngle = Rotation2D::fromDegrees(flModule->GetAngle());
 //		Rotation2D brAngle = Rotation2D::fromDegrees(brModule->GetAngle());
 //		Rotation2D blAngle = Rotation2D::fromDegrees(blModule->GetAngle());
 
-		RigidTransform2D odometry = RobotChains::getInstance()->generateOdometryFromSensors(frDistance - m_frPrevDistance,
-				flDistance - m_flPrevDistance, brDistance - m_brPrevDistance, blDistance - m_blPrevDistance,
-				frRotation - m_frPrevRotation,flRotation - m_frPrevRotation, brRotation - m_brPrevRotation, blRotation - m_blPrevRotation,
-				CommandBase::m_driveTrain->GetAngle());
+	RigidTransform2D odometry = RobotChains::getInstance()->generateOdometryFromSensors(frDistance - m_frPrevDistance,
+			flDistance - m_flPrevDistance, brDistance - m_brPrevDistance, blDistance - m_blPrevDistance,
+			frRotation - m_frPrevRotation,flRotation - m_frPrevRotation, brRotation - m_brPrevRotation, blRotation - m_blPrevRotation,
+			CommandBase::m_driveTrain->GetAngle());
+//	printf("odometry x %f  ", (float)odometry.getTranslation().getX());
+//	printf("odometry y %f  ", (float)odometry.getTranslation().getY());
+//	printf("odometry rot %f\n", (float)odometry.getRotation().getDegrees());
 
-		RigidTransform2D::Delta velocity = Kinematics::forwardKinematics(CommandBase::m_driveTrain->GetFRVelocityInchesPerSec(), CommandBase::m_driveTrain->GetFLVelocityInchesPerSec(),
-				CommandBase::m_driveTrain->GetBRVelocityInchesPerSec(), CommandBase::m_driveTrain->GetBLVelocityInchesPerSec(),
-				frRotation - m_frPrevRotation,flRotation - m_frPrevRotation, brRotation - m_brPrevRotation, blRotation - m_blPrevRotation);
+	RigidTransform2D::Delta velocity = Kinematics::forwardKinematics(CommandBase::m_driveTrain->GetFRVelocityInchesPerSec(), CommandBase::m_driveTrain->GetFLVelocityInchesPerSec(),
+			CommandBase::m_driveTrain->GetBRVelocityInchesPerSec(), CommandBase::m_driveTrain->GetBLVelocityInchesPerSec(),
+			frRotation - m_frPrevRotation,flRotation - m_frPrevRotation, brRotation - m_brPrevRotation, blRotation - m_blPrevRotation);
 
-		RobotChains::getInstance()->addObservations(start, odometry, velocity);
+//	printf("velocity x %f  ", (float)velocity.m_dx);
+//	printf("velocity y %f\n", (float)velocity.m_dy);
 
-		m_frPrevDistance = frDistance;
-		m_flPrevDistance = flDistance;
-		m_brPrevDistance = brDistance;
-		m_blPrevDistance = blDistance;
+	RobotChains::getInstance()->addObservations(start, odometry, velocity);
 
-		m_frPrevRotation = frRotation;
-		m_flPrevRotation = flRotation;
-		m_brPrevRotation = brRotation;
-		m_blPrevRotation = blRotation;
+	m_frPrevDistance = frDistance;
+	m_flPrevDistance = flDistance;
+	m_brPrevDistance = brDistance;
+	m_blPrevDistance = blDistance;
 
-		RobotChains::getInstance()->outputToSmartDashboard();
-	}
+	m_frPrevRotation = frRotation;
+	m_flPrevRotation = flRotation;
+	m_brPrevRotation = brRotation;
+	m_blPrevRotation = blRotation;
+
+	RobotChains::getInstance()->outputToSmartDashboard();
 }
 
 void RobotChainLooper::OnStart() {
