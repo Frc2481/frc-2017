@@ -49,8 +49,12 @@
 #include "Commands/TestMotionProfileCreationCommand.h"
 #include "Commands/TimeSteerMotorAccelAndDecelCommandGroup.h"
 #include "Commands/SwerveModuleNominalVoltageCommand.h"
+#include "Commands/RotateToAngleMotionMagicCommandGroup.h"
+#include "Commands/CalibrateMotionMagicRotationCommand.h"
+#include "Commands/SetModulesForSpinInPlaceCommand.h"
 #include "Commands/TimeIntakeAccelAndDecelCommandGroup.h"
 #include "Commands/IntakeSetPosCommand.h"
+#include "Commands/SetOpenLoopShooterSpeedCommand.h"
 #include "Commands/CalibrateGearIntakeCommand.h"
 #include "Commands/IntakeOnCommand.h"
 #include "Commands/PickUpGearCommandGroup.h"
@@ -59,6 +63,7 @@
 #include "Commands/RotateToCameraAngleCommandGroup.h"
 #include "Commands/IntakeOutCommand.h"
 #include "Commands/PlaceGearOnPegCommandGroup.h"
+#include "CameraServer.h"
 
 class Robot: public IterativeRobot
 {
@@ -70,6 +75,9 @@ private:
 	VisionProcessor* m_visionProcessor = VisionProcessor::GetInstance();
 	VisionServer* m_visionServer;
 	Scheduler* m_scheduler;
+	CameraServer* m_server = CameraServer::GetInstance();
+	cs::UsbCamera m_usbCam1;
+	cs::UsbCamera m_usbCam2;
 
 	void RobotInit()
 	{
@@ -80,14 +88,25 @@ private:
 //		m_visionServer->addVisionUpdateReceiver(VisionProcessor::GetInstance());
 		BoilerVisionLooper::GetInstance()->addVisionUpdateReceiver(VisionProcessor::GetInstance());
 		BoilerVisionLooper::GetInstance()->Start();
+		BoilerVisionLooper::GetInstance()->SetActive(true);
 		VisionProcessor::GetInstance()->SetActive(true);
-		RobotChainLooper::GetInstance()->SetActive(true);
 		SmartDashboard::PutData("Scheduler", m_scheduler->GetInstance());
 		CommandBase::init();
 		CommandBase::m_driveTrain->SetLengthAndWidth(ROBOT_LENGTH, ROBOT_WIDTH);
-		VisionProcessor::GetInstance()->OnStart();
-		RobotChainLooper::GetInstance()->OnStart();
+		VisionProcessor::GetInstance()->Start();
+		RobotChainLooper::GetInstance()->Start();
+		RobotChainLooper::GetInstance()->SetActive(true);
 		pdp.reset(new PowerDistributionPanel());
+		m_usbCam1 = m_server->StartAutomaticCapture("cam1", 0);
+		m_usbCam1.SetFPS(15);
+		m_usbCam1.SetResolution(1280, 720);
+		m_usbCam1.SetExposureAuto();
+		//m_usbCam1.SetBrightness(50);
+//		m_usbCam2 = m_server->StartAutomaticCapture("cam2", 1);
+//		m_usbCam2.SetFPS(15);
+//		m_usbCam2.SetResolution(320, 240);
+//		m_usbCam2.SetExposureManual(0);
+//		m_usbCam2.SetBrightness(0);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
@@ -101,12 +120,12 @@ private:
 //		SmartDashboard::PutNumber("Steer I", CommandBase::m_driveTrain->GetSteerI());
 //		SmartDashboard::PutNumber("Steer D", CommandBase::m_driveTrain->GetSteerD());
 
-		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
+//		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
 
 //		SmartDashboard::PutNumber("Shooter P", CommandBase::m_superStructure->GetP());
 //		SmartDashboard::PutNumber("Shooter I", CommandBase::m_superStructure->GetI());
 //		SmartDashboard::PutNumber("Shooter D", CommandBase::m_superStructure->GetD());
-		SmartDashboard::PutNumber("Hopper Speed", CommandBase::m_superStructure->GetSpeed());
+//		SmartDashboard::PutNumber("Hopper Speed", CommandBase::m_superStructure->GetSpeed());
 
 		chooser.AddDefault("Nothing", NULL);
 		chooser.AddObject("RED 40 KPA No Gear", new REDFortyKPACIRCommandGroup()/*FortyKPAHypoAutoCommandGroup()*/);
@@ -121,9 +140,14 @@ private:
 		SmartDashboard::PutData(new BLUEFortyBeforeCIR());
 		SmartDashboard::PutData(new REDFortyKPACIRCommandGroup());
 
+		SmartDashboard::PutData(new SetModulesForSpinInPlaceCommand());
+		SmartDashboard::PutData(new RotateToAngleMotionMagicCommandGroup(90.0));
+		SmartDashboard::PutData(new CalibrateMotionMagicRotationCommand());
+		SmartDashboard::PutData(new RotateToCameraAngleCommandGroup());
+
 		SmartDashboard::PutData("Autonomous Chooser", &chooser);
 
-		CommandBase::m_gearFlicker->CloseLid();
+		//CommandBase::m_gearFlicker->CloseLid();
 
 		SmartDashboard::PutData(new ToggleOptimizedCommand());
 		SmartDashboard::PutData("RED Hopper Auto Wheel Align", new SwerveModuleRotateToAngleCommand(-163, false));
@@ -132,32 +156,32 @@ private:
 
 		SmartDashboard::PutData(new DriveTrainShiftCommand(true));
 
-		SmartDashboard::PutData(new TestMotionProfileCreationCommand());
+		//SmartDashboard::PutData(new TestMotionProfileCreationCommand());
 
-		SmartDashboard::PutData(new ShooterRampSpeedCommand(5000, 4500, 2.5));
+		//SmartDashboard::PutData(new ShooterRampSpeedCommand(5000, 4500, 2.5));
 		SmartDashboard::PutData(new ShooterIncreaseSpeedCommand());
 		SmartDashboard::PutData(new ShooterDecreaseSpeedCommand());
-		SmartDashboard::PutData(new ShooterOnCommand());
-		SmartDashboard::PutData(new ShooterOffCommand());
+		//SmartDashboard::PutData(new ShooterOnCommand());
+		//SmartDashboard::PutData(new ShooterOffCommand());
 		SmartDashboard::PutData(new CalibrateEncoderOffsetsCommand());
 		//SmartDashboard::PutData(new SetEncoderConfigsCommand());
 		//SmartDashboard::PutData(new FollowFakePathCommand());
 		//SmartDashboard::PutData(new SwerveModuleTestClosedLoopVelocityCommand());
 		//SmartDashboard::PutData(new GenerateGearRotationPathCommand(30));
-		SmartDashboard::PutData(new FollowGearPathCommandGroup());
+		//SmartDashboard::PutData(new FollowGearPathCommandGroup());
 		//SmartDashboard::PutData(new SetDriveTalonToSlaveCommand(true));
-		SmartDashboard::PutData(new AutoDriveToGearCommandGroup());
-		SmartDashboard::PutData(new TimeAccelAndDecelCommandGroup());
+		//SmartDashboard::PutData(new AutoDriveToGearCommandGroup());
+//		SmartDashboard::PutData(new TimeAccelAndDecelCommandGroup());
 		SmartDashboard::PutData(new DriveTrainEnableGyroCorrectionCommand(0));
 		SmartDashboard::PutData(new DriveTrainDisableGyroCorrectionCommand());
 		//SmartDashboard::PutData(new DriveToDistanceEncoderCommand());
 		SmartDashboard::PutData(new DriveTrainZeroYawCommand());
-		SmartDashboard::PutData(new RotateToAngleGyroCommand(-60));
-		SmartDashboard::PutData(new MiddleGearAutoCommandGroup());
-		SmartDashboard::PutData(new TurnShooterOnCommand());
-		SmartDashboard::PutData(new SendSerialPRMCommandGroup());
+		//SmartDashboard::PutData(new RotateToAngleGyroCommand(-60));
+		//SmartDashboard::PutData(new MiddleGearAutoCommandGroup());
+		//SmartDashboard::PutData(new TurnShooterOnCommand());
+//		SmartDashboard::PutData(new SendSerialPRMCommandGroup());
 		SmartDashboard::PutData("Camera Rotate To Angle", new CameraRotateToAngle(true));
-		//SmartDashboard::PutData(new SetShooterOpenLoopFullSpeed());
+//		SmartDashboard::PutData(new SetOpenLoopShooterSpeedCommand(.8));
 		//SmartDashboard::PutData(new TurnShooterOnCommand(4350));
 		//SmartDashboard::PutData(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(24), false));
 
@@ -168,10 +192,10 @@ private:
 //		SmartDashboard::PutNumber("EncoderConfig V", 0.0);
 //		SmartDashboard::PutNumber("EncoderConfig A", 0.0);
 
-		SmartDashboard::PutNumber("Gyro Correction P", 0.0);
-		SmartDashboard::PutNumber("Gyro Rotation P", 0.0);
-		SmartDashboard::PutNumber("Gyro Rotation I", 0.0);
-		SmartDashboard::PutNumber("Gyro Rotation D", 0.0);
+//		SmartDashboard::PutNumber("Gyro Correction P", 0.0);
+//		SmartDashboard::PutNumber("Gyro Rotation P", 0.0);
+//		SmartDashboard::PutNumber("Gyro Rotation I", 0.0);
+//		SmartDashboard::PutNumber("Gyro Rotation D", 0.0);
 
 		SmartDashboard::PutNumber("RotateToAngle Angle", 0.0);
 
@@ -293,26 +317,26 @@ private:
 		SmartDashboard::PutNumber("Intake Pivot Pos", CommandBase::m_gearIntake->GetPivotPos());
 //		SmartDashboard::PutBoolean("Encoder Present", CommandBase::m_gearIntake->IsEncoderPluggedIn());
 
-		SmartDashboard::PutNumber("FLDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
-				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
-		SmartDashboard::PutNumber("FRDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->
-				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
-		SmartDashboard::PutNumber("BLDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->
-				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
-		SmartDashboard::PutNumber("BRDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->
-				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
+//		SmartDashboard::PutNumber("FLDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
+//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
+//		SmartDashboard::PutNumber("FRDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->
+//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
+//		SmartDashboard::PutNumber("BLDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->
+//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
+//		SmartDashboard::PutNumber("BRDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->
+//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
 		SmartDashboard::PutNumber("DriveTrain Distance", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetDistance());
-		SmartDashboard::PutNumber("Drive Velocity", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetSpeed());
-		SmartDashboard::PutNumber("GetFLClosedLoopError", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
-				GetMotor(SwerveModule::STEER_MOTOR)->GetClosedLoopError());
-		SmartDashboard::PutNumber("GetFLPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
-				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
-		SmartDashboard::PutNumber("GetFRPosition",CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->
-				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
-		SmartDashboard::PutNumber("GetBLPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->
-				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
-		SmartDashboard::PutNumber("GetBRPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->
-				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+//		SmartDashboard::PutNumber("Drive Velocity", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetSpeed());
+//		SmartDashboard::PutNumber("GetFLClosedLoopError", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
+//				GetMotor(SwerveModule::STEER_MOTOR)->GetClosedLoopError());
+//		SmartDashboard::PutNumber("GetFLPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
+//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+//		SmartDashboard::PutNumber("GetFRPosition",CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->
+//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+//		SmartDashboard::PutNumber("GetBLPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->
+//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+//		SmartDashboard::PutNumber("GetBRPosition", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->
+//				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
 //		SmartDashboard::PutNumber("GetFLError+Position", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
 //				GetMotor(SwerveModule::DRIVE_MOTOR)->GetClosedLoopError() + CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
 //				GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
@@ -320,11 +344,16 @@ private:
 		//SmartDashboard::PutNumber("BL Encoder Value", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetAngle());
 		SmartDashboard::PutNumber("Gyro Angle", CommandBase::m_driveTrain->GetHeading());
 		SmartDashboard::PutNumber("Shooter Speed", CommandBase::m_superStructure->GetSpeed());
-		SmartDashboard::PutNumber("MotionMagic Setpoint", CommandBase::m_driveTrain->GetMotionMagicSetpoint());
-		SmartDashboard::PutNumber("BRSteerValue", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->GetMotor(SwerveModule::STEER_MOTOR)->GetPulseWidthPosition());
+//		SmartDashboard::PutNumber("MotionMagic Setpoint", CommandBase::m_driveTrain->GetMotionMagicSetpoint());
+//		SmartDashboard::PutNumber("BRSteerValue", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->GetMotor(SwerveModule::STEER_MOTOR)->GetPulseWidthPosition());
 		SmartDashboard::PutBoolean("Shooter Hood", CommandBase::m_superStructure->IsRaised());
 		SmartDashboard::PutNumber("Hopper Current", CommandBase::m_superStructure->GetHopperCurrent());
-		SmartDashboard::PutNumber("AimingParams Angle", RobotChains::getInstance()->getGearAimingParameters(frc::GetFPGATime()).begin()->getRobotAngle());
+//		SmartDashboard::PutNumber("AimingParams Angle", RobotChains::getInstance()->getGearAimingParameters(frc::GetFPGATime()).begin()->getRobotAngle());
+//		SmartDashboard::PutNumber("BL Steer Angle", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetAngle());
+//		SmartDashboard::PutNumber("BR Steer Angle", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->GetAngle());
+//		SmartDashboard::PutNumber("FL Steer Angle", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetAngle());
+//		SmartDashboard::PutNumber("FR Steer Angle", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->GetAngle());
+
 		SmartDashboard::PutNumber("Intake Roller Current", CommandBase::m_gearIntake->GetIntakeCurrent());
 		SmartDashboard::PutNumber("Intake Pivot Current", CommandBase::m_gearIntake->GetPivotCurrent());
 		SmartDashboard::PutNumber("Intake Output Voltage", CommandBase::m_gearIntake->GetPivotAppliedThrottle());

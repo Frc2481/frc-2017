@@ -30,14 +30,16 @@ public:
 		AddSequential(new SetClosedLoopErrorCommand());
 		AddSequential(new GearCloseLidCommand());
 		AddSequential(new ShooterSetHoodCommand(true));
-		AddSequential(new SetShooterSpeedCommand(4100));
+		AddSequential(new SetShooterSpeedCommand(Preferences::GetInstance()->GetDouble("BLUE_AUTO_SHOOTER_SPD", 4100))); //4100
 		AddSequential(new TurnShooterOnCommand());
 		//AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new SetAngleOptimizedCommand(false));
-		AddSequential(new SwerveModuleRotateToAngleCommand(-17,false), .6);
+		//AddSequential(new SwerveModuleRotateToAngleCommand(-17,false), .6);
 		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
-		AddParallel(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(100), false), 3);
-		AddSequential(new DriveTrainWaitForEncoderDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(72)), 5);
+		AddParallel(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(
+				Preferences::GetInstance()->GetDouble("BLUE_AUTO_DRIVE_DIST", 100)), false), 3); //100
+		AddSequential(new DriveTrainWaitForEncoderDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(
+				Preferences::GetInstance()->GetDouble("BLUE_AUTO_TURN_POS", 72))), 5); //72
 		AddSequential(new SwerveModuleRotateToAngleCommand(270,false), .6);
 		AddSequential(new DriveTrainDisableGyroCorrectionCommand());
 		AddSequential(new SetAngleOptimizedCommand(true));

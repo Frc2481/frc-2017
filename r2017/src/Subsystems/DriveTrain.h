@@ -40,6 +40,7 @@ private:
 	float m_originX;
 	float m_originY;
 	double m_motionSetpoint;
+	double m_encRotationPerDegrees;
 
 	bool m_isFieldCentric;
 	bool m_isForward;
@@ -108,6 +109,7 @@ public:
 	double RotationsToInches(double rotation);
 
 	double ComputeDriveDistanceInchestoEncoderRotations(double inches);
+	double ComputeDegreesToEncoderRotations(double degrees);
 
 	void SetSlaveTalons();
 	void ResetSlaveTalons();
