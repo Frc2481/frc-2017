@@ -22,10 +22,16 @@
 #include "Commands/GearFlickCommand.h"
 #include "Commands/GearResetCommand.h"
 #include "Commands/SetFieldCentricCommand.h"
+#include "Commands/IntakeOnCommand.h"
+#include "Commands/IntakeOffCommand.h"
+#include "Commands/PlaceGearOnPegCommandGroup.h"
+#include "Commands/PickUpGearCommandGroup.h"
+#include "Commands/StopGearIntakeCommand.h"
+#include "Commands/HomeGearIntakeCommandGroup.h"
 
 OI::OI() {
 	m_driverStick = new Joystick2481(DRIVE_STICK_PORT);
-	m_operatorStick = new Joystick(OPERATOR_STICK_PORT);
+	m_operatorStick = new Joystick2481(OPERATOR_STICK_PORT);
 
 	m_shifterButton = SHIFTER_BUTTON;
 	m_shifterButton->WhenPressed(new DriveTrainShiftSequenceCommand(true));
@@ -35,8 +41,12 @@ OI::OI() {
 	m_fieldCentricButton->WhenPressed(new SetFieldCentricCommand(true));
 	m_fieldCentricButton->WhenReleased(new SetFieldCentricCommand(false));
 
-	m_flickerGearButton = FLICKER_GEAR_BUTTON;
-	m_flickerGearButton->WhenPressed(new GearFlickCommandGroup());
+	m_unloadGearButton = UNLOAD_GEAR_BUTTON;
+	m_unloadGearButton->WhileHeld(new PlaceGearOnPegCommandGroup());
+
+	m_intakeButton = INTAKE_BUTTON;
+	m_intakeButton->WhenPressed(new PickUpGearCommandGroup());
+	m_intakeButton->WhenReleased(new HomeGearIntakeCommandGroup());
 
 	m_climberButton = CLIMBER_BUTTON;
 	m_climberButton->WhileHeld(new ClimberUpCommand());
@@ -90,6 +100,9 @@ OI::OI() {
 	m_flickerGearButtonOP->WhenPressed(new GearFlickCommand());
 	m_flickerGearButtonOP->WhenReleased(new GearResetCommand());
 
+	m_intakeButtonOP = INTAKE_BUTTON_OP;
+	m_intakeButtonOP->WhenPressed(new IntakeOnCommand());
+
 //	m_incOurGear = INC_OUR_GEAR_COUNTER;
 //	m_incOurGear->WhenPressed(new IncOurGearCounterCommand());
 //
@@ -107,4 +120,8 @@ OI::OI() {
 
 Joystick2481* OI::GetDriverStick(){
 	return m_driverStick;
+}
+
+Joystick2481* OI::GetOperatorStick() {
+	return m_operatorStick;
 }

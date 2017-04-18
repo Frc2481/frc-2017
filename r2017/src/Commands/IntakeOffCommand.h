@@ -12,12 +12,11 @@
 
 class IntakeOffCommand : public frc::InstantCommand {
 public:
-	IntakeOffCommand() : InstantCommand("Intake Off Command"){
-		Requires(CommandBase::m_intake.get());
+	IntakeOffCommand() : InstantCommand("IntakeOffCommand"){
 	}
 
 	void Initialize() {
-		CommandBase::m_intake->TurnIntakeOff();
+		CommandBase::m_gearIntake->StopIntake();
 	}
 };
 

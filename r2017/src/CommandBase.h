@@ -11,6 +11,7 @@
 #include "Subsystems/Intake.h"
 #include "Subsystems/SuperStructure.h"
 #include "Subsystems/AirCompressor.h"
+#include "Subsystems/GearIntake.h"
 
 /**
  * The base for all commands. All atomic commands should subclass CommandBase.
@@ -30,6 +31,7 @@ public:
 	static std::unique_ptr<Intake> m_intake;
 	static std::unique_ptr<SuperStructure> m_superStructure;
 	static std::unique_ptr<AirCompressor> m_airCompressor;
+	static std::unique_ptr<GearIntake> m_gearIntake;
 	static std::unique_ptr<OI> oi;
 
 	static bool m_pause;
