@@ -10,11 +10,13 @@ private:
 	static const int DRIVE_STICK_PORT = 0;
 	static const int OPERATOR_STICK_PORT = 1;
 	Joystick2481* m_driverStick;
-	Joystick* m_operatorStick;
+	Joystick2481* m_operatorStick;
 
 	Button* m_shifterButton;
 	Button* m_fieldCentricButton;
-	Button* m_flickerGearButton;
+	//Button* m_flickerGearButton;
+	Button* m_unloadGearButton;
+	AnalogJoystickButton* m_intakeButton;
 	AnalogJoystickButton* m_climberButton;
 	Button* m_gearLidButton;
 	Button* m_frontCameraButton;
@@ -30,6 +32,7 @@ private:
 	Button* m_shooterHoodToggleButton;
 	Button* m_gearLidButtonOP;
 	Button* m_flickerGearButtonOP;
+	AnalogJoystickButton* m_intakeButtonOP;
 	AnalogJoystickButton* m_fireTrigger;
 	AnalogJoystickButton* m_incOurGear;
 	AnalogJoystickButton* m_decOurGear;
@@ -39,6 +42,7 @@ private:
 public:
 	OI();
 	Joystick2481* GetDriverStick();
+	Joystick2481* GetOperatorStick();
 };
 
 #endif

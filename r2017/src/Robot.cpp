@@ -49,6 +49,16 @@
 #include "Commands/TestMotionProfileCreationCommand.h"
 #include "Commands/TimeSteerMotorAccelAndDecelCommandGroup.h"
 #include "Commands/SwerveModuleNominalVoltageCommand.h"
+#include "Commands/TimeIntakeAccelAndDecelCommandGroup.h"
+#include "Commands/IntakeSetPosCommand.h"
+#include "Commands/CalibrateGearIntakeCommand.h"
+#include "Commands/IntakeOnCommand.h"
+#include "Commands/PickUpGearCommandGroup.h"
+#include "Commands/IntakeRollerWithJoystickCommand.h"
+#include "Commands/PlaceGearOnPegCommand.h"
+#include "Commands/RotateToCameraAngleCommandGroup.h"
+#include "Commands/IntakeOutCommand.h"
+#include "Commands/PlaceGearOnPegCommandGroup.h"
 
 class Robot: public IterativeRobot
 {
@@ -165,8 +175,20 @@ private:
 
 		SmartDashboard::PutNumber("RotateToAngle Angle", 0.0);
 
-		SmartDashboard::PutData(new TimeSteerMotorAccelAndDecelCommandGroup());
-		SmartDashboard::PutData(new SwerveModuleNominalVoltageCommand());
+//		SmartDashboard::PutData(new TimeSteerMotorAccelAndDecelCommandGroup());
+//		SmartDashboard::PutData(new SwerveModuleNominalVoltageCommand());
+
+		SmartDashboard::PutData(new CalibrateGearIntakeCommand());
+		SmartDashboard::PutData(new TimeIntakeAccelAndDecelCommandGroup());
+		SmartDashboard::PutData(new IntakeSetPosCommand(0,2));
+		SmartDashboard::PutData("UnstowCommand", new IntakeSetPosCommand(400.0, 1.0));
+		SmartDashboard::PutNumber("Intake Setpoint", 0);
+		SmartDashboard::PutData(new IntakeOnCommand());
+		SmartDashboard::PutData(new IntakeOutCommand());
+		SmartDashboard::PutData(new PickUpGearCommandGroup());
+		SmartDashboard::PutData(new IntakeRollerWithJoystickCommand());
+		SmartDashboard::PutData(new PlaceGearOnPegCommandGroup());
+		SmartDashboard::PutData(new GearIntake());
 	}
 
 	/**
@@ -185,6 +207,7 @@ private:
 	{
 		Scheduler::GetInstance()->Run();
 		SmartDashboard::PutNumber("Gyro Angle", CommandBase::m_driveTrain->GetHeading());
+		SmartDashboard::PutNumber("Intake Pivot Pos", CommandBase::m_gearIntake->GetPivotPos());
 	}
 
 	/**
@@ -264,7 +287,12 @@ private:
 //		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_shooter->GetShooterSetpoint());
 //		SmartDashboard::PutNumber("Feeder Speed", CommandBase::m_shooter->GetFeederSpeed());
 		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
+		SmartDashboard::PutNumber("Intake Power", CommandBase::m_gearIntake->GetIntakePower());
 		SmartDashboard::PutBoolean("Shifted", CommandBase::m_driveTrain->IsShifted());
+
+		SmartDashboard::PutNumber("Intake Pivot Pos", CommandBase::m_gearIntake->GetPivotPos());
+//		SmartDashboard::PutBoolean("Encoder Present", CommandBase::m_gearIntake->IsEncoderPluggedIn());
+
 		SmartDashboard::PutNumber("FLDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
 				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
 		SmartDashboard::PutNumber("FRDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->
@@ -297,6 +325,9 @@ private:
 		SmartDashboard::PutBoolean("Shooter Hood", CommandBase::m_superStructure->IsRaised());
 		SmartDashboard::PutNumber("Hopper Current", CommandBase::m_superStructure->GetHopperCurrent());
 		SmartDashboard::PutNumber("AimingParams Angle", RobotChains::getInstance()->getGearAimingParameters(frc::GetFPGATime()).begin()->getRobotAngle());
+		SmartDashboard::PutNumber("Intake Roller Current", CommandBase::m_gearIntake->GetIntakeCurrent());
+		SmartDashboard::PutNumber("Intake Pivot Current", CommandBase::m_gearIntake->GetPivotCurrent());
+		SmartDashboard::PutNumber("Intake Output Voltage", CommandBase::m_gearIntake->GetPivotAppliedThrottle());
 	}
 
 	void TestPeriodic()

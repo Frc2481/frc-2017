@@ -24,7 +24,8 @@
 		#define GEAR_LID_2 3
 
 //Intake
-		#define INTAKE_MOTOR 3
+		#define INTAKE_MOTOR 30
+		#define PIVOT_MOTOR 31
 
 //SuperStructure
 		#define HOPPER_MOTOR 2
