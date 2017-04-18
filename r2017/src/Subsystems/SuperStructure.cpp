@@ -21,14 +21,19 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 //	m_shooterMotor->SetNominalClosedLoopVoltage(12);
 //	m_shooterMotor->DisableNominalClosedLoopVoltage();
 //	m_shooterMotor->SetNominalClosedLoopVoltage(12.0f);
-	m_shooterMotor->SetPID(0.025, 0.0025, 0.0);
-	m_shooterMotor->SetF(0.026);
-	m_shooterMotor->SetIzone(200);
+//	m_shooterMotor->SetPID(0.025, 0.0025, 0.0);
+//	m_shooterMotor->SetF(0.026);
+//	m_shooterMotor->SetIzone(200);
+	m_shooterMotor->SetPID(0.025, 0.0, 5.0);
+		m_shooterMotor->SetF(0.026);
+		m_shooterMotor->SetIzone(300);
 	m_shooterMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
 	m_shooterMotor->SetSensorDirection(true);
 	m_shooterMotor->ConfigPeakOutputVoltage(12,-12);
+	m_shooterMotor->DisableNominalClosedLoopVoltage();
+	m_shooterMotor->SetNominalClosedLoopVoltage(12.0f);
 //	m_shooterMotor->SetInverted(true);
-	m_loaderSpeed = 1;
+	m_loaderSpeed = .85;
 	m_loaderMotor->SetInverted(true);
 	m_loaderMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
 	m_loaderMotor->SetVoltageRampRate(36);
@@ -156,8 +161,9 @@ void SuperStructure::SetShooterSpeed(double speed) {
 }
 
 void SuperStructure::SetShooterSpeedOpenLoop(double speed) {
+	m_shooterMotor->Enable();
 	m_shooterMotor->SetControlMode(CANTalon::kPercentVbus);
-	m_shooterMotor->Set(speed);
+	m_shooterMotor->Set(-speed);
 }
 
 void SuperStructure::SetShooterControlMode(CANTalon::ControlMode mode) {
@@ -171,6 +177,10 @@ double SuperStructure::GetHopperCurrent() {
 void SuperStructure::IncShooterSpeed() {
 	m_shooterSpeed += 25;
 	SetShooterSpeed(m_shooterSpeed);
+}
+
+void SuperStructure::ReverseHopper() {
+	m_hopperMotor->Set(-m_speed);
 }
 
 void SuperStructure::DecShooterSpeed() {

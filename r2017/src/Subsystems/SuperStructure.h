@@ -44,6 +44,7 @@ public:
 	bool IsOnTarget();
 	void StartFeeding();
 	void StopFeeding();
+	void ReverseHopper();
 	void SetSpeed(double speed);
 	double GetSpeed();
 	void RaiseHood();
