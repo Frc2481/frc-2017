@@ -40,7 +40,7 @@ public:
 
 	void End(){
 		if (m_TimeoutSet){
-			//CommandBase::m_driveTrain->Stop();
+			CommandBase::m_driveTrain->Stop();
 		}
 	}
 

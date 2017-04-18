@@ -11,6 +11,7 @@
 #define DEBUGGING 1
 #define ROBOT_SETTING_PATH "settings.cfg"
 #define ENCODER_OFFSET_FILENAME "/home/lvuser/Encoder_Offsets"
+#define ENCODER_ROTATION_PER_DEGREE_FILENAME "/home/lvuser/Rotations_Per_Degree"
 
 //Robot Base
 	#define ROBOT_LENGTH 22

@@ -36,7 +36,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_driveMotor->SetFeedbackDevice(CANTalon::QuadEncoder);
 	m_driveMotor->SetSensorDirection(true);
 	m_driveMotor->SetClosedLoopOutputDirection(true);
-	m_driveMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
+	//m_driveMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
 	m_driveMotor->ConfigEncoderCodesPerRev(128);
 
 	m_driveMotor->ConfigNominalOutputVoltage(0.0,0.0);
@@ -44,7 +44,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_driveMotor->SetMotionMagicAcceleration(m_accel);
 	m_driveMotor->SetMotionMagicCruiseVelocity(m_velocity);
 
-	m_driveMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
+	m_driveMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
 
 	m_steerMotor->SelectProfileSlot(0); //Profile 1 PIDf are P = 0.2 f = 1.1
 	m_steerMotor->ConfigNominalOutputVoltage(0,0);
@@ -58,7 +58,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID) {
 	m_steerMotor->Enable();
 	m_steerMotor->SetAllowableClosedLoopErr(40);
 	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateFeedback, 10);
-	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateGeneral, 10);
+//	m_steerMotor->SetStatusFrameRateMs(CANTalon::StatusFrameRateGeneral, 10);
 }
 
 SwerveModule::~SwerveModule() {
@@ -254,7 +254,12 @@ int SwerveModule::GetError() {
 void SwerveModule::SetMotionMagic(double setpoint) {
 	m_motionMagic = true;
 	m_driveMotor->SetTalonControlMode(CANTalon::kMotionMagicMode);
-	m_driveMotor->Set(setpoint);
+//	if(m_angleOptimized){
+//		m_driveMotor->Set(-setpoint);
+//	}
+//	else{
+		m_driveMotor->Set(setpoint);
+//	}
 }
 
 void SwerveModule::SetMagicBool(bool magic) {

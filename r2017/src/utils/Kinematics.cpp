@@ -1,5 +1,6 @@
 #include <utils/Kinematics.h>
 #include <cmath>
+#include "RobotParameters.h"
 
 RigidTransform2D::Delta Kinematics::forwardKinematics(double frDriveDelta, double flDriveDelta, double brDriveDelta, double blDriveDelta,
 	double frRotationDelta, double flRotationDelta, double brRotationDelta, double blRotationDelta) 
@@ -14,9 +15,8 @@ RigidTransform2D::Delta Kinematics::forwardKinematics(double frDriveDelta, doubl
 	double frRotationDelta, double flRotationDelta, double brRotationDelta, double blRotationDelta, double gyroDelta)
 {
 	//TODO: Initialize these Values
-	double L, W;
-	L = 0;
-	W = 0;
+	double L = ROBOT_LENGTH;
+	double W = ROBOT_WIDTH;
 	double originY, originX;
 	originY = 0;
 	originX = 0;
@@ -40,7 +40,7 @@ RigidTransform2D::Delta Kinematics::forwardKinematics(double frDriveDelta, doubl
 
 	double omega1, omega2, omega;
 	omega1 = (B - A) / L;
-	omega2 = (D - C) / W;
+	omega2 = (C - D) / W;
 	omega = (omega1 + omega2) / 2;
 
 	double STR, FWD, STR1, STR2, FWD1, FWD2;

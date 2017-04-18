@@ -30,6 +30,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_blWheel->SetOffset(PersistedSettings::GetInstance().Get("BL_ENCODER_OFFSET", 0));
 	//driveLogger = new DataLogger("/home/lvuser/DriveLogger.txt");
 	m_gyroCorrection = false;
+	m_encRotationPerDegrees = PersistedSettings::GetInstance().Get("ENCODER_ROTATIONS_PER_DEGREE",0);
 
 	m_originX = 0.0f;
 	m_originY = 0.0f;
@@ -232,14 +233,14 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 	}
 
 	SmartDashboard::PutNumber("aref", ControllerPower::GetVoltage5V());
-	SmartDashboard::PutNumber("commandedAngleFR", wheelAngleFR);
-	SmartDashboard::PutNumber("commandedAngleFL", wheelAngleFL);
-	SmartDashboard::PutNumber("commandedAngleBR", wheelAngleBR);
-	SmartDashboard::PutNumber("commandedAngleBL", wheelAngleBL);
-	SmartDashboard::PutNumber("commandedSpeedFR", wheelSpeedFR);
-	SmartDashboard::PutNumber("commandedSpeedFL", wheelSpeedFL);
-	SmartDashboard::PutNumber("commandedSpeedBR", wheelSpeedBR);
-	SmartDashboard::PutNumber("commandedSpeedBL", wheelSpeedBL);
+//	SmartDashboard::PutNumber("commandedAngleFR", wheelAngleFR);
+//	SmartDashboard::PutNumber("commandedAngleFL", wheelAngleFL);
+//	SmartDashboard::PutNumber("commandedAngleBR", wheelAngleBR);
+//	SmartDashboard::PutNumber("commandedAngleBL", wheelAngleBL);
+//	SmartDashboard::PutNumber("commandedSpeedFR", wheelSpeedFR);
+//	SmartDashboard::PutNumber("commandedSpeedFL", wheelSpeedFL);
+//	SmartDashboard::PutNumber("commandedSpeedBR", wheelSpeedBR);
+//	SmartDashboard::PutNumber("commandedSpeedBL", wheelSpeedBL);
 
 	m_flWheel->Set(-wheelSpeedFL, wheelAngleFL);
 	m_frWheel->Set(wheelSpeedFR, wheelAngleFR);
@@ -382,7 +383,7 @@ double DriveTrain::ComputeDriveDistanceInchestoEncoderRotations(double inches) {
 	final = inches;
 	final /= INCHES_PER_REV;
 	final *= ENCODER_REV_PER_WHEEL_REV;
-	SmartDashboard::PutNumber("DistanceFromInches", final);
+//	SmartDashboard::PutNumber("DistanceFromInches", final);
 	return final;
 }
 
@@ -408,6 +409,10 @@ bool DriveTrain::IsShifted() {
 
 void DriveTrain::EnableFollower() {
 	m_trajectoryFollower->Enable();
+}
+
+double DriveTrain::ComputeDegreesToEncoderRotations(double degrees) {
+	return (degrees * m_encRotationPerDegrees);
 }
 
 void DriveTrain::DisableFollower() {
