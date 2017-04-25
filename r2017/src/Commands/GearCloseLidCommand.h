@@ -18,7 +18,9 @@ public:
 	}
 
 	void Initialize(){
-		CommandBase::m_gearFlicker->CloseLid();
+		if(CommandBase::m_gearIntake->GetPivotPos() <= 300.0){
+			CommandBase::m_gearFlicker->CloseLid();
+		}
 	}
 };
 

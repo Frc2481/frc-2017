@@ -16,7 +16,7 @@ public:
 	}
 
 	void Initialize() {
-		CommandBase::m_gearIntake->StopIntake();
+		CommandBase::m_gearIntakeRoller->StopIntake();
 	}
 };
 

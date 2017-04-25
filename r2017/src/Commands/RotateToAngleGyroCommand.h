@@ -34,12 +34,12 @@ public:
 	}
 	void Initialize(){
 		//m_angle = SmartDashboard::GetNumber("RotateToAngle Angle", 0.0);
-		m_p = /*-0.04;*/ SmartDashboard::GetNumber("Gyro Rotation P",0.0);
+		m_p = -0.04; //SmartDashboard::GetNumber("Gyro Rotation P",0.0);
 //		if(m_p == 0.0){
 //			m_p = m_pMap.getInterpolated(InterpolatingDouble(fabs(m_angle - m_driveTrain->GetHeading()))).m_value;
 //		}
-		m_i = SmartDashboard::GetNumber("Gyro Rotation I", 0.0);
-		m_d = /*200;*/SmartDashboard::GetNumber("Gyro Rotation D", 0.0);
+//		m_i = SmartDashboard::GetNumber("Gyro Rotation I", 0.0);
+		m_d = 0.0;///*200;*/SmartDashboard::GetNumber("Gyro Rotation D", 0.0);
 		m_prevTime = frc::GetFPGATime();
 	}
 	void Execute(){
@@ -47,7 +47,7 @@ public:
 		//double heading = RoboUtils::constrainDeg180From(CommandBase::m_driveTrain->GetHeading(), m_angle);
 		double error = m_angle - CommandBase::m_driveTrain->GetHeading();//heading;
 		double errorD = (error - m_prevError) / (m_time - m_prevTime);
-		SmartDashboard::PutNumber("ErrorD", errorD * m_d);
+//		SmartDashboard::PutNumber("ErrorD", errorD * m_d);
 		double output = (error * m_p) - (errorD * m_d);
 //		if(fabs(error) <= 5){
 //			m_accumError += error;
@@ -71,10 +71,10 @@ public:
 		return m_loopCounter == 5;
 	}
 	void End(){
-		printf("Target Rotate Angle %f\n", m_angle);
-		printf("Real Rotate Angle %f\n", CommandBase::m_driveTrain->GetHeading());
+//		printf("Target Rotate Angle %f\n", m_angle);
+//		printf("Real Rotate Angle %f\n", CommandBase::m_driveTrain->GetHeading());
 		CommandBase::m_driveTrain->Drive(0,0,0);
-		SmartDashboard::PutNumber("TimeSinceRotateStart", TimeSinceInitialized());
+//		SmartDashboard::PutNumber("TimeSinceRotateStart", TimeSinceInitialized());
 	}
 	void Interrupted(){
 		End();

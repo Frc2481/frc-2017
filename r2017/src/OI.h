@@ -11,11 +11,13 @@ private:
 	static const int OPERATOR_STICK_PORT = 1;
 	Joystick2481* m_driverStick;
 	Joystick2481* m_operatorStick;
+//	Joystick2481* m_thirdStick;
 
 	Button* m_shifterButton;
 	Button* m_fieldCentricButton;
 	//Button* m_flickerGearButton;
 	Button* m_unloadGearButton;
+	Button* m_placeOnGroundButton;
 	AnalogJoystickButton* m_intakeButton;
 	AnalogJoystickButton* m_climberButton;
 	Button* m_gearLidButton;
@@ -32,12 +34,17 @@ private:
 	Button* m_shooterHoodToggleButton;
 	Button* m_gearLidButtonOP;
 	Button* m_flickerGearButtonOP;
-	AnalogJoystickButton* m_intakeButtonOP;
+	AnalogJoystickButton* m_unloadGearButtonOP;
 	AnalogJoystickButton* m_fireTrigger;
 	AnalogJoystickButton* m_incOurGear;
 	AnalogJoystickButton* m_decOurGear;
 	AnalogJoystickButton* m_incTheirGear;
 	AnalogJoystickButton* m_decTheirGear;
+	AnalogJoystickButton* m_manualIntakeButtonUp;
+	AnalogJoystickButton* m_manualIntakeButtonDown;
+
+//	AnalogJoystickButton* m_hpBeamButton;
+//	AnalogJoystickButton* m_intakeBeamButton;
 
 public:
 	OI();

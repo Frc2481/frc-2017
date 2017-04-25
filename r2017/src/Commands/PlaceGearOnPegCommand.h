@@ -11,6 +11,7 @@ class PlaceGearOnPegCommand : public CommandBase {
 private:
 	double m_currentPos;
 	double m_ratio;
+	double m_flOffset, m_frOffset, m_blOffset, m_brOffset;
 	SwerveModule* m_blWheel;
 	SwerveModule* m_brWheel;
 	SwerveModule* m_flWheel;
@@ -19,6 +20,7 @@ public:
 	PlaceGearOnPegCommand() : CommandBase("PlaceGearOnPegCommand"){
 		Requires(m_driveTrain.get());
 		Requires(m_gearIntake.get());
+		Requires(m_gearIntakeRoller.get());
 		m_blWheel = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE);
 		m_brWheel = CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE);
 		m_flWheel = CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE);
@@ -26,20 +28,20 @@ public:
 	}
 	void Initialize(){
 		m_ratio = GEAR_DOWN_POS / ONE_FOOT_DRIVE_TICKS;
-		m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
-		m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
-		m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
-		m_brWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
-		m_gearIntake->SpitGear();
+		m_flOffset = fabs(m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+		m_frOffset = fabs(m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+		m_blOffset = fabs(m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+		m_brOffset = fabs(m_brWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition());
+		m_gearIntakeRoller->SpitGear();
 	}
 	void Execute(){
 		m_driveTrain->Drive(0.0,0.5,0.0);
-		m_currentPos = (fabs(m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition() * 128.0) +
-				fabs(m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition() * 128.0) +
-				fabs(m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition() * 128.0) +
-				fabs(m_brWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition() * 128.0)) / 4.0;
+		m_currentPos = (fabs((m_flWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition() - m_flOffset) * 128.0) +
+				fabs((m_frWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition() - m_frOffset) * 128.0) +
+				fabs((m_blWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition() - m_blOffset) * 128.0) +
+				fabs((m_brWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->GetPosition() - m_brOffset) * 128.0)) / 4.0;
 		m_gearIntake->SetIntakePos((m_currentPos * m_ratio) + m_gearIntake->GetPivotPos());
-		SmartDashboard::PutNumber("Gear Place CurrentPos", m_currentPos * m_ratio);
+//		SmartDashboard::PutNumber("Gear Place CurrentPos", m_currentPos * m_ratio);
 
 	}
 	bool IsFinished(){
@@ -53,8 +55,8 @@ public:
 		m_brWheel->GetMotor(SwerveModule::DRIVE_MOTOR)->SetEncPosition(0);
 
 		m_gearIntake->StopIntakePivot();
-		printf("DropOff StopIntake\n");
-		m_gearIntake->StopIntake();
+//		printf("DropOff StopIntake\n");
+		m_gearIntakeRoller->StopIntake();
 	}
 };
 

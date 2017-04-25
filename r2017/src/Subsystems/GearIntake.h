@@ -2,22 +2,22 @@
 #define GearIntake_H
 
 #include <Commands/Subsystem.h>
+#include "DigitalInput.h"
 #include "CANTalon.h"
 
 class GearIntake : public Subsystem {
 private:
 	CANTalon* m_pivotMotor;
-	CANTalon* m_intakeMotor;
+	DigitalInput* m_hpBreak;
+	DigitalInput* m_intakeBreak;
 	double m_offset;
 	double m_setpoint;
+	bool m_hasGear;
+	bool m_lock;
+	bool m_hpBeam;
 public:
 	GearIntake();
 	void InitDefaultCommand();
-	void IntakeGear(double speed);
-	void StopIntake();
-	void SpitGear();
-	double GetIntakeCurrent();
-	double GetIntakePower();
 	void SetIntakePos(double pos);
 	void SetIntakeOpenLoop(double speed);
 	void StopIntakePivot();
@@ -29,6 +29,16 @@ public:
 	void ZeroEncoderPosition();
 	double GetPivotCurrent();
 	double GetPivotAppliedThrottle();
+	bool IsHPBeamBroken();
+	bool GetHasGear();
+	double PivotClosedLoopError();
+	void LockGearIntake();
+	void UnlockGearIntake();
+	bool GetGearLock();
+	void SetHasGear(bool hasGear);
+	void SetHPBeamBroken(bool hpBeam);
+	double GetEncoderSpeed();
+	double GetAppliedThrottle();
 };
 
 #endif  // GearIntake_H

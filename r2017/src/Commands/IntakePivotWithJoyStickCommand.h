@@ -9,6 +9,7 @@ class IntakePivotWithJoyStickCommand : public CommandBase {
 public:
 	IntakePivotWithJoyStickCommand() : CommandBase("IntakePivotWithJoystickCommand"){
 		Requires(m_gearIntake.get());
+		SetRunWhenDisabled(true);
 	}
 	void Initialize(){}
 	void Execute(){

@@ -4,12 +4,20 @@
 #include "../CommandBase.h"
 #include "Commands/InstantCommand.h"
 
-class IntakeOutCommand : public InstantCommand{
+class IntakeOutCommand : public CommandBase{
 public:
-	IntakeOutCommand() : InstantCommand("IntakeOutCommand"){}
+	IntakeOutCommand(double timeout = 1.0) : CommandBase("IntakeOutCommand"){
+		SetTimeout(timeout);
+	}
 	void Initialize(){
-		printf("IntakeOutCommand");
-		CommandBase::m_gearIntake->SpitGear();
+//		printf("IntakeOutCommand");
+		CommandBase::m_gearIntakeRoller->SpitGear();
+	}
+	bool IsFinished(){
+		return IsTimedOut();
+	}
+	void End(){
+		CommandBase::m_gearIntakeRoller->StopIntake();
 	}
 };
 

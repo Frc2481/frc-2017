@@ -29,7 +29,8 @@ public:
 	}
 
 	bool IsFinished(){
-		return m_loopCount >= 1 || IsTimedOut(); //|| m_gearIntake->GetPivotCurrent() > 50.0;
+//		SmartDashboard::PutBoolean("IntakeSetPos TimedOut", IsTimedOut());
+		return m_loopCount >= 5 || IsTimedOut(); //|| m_gearIntake->GetPivotCurrent() > 50.0;
 	}
 	void End(){
 		m_gearIntake->StopIntakePivot();

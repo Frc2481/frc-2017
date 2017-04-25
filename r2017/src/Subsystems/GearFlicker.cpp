@@ -14,6 +14,7 @@ GearFlicker::GearFlicker() : Subsystem("GearFlicker") {
 	m_gearLidSolenoid2 = new Solenoid(GEAR_LID_2);
 	m_ourGearCounter = 0;
 	m_theirGearCounter = 0;
+	m_isOpen = true;
 }
 
 GearFlicker::~GearFlicker() {
@@ -38,15 +39,17 @@ bool GearFlicker::IsUnloaded(){
 void GearFlicker::OpenLid() {
 	m_gearLidSolenoid->Set(false);
 	m_gearLidSolenoid2->Set(true);
+	m_isOpen = true;
 }
 
 void GearFlicker::CloseLid() {
 	m_gearLidSolenoid->Set(true);
 	m_gearLidSolenoid2->Set(false);
+	m_isOpen = false;
 }
 
 bool GearFlicker::IsOpen() {
-	return m_gearLidSolenoid->Get();
+	return m_isOpen;
 }
 
 void GearFlicker::IncOurGear() {
