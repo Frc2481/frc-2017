@@ -19,7 +19,7 @@ public:
 			m_angle = CommandBase::m_driveTrain->GetHeading();
 		}
 		//CommandBase::m_driveTrain->ZeroYaw();
-		SmartDashboard::PutNumber("GyroCorrection Angle", m_angle);
+//		SmartDashboard::PutNumber("GyroCorrection Angle", m_angle);
 		CommandBase::m_driveTrain->SetGyroCorrectionOffset(m_angle);
 		CommandBase::m_driveTrain->SetGyroCorrection(true);
 	}

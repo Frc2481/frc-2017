@@ -33,7 +33,7 @@ SuperStructure::SuperStructure() : Subsystem("SuperStructure"){
 	m_shooterMotor->DisableNominalClosedLoopVoltage();
 	m_shooterMotor->SetNominalClosedLoopVoltage(12.0f);
 //	m_shooterMotor->SetInverted(true);
-	m_loaderSpeed = .85;
+	m_loaderSpeed = .7;
 	m_loaderMotor->SetInverted(true);
 	m_loaderMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Coast);
 	m_loaderMotor->SetVoltageRampRate(36);

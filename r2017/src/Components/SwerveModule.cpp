@@ -254,12 +254,12 @@ int SwerveModule::GetError() {
 void SwerveModule::SetMotionMagic(double setpoint) {
 	m_motionMagic = true;
 	m_driveMotor->SetTalonControlMode(CANTalon::kMotionMagicMode);
-//	if(m_angleOptimized){
-//		m_driveMotor->Set(-setpoint);
-//	}
-//	else{
+	if(m_angleOptimized){
+		m_driveMotor->Set(-setpoint);
+	}
+	else{
 		m_driveMotor->Set(setpoint);
-//	}
+	}
 }
 
 void SwerveModule::SetMagicBool(bool magic) {

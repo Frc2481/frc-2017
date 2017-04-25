@@ -9,6 +9,7 @@ std::unique_ptr<Intake> CommandBase::m_intake;
 std::unique_ptr<SuperStructure> CommandBase::m_superStructure;
 std::unique_ptr<AirCompressor> CommandBase::m_airCompressor;
 std::unique_ptr<GearIntake> CommandBase::m_gearIntake;
+std::unique_ptr<GearIntakeRoller> CommandBase::m_gearIntakeRoller;
 std::unique_ptr<OI> CommandBase::oi;
 bool CommandBase::m_pause;
 
@@ -34,6 +35,7 @@ void CommandBase::init()
 	m_superStructure.reset(new SuperStructure());
 	m_airCompressor.reset(new AirCompressor());
 	m_gearIntake.reset(new GearIntake());
+	m_gearIntakeRoller.reset(new GearIntakeRoller());
 
 	m_pause = false;
 

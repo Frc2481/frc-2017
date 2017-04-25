@@ -15,7 +15,7 @@ public:
 	}
 	void Execute(){
 		double speed = m_startSpeed.interpolate(m_endSpeed, TimeSinceInitialized()/m_endTime).m_value;
-		SmartDashboard::PutNumber("CommandedShooterRampSpeed", speed);
+//		SmartDashboard::PutNumber("CommandedShooterRampSpeed", speed);
 		m_superStructure->SetShooterSpeed(speed);
 	}
 	bool IsFinished(){

@@ -1,5 +1,5 @@
-#ifndef BLUEFortyBeforeCIR_H
-#define BLUEFortyBeforeCIR_H
+#ifndef RedBackHopperCommandGroup_H
+#define RedBackHopperCommandGroup_H
 
 #include <Commands/CommandGroup.h>
 #include "Commands/ToggleCoastToBrakeCommand.h"
@@ -21,25 +21,25 @@
 #include "Commands/SetClosedLoopErrorCommand.h"
 #include "Commands/SetShooterSpeedCommand.h"
 
-class BLUEFortyBeforeCIR : public CommandGroup {
+class RedBackHopperCommandGroup : public CommandGroup {
 public:
-	BLUEFortyBeforeCIR() : CommandGroup("BLUEFortyBeforeCIR"){
+	RedBackHopperCommandGroup() : CommandGroup("RedBackHopperCommandGroup"){
 		AddSequential(new ToggleCoastToBrakeCommand(false));
 		AddSequential(new DriveTrainZeroYawCommand());
 		AddSequential(new DriveTrainZeroDriveEncodersCommand());
 		AddSequential(new SetClosedLoopErrorCommand());
 		AddSequential(new GearCloseLidCommand());
 		AddSequential(new ShooterSetHoodCommand(true));
-		AddSequential(new SetShooterSpeedCommand(Preferences::GetInstance()->GetDouble("BLUE_AUTO_SHOOTER_SPD", 4100))); //4100
+		AddSequential(new SetShooterSpeedCommand(Preferences::GetInstance()->GetDouble("RED_BACK_AUTO_SHOOTER_SPD", 4275))); //4100
 		AddSequential(new TurnShooterOnCommand());
 		//AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddSequential(new SetAngleOptimizedCommand(false));
-		AddSequential(new SwerveModuleRotateToAngleCommand(-17,false), .6);
+		AddSequential(new SwerveModuleRotateToAngleCommand(Preferences::GetInstance()->GetDouble("RED_BACK_AUTO_ANGLE", -149),false), .6);
 		AddSequential(new DriveTrainEnableGyroCorrectionCommand(0));
 		AddParallel(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(
-				Preferences::GetInstance()->GetDouble("BLUE_AUTO_DRIVE_DIST", 100)), false), 3); //100
+				Preferences::GetInstance()->GetDouble("RED_BACK_AUTO_DRIVE_DIST", 200.5)), false), 3); //100
 		AddSequential(new DriveTrainWaitForEncoderDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(
-				Preferences::GetInstance()->GetDouble("BLUE_AUTO_TURN_POS", 72))), 5); //72
+				Preferences::GetInstance()->GetDouble("RED_BACK_AUTO_TURN_POS", 155.0))), 5); //72
 		AddSequential(new SwerveModuleRotateToAngleCommand(270,false), .6);
 		AddSequential(new DriveTrainDisableGyroCorrectionCommand());
 		AddSequential(new SetAngleOptimizedCommand(true));
@@ -47,4 +47,4 @@ public:
 	}
 };
 
-#endif  // BLUEFortyBeforeCIR_H
+#endif  // RedBackHopperCommandGroup_H

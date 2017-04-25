@@ -15,9 +15,9 @@ public:
 	ShooterSetPIDCommand() : InstantCommand("Shooter Set PID Command") {}
 
 	void Initialize() {
-		CommandBase::m_superStructure->SetPID(SmartDashboard::GetNumber("Shooter P", 0),
-				SmartDashboard::GetNumber("Shooter I", 0),
-				SmartDashboard::GetNumber("Shooter D", 0));
+//		CommandBase::m_superStructure->SetPID(SmartDashboard::GetNumber("Shooter P", 0),
+//				SmartDashboard::GetNumber("Shooter I", 0),
+//				SmartDashboard::GetNumber("Shooter D", 0));
 	}
 };
 

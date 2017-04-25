@@ -14,12 +14,12 @@ public:
 		m_onTarget = false;
 	}
 	void Initialize(){
-		printf("Initialize, WaitforEncoder\n");
+//		printf("Initialize, WaitforEncoder\n");
 		m_onTarget = false;
 	}
 	void Execute(){
-		printf("Execute, WaitforEncoder\n");
-		printf("Distance %f\n", CommandBase::m_driveTrain->GetDriveDistance());
+//		printf("Execute, WaitforEncoder\n");
+//		printf("Distance %f\n", CommandBase::m_driveTrain->GetDriveDistance());
 		if(m_distance - CommandBase::m_driveTrain->GetDriveDistance() <= .3){
 			m_onTarget = true;
 		}
@@ -31,7 +31,7 @@ public:
 		return m_onTarget;
 	}
 	void End(){
-		printf("End, WaitforEncoder\n");
+//		printf("End, WaitforEncoder\n");
 	}
 	void Interrupted(){}
 };

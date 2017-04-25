@@ -22,7 +22,7 @@ public:
 				GetMotor(SwerveModule::STEER_MOTOR)->GetSpeed()) > 0;
 	}
 	void End(){
-		printf("Applied Throttle %f\n", m_counter);
+//		printf("Applied Throttle %f\n", m_counter);
 		m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
 				GetMotor(SwerveModule::STEER_MOTOR)->SetControlMode(CANTalon::kPosition);
 	}

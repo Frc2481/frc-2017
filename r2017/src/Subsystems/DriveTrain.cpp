@@ -15,7 +15,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER)),
 	m_shifter(new Solenoid(SHIFTER)),
 	//m_serialPort(new SerialPort(57600,SerialPort::kUSB)),
-	m_imu(new AHRS(SerialPort::kMXP)),
+	m_imu(new AHRS(SPI::kMXP)),
 //		imu(new IMU(serialPort,update_rate_hz)),
 	m_trajectoryFollower(new TrajectoryFollowerLooper(5000, this)),
 	m_isFieldCentric(false),
@@ -171,9 +171,9 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 		twist = gyroAngle * P;
 	}
 //
-		SmartDashboard::PutNumber("DriveTrain X", m_XPos);
-		SmartDashboard::PutNumber("DriveTrain Y", m_YPos);
-		SmartDashboard::PutBoolean("GYRO Correction", m_gyroCorrection);
+//		SmartDashboard::PutNumber("DriveTrain X", m_XPos);
+//		SmartDashboard::PutNumber("DriveTrain Y", m_YPos);
+//		SmartDashboard::PutBoolean("GYRO Correction", m_gyroCorrection);
 //
 		twist = -twist;
 		if (m_isFieldCentric) {
@@ -186,7 +186,7 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 			  //limit twist speed while not in field centric
 			FWD = yPos;
 			STR = -xPos;
-			SmartDashboard::PutNumber("DriveTrain Twist", twist);
+//			SmartDashboard::PutNumber("DriveTrain Twist", twist);
 			twist = twist * .05;
 		}
 
@@ -232,7 +232,7 @@ void DriveTrain::Drive(double xPos, double yPos, double twist) {
 		wheelSpeedBL /= maxWheelSpeed;
 	}
 
-	SmartDashboard::PutNumber("aref", ControllerPower::GetVoltage5V());
+//	SmartDashboard::PutNumber("aref", ControllerPower::GetVoltage5V());
 //	SmartDashboard::PutNumber("commandedAngleFR", wheelAngleFR);
 //	SmartDashboard::PutNumber("commandedAngleFL", wheelAngleFL);
 //	SmartDashboard::PutNumber("commandedAngleBR", wheelAngleBR);

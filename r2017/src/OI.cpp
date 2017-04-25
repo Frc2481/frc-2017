@@ -28,10 +28,16 @@
 #include "Commands/PickUpGearCommandGroup.h"
 #include "Commands/StopGearIntakeCommand.h"
 #include "Commands/HomeGearIntakeCommandGroup.h"
+#include "Commands/IntakeSetPosCommand.h"
+#include "Commands/UnloadGearToFloorCommandGroup.h"
+#include "Commands/SetHPBeamCommand.h"
+#include "Commands/SetHasGearCommand.h"
+#include "Commands/IntakeRollerWithJoystickCommand.h"
 
 OI::OI() {
 	m_driverStick = new Joystick2481(DRIVE_STICK_PORT);
 	m_operatorStick = new Joystick2481(OPERATOR_STICK_PORT);
+//	m_thirdStick = new Joystick2481(2);
 
 	m_shifterButton = SHIFTER_BUTTON;
 	m_shifterButton->WhenPressed(new DriveTrainShiftSequenceCommand(true));
@@ -44,9 +50,12 @@ OI::OI() {
 	m_unloadGearButton = UNLOAD_GEAR_BUTTON;
 	m_unloadGearButton->WhileHeld(new PlaceGearOnPegCommandGroup());
 
+	m_placeOnGroundButton = PLACE_ON_GROUND_BUTTON;
+	m_placeOnGroundButton->WhenPressed(new UnloadGearToFloorCommandGroup());
+
 	m_intakeButton = INTAKE_BUTTON;
 	m_intakeButton->WhenPressed(new PickUpGearCommandGroup());
-	m_intakeButton->WhenReleased(new HomeGearIntakeCommandGroup());
+	//m_intakeButton->WhenReleased(new HomeGearIntakeCommandGroup());
 
 	m_climberButton = CLIMBER_BUTTON;
 	m_climberButton->WhileHeld(new ClimberUpCommand());
@@ -100,8 +109,14 @@ OI::OI() {
 	m_flickerGearButtonOP->WhenPressed(new GearFlickCommand());
 	m_flickerGearButtonOP->WhenReleased(new GearResetCommand());
 
-	m_intakeButtonOP = INTAKE_BUTTON_OP;
-	m_intakeButtonOP->WhenPressed(new IntakeOnCommand());
+	m_manualIntakeButtonUp = MANUAL_INTAKE_UP;
+	m_manualIntakeButtonUp->WhileHeld(new IntakeRollerWithJoystickCommand());
+
+	m_manualIntakeButtonDown = MANUAL_INTAKE_DOWN;
+	m_manualIntakeButtonDown->WhileHeld(new IntakeRollerWithJoystickCommand());
+
+//	m_unloadGearButtonOP = UNLOAD_GEAR_BUTTON_OP;
+//	m_unloadGearButtonOP->WhenPressed(new UnloadGearToFloorCommandGroup());
 
 //	m_incOurGear = INC_OUR_GEAR_COUNTER;
 //	m_incOurGear->WhenPressed(new IncOurGearCounterCommand());
@@ -115,6 +130,11 @@ OI::OI() {
 //	m_decTheirGear = DEC_THEIR_GEAR_COUNTER;
 //	m_decTheirGear->WhenPressed(new DecTheirGearCounterCommand());
 
+//	m_intakeBeamButton = INTAKE_BEAM_BUTTON;
+//	m_intakeBeamButton->WhileHeld(new SetHasGearCommand());
+//
+//	m_hpBeamButton = HP_BEAM_BUTTON;
+//	m_hpBeamButton->WhileHeld(new SetHPBeamCommand());
 
 }
 

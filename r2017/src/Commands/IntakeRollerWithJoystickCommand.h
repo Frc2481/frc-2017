@@ -5,18 +5,20 @@
 
 class IntakeRollerWithJoystickCommand : public CommandBase {
 public:
-	IntakeRollerWithJoystickCommand() : CommandBase("IntakeRollerWithJoystickCommand"){}
+	IntakeRollerWithJoystickCommand() : CommandBase("IntakeRollerWithJoystickCommand"){
+		Requires(m_gearIntakeRoller.get());
+	}
 	void Initialize(){}
 	void Execute(){
 		double speed = oi->GetOperatorStick()->GetRawAxis(XB_RIGHT_Y_AXIS);
-		m_gearIntake->IntakeGear(speed);
+		m_gearIntakeRoller->IntakeGear(-speed);
 	}
 	bool IsFinished(){
 		return false;
 	}
 	void End(){
-		printf("IntakeJoystick StopIntake\n");
-		m_gearIntake->StopIntake();
+//		printf("IntakeJoystick StopIntake\n");
+		m_gearIntakeRoller->StopIntake();
 	}
 	void Interrupted(){
 		End();

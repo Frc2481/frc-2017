@@ -38,7 +38,7 @@ void TalonMotionProfileFollower::Periodic() {
 	}
 
 	if(m_started){
-		SmartDashboard::PutNumber("TalonError", m_status.activePoint.velocity - m_talon->GetSpeed());
+//		SmartDashboard::PutNumber("TalonError", m_status.activePoint.velocity - m_talon->GetSpeed());
 		m_outFile << frc::GetFPGATime() << ","
 				<< m_talon->GetClosedLoopError() << ","
 				<< m_talon->GetPosition() << ","

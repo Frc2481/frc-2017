@@ -1,3 +1,4 @@
+#include <Commands/LockIntakeCommand.h>
 #include <Commands/REDGearToBLUELaunchPadCommandGroup.h>
 #include "WPILib.h"
 #include "Commands/Command.h"
@@ -16,7 +17,6 @@
 #include "Commands/TimeAccelAndDecelCommandGroup.h"
 #include "Commands/DriveTrainDisableGyroCorrectionCommand.h"
 #include "Commands/DriveTrainEnableGyroCorrectionCommand.h"
-#include "Commands/DriveToDistanceEncoderCommand.h"
 #include "Commands/DriveTrainZeroYawCommand.h"
 #include "Commands/RotateToAngleGyroCommand.h"
 #include "Commands/MiddleGearAutoCommandGroup.h"
@@ -63,6 +63,15 @@
 #include "Commands/RotateToCameraAngleCommandGroup.h"
 #include "Commands/IntakeOutCommand.h"
 #include "Commands/PlaceGearOnPegCommandGroup.h"
+#include "Commands/IntakePivotWithJoyStickCommand.h"
+#include "Commands/BlueBackHopperAutoCommandGroup.h"
+#include "Commands/UnloadGearToFloorCommandGroup.h"
+#include "Commands/GearCloseLidCommand.h"
+#include "Commands/LeftPegGearSprintCommandGroup.h"
+#include "Commands/RightPegGearSprintCommandGroup.h"
+#include "Commands/SetShooterForBlueCommandGroup.h"
+#include "Commands/SetShooterForRedCommandGroup.h"
+#include "Commands/RedBackHopperCommandGroup.h"
 #include "CameraServer.h"
 
 class Robot: public IterativeRobot
@@ -71,6 +80,7 @@ private:
 	std::unique_ptr<Command> autonomousCommand;
 	std::unique_ptr<Command> birdEyeSetupCommand;
 	frc::SendableChooser<Command*> chooser;
+	frc::SendableChooser<Command*> colorChooser;
 	std::unique_ptr<PowerDistributionPanel> pdp;
 	VisionProcessor* m_visionProcessor = VisionProcessor::GetInstance();
 	VisionServer* m_visionServer;
@@ -78,30 +88,33 @@ private:
 	CameraServer* m_server = CameraServer::GetInstance();
 	cs::UsbCamera m_usbCam1;
 	cs::UsbCamera m_usbCam2;
+	Command* m_lockCommand;
+	bool m_red;
 
 	void RobotInit()
 	{
-		birdEyeSetupCommand.reset(new BirdEyeDelayedSetupCommandGroup());
-		birdEyeSetupCommand->Start();
+//		birdEyeSetupCommand.reset(new BirdEyeDelayedSetupCommandGroup());
+//		birdEyeSetupCommand->Start();
 		//m_visionServer = new VisionServer("8254");
 //		m_visionServer = new VisionServer("8254");
 //		m_visionServer->addVisionUpdateReceiver(VisionProcessor::GetInstance());
-		BoilerVisionLooper::GetInstance()->addVisionUpdateReceiver(VisionProcessor::GetInstance());
-		BoilerVisionLooper::GetInstance()->Start();
-		BoilerVisionLooper::GetInstance()->SetActive(true);
-		VisionProcessor::GetInstance()->SetActive(true);
+//		BoilerVisionLooper::GetInstance()->addVisionUpdateReceiver(VisionProcessor::GetInstance());
+//		BoilerVisionLooper::GetInstance()->Start();
+//		BoilerVisionLooper::GetInstance()->SetActive(true);
+//		VisionProcessor::GetInstance()->SetActive(true);
 		SmartDashboard::PutData("Scheduler", m_scheduler->GetInstance());
 		CommandBase::init();
 		CommandBase::m_driveTrain->SetLengthAndWidth(ROBOT_LENGTH, ROBOT_WIDTH);
-		VisionProcessor::GetInstance()->Start();
-		RobotChainLooper::GetInstance()->Start();
-		RobotChainLooper::GetInstance()->SetActive(true);
+		m_lockCommand = new LockIntakeCommand();
+//		VisionProcessor::GetInstance()->Start();
+//		RobotChainLooper::GetInstance()->Start();
+//		RobotChainLooper::GetInstance()->SetActive(true);
 		pdp.reset(new PowerDistributionPanel());
 		m_usbCam1 = m_server->StartAutomaticCapture("cam1", 0);
-		m_usbCam1.SetFPS(15);
-		m_usbCam1.SetResolution(1280, 720);
+		m_usbCam1.SetFPS(10);
+		m_usbCam1.SetResolution(320, 180);
 		m_usbCam1.SetExposureAuto();
-		//m_usbCam1.SetBrightness(50);
+		m_usbCam1.SetBrightness(50);
 //		m_usbCam2 = m_server->StartAutomaticCapture("cam2", 1);
 //		m_usbCam2.SetFPS(15);
 //		m_usbCam2.SetResolution(320, 240);
@@ -134,33 +147,45 @@ private:
 		chooser.AddObject("BLUE One Gear + 10 Ball", new BLUEPutGearOnBeforeShootTenBallsCommandGroup());
 		chooser.AddObject("RED Gear To Blue Launchpad", new REDGearToBlueLaunchPadCommandGroup());//NeedsTuning
 		chooser.AddObject("BLUE Gear To Red Launchpad", new BLUEGearToRedLaunchPadCommandGroup());
+		chooser.AddObject("BLUE Back Hopper", new BlueBackHopperAutoCommandGroup());
+		chooser.AddObject("RED Back Hopper", new RedBackHopperCommandGroup());
 		//chooser.AddObject("RED Right Gear to Hopper", new FollowGearPathCommandGroup());
 		chooser.AddObject("Middle Gear Only", new MiddleGearAutoCommandGroup());
+		chooser.AddObject("Left Gear Sprint", new LeftPegGearSprintCommandGroup());
+		chooser.AddObject("Right Gear Sprint", new RightPegGearSprintCommandGroup());
 
-		SmartDashboard::PutData(new BLUEFortyBeforeCIR());
-		SmartDashboard::PutData(new REDFortyKPACIRCommandGroup());
+		colorChooser.AddDefault("No Color", NULL);
+		colorChooser.AddObject("Red Gear", new SetShooterForRedCommandGroup());
+		colorChooser.AddObject("Blue Gear", new SetShooterForBlueCommandGroup());
 
-		SmartDashboard::PutData(new SetModulesForSpinInPlaceCommand());
-		SmartDashboard::PutData(new RotateToAngleMotionMagicCommandGroup(90.0));
+//		SmartDashboard::PutData(new BLUEFortyBeforeCIR());
+//		SmartDashboard::PutData(new REDFortyKPACIRCommandGroup());
+
+//		SmartDashboard::PutNumber("RotateMotionMagicAngle", 0);
+//		SmartDashboard::PutData(new SetModulesForSpinInPlaceCommand());
+//		SmartDashboard::PutData(new RotateToAngleMotionMagicCommandGroup(90.0));
 		SmartDashboard::PutData(new CalibrateMotionMagicRotationCommand());
-		SmartDashboard::PutData(new RotateToCameraAngleCommandGroup());
+//		SmartDashboard::PutData(new RotateToCameraAngleCommandGroup());
 
 		SmartDashboard::PutData("Autonomous Chooser", &chooser);
+		SmartDashboard::PutData("Color Chooser", &colorChooser);
 
 		//CommandBase::m_gearFlicker->CloseLid();
 
 		SmartDashboard::PutData(new ToggleOptimizedCommand());
 		SmartDashboard::PutData("RED Hopper Auto Wheel Align", new SwerveModuleRotateToAngleCommand(-163, false));
+		SmartDashboard::PutData("RED Back Hopper Auto Wheel Align", new SwerveModuleRotateToAngleCommand(-155, false));
 		SmartDashboard::PutData("BLUE Hopper Auto Wheel Align", new SwerveModuleRotateToAngleCommand(-17,false));
-		SmartDashboard::PutData(new ResumeCommand());
+		SmartDashboard::PutData("BLUE Back Hopper Auto Wheel Align", new SwerveModuleRotateToAngleCommand(-31, false));
+		//SmartDashboard::PutData(new ResumeCommand());
 
-		SmartDashboard::PutData(new DriveTrainShiftCommand(true));
+		//SmartDashboard::PutData(new DriveTrainShiftCommand(true));
 
 		//SmartDashboard::PutData(new TestMotionProfileCreationCommand());
 
 		//SmartDashboard::PutData(new ShooterRampSpeedCommand(5000, 4500, 2.5));
-		SmartDashboard::PutData(new ShooterIncreaseSpeedCommand());
-		SmartDashboard::PutData(new ShooterDecreaseSpeedCommand());
+//		SmartDashboard::PutData(new ShooterIncreaseSpeedCommand());
+//		SmartDashboard::PutData(new ShooterDecreaseSpeedCommand());
 		//SmartDashboard::PutData(new ShooterOnCommand());
 		//SmartDashboard::PutData(new ShooterOffCommand());
 		SmartDashboard::PutData(new CalibrateEncoderOffsetsCommand());
@@ -172,47 +197,41 @@ private:
 		//SmartDashboard::PutData(new SetDriveTalonToSlaveCommand(true));
 		//SmartDashboard::PutData(new AutoDriveToGearCommandGroup());
 //		SmartDashboard::PutData(new TimeAccelAndDecelCommandGroup());
-		SmartDashboard::PutData(new DriveTrainEnableGyroCorrectionCommand(0));
-		SmartDashboard::PutData(new DriveTrainDisableGyroCorrectionCommand());
+//		SmartDashboard::PutData(new DriveTrainEnableGyroCorrectionCommand(0));
+//		SmartDashboard::PutData(new DriveTrainDisableGyroCorrectionCommand());
 		//SmartDashboard::PutData(new DriveToDistanceEncoderCommand());
 		SmartDashboard::PutData(new DriveTrainZeroYawCommand());
 		//SmartDashboard::PutData(new RotateToAngleGyroCommand(-60));
 		//SmartDashboard::PutData(new MiddleGearAutoCommandGroup());
 		//SmartDashboard::PutData(new TurnShooterOnCommand());
 //		SmartDashboard::PutData(new SendSerialPRMCommandGroup());
-		SmartDashboard::PutData("Camera Rotate To Angle", new CameraRotateToAngle(true));
+//		SmartDashboard::PutData("Camera Rotate To Angle", new CameraRotateToAngle(true));
 //		SmartDashboard::PutData(new SetOpenLoopShooterSpeedCommand(.8));
 		//SmartDashboard::PutData(new TurnShooterOnCommand(4350));
 		//SmartDashboard::PutData(new DriveMotionMagicDistanceCommand(CommandBase::m_driveTrain->ComputeDriveDistanceInchestoEncoderRotations(24), false));
-
-//		SmartDashboard::PutNumber("EncoderConfig InitPos", 0);
-//		SmartDashboard::PutNumber("EncoderConfig P", 0.0);
-//		SmartDashboard::PutNumber("EncoderConfig I", 0.0);
-//		SmartDashboard::PutNumber("EncoderConfig D", 0.0);
-//		SmartDashboard::PutNumber("EncoderConfig V", 0.0);
-//		SmartDashboard::PutNumber("EncoderConfig A", 0.0);
 
 //		SmartDashboard::PutNumber("Gyro Correction P", 0.0);
 //		SmartDashboard::PutNumber("Gyro Rotation P", 0.0);
 //		SmartDashboard::PutNumber("Gyro Rotation I", 0.0);
 //		SmartDashboard::PutNumber("Gyro Rotation D", 0.0);
 
-		SmartDashboard::PutNumber("RotateToAngle Angle", 0.0);
+//		SmartDashboard::PutNumber("RotateToAngle Angle", 0.0);
 
 //		SmartDashboard::PutData(new TimeSteerMotorAccelAndDecelCommandGroup());
 //		SmartDashboard::PutData(new SwerveModuleNominalVoltageCommand());
 
 		SmartDashboard::PutData(new CalibrateGearIntakeCommand());
-		SmartDashboard::PutData(new TimeIntakeAccelAndDecelCommandGroup());
-		SmartDashboard::PutData(new IntakeSetPosCommand(0,2));
-		SmartDashboard::PutData("UnstowCommand", new IntakeSetPosCommand(400.0, 1.0));
-		SmartDashboard::PutNumber("Intake Setpoint", 0);
-		SmartDashboard::PutData(new IntakeOnCommand());
-		SmartDashboard::PutData(new IntakeOutCommand());
+		//SmartDashboard::PutData(new TimeIntakeAccelAndDecelCommandGroup());
+		//SmartDashboard::PutData(new IntakeSetPosCommand(0,2));
+		//SmartDashboard::PutData("UnstowCommand", new IntakeSetPosCommand(400.0, 1.0));
+//		SmartDashboard::PutNumber("Intake Setpoint", 0);
+		//SmartDashboard::PutData(new IntakeOnCommand());
+		//SmartDashboard::PutData(new IntakeOutCommand());
 		SmartDashboard::PutData(new PickUpGearCommandGroup());
 		SmartDashboard::PutData(new IntakeRollerWithJoystickCommand());
+		SmartDashboard::PutData(new IntakePivotWithJoyStickCommand());
 		SmartDashboard::PutData(new PlaceGearOnPegCommandGroup());
-		SmartDashboard::PutData(new GearIntake());
+		SmartDashboard::PutData(new UnloadGearToFloorCommandGroup());
 	}
 
 	/**
@@ -232,6 +251,8 @@ private:
 		Scheduler::GetInstance()->Run();
 		SmartDashboard::PutNumber("Gyro Angle", CommandBase::m_driveTrain->GetHeading());
 		SmartDashboard::PutNumber("Intake Pivot Pos", CommandBase::m_gearIntake->GetPivotPos());
+		SmartDashboard::PutBoolean("HPBeam", CommandBase::m_gearIntake->IsHPBeamBroken());
+		SmartDashboard::PutBoolean("IntakeBeam", CommandBase::m_gearIntake->GetHasGear());
 	}
 
 	/**
@@ -253,6 +274,7 @@ private:
 		} */
 
 		CommandBase::m_gearFlicker->CloseLid();
+		CommandBase::m_gearIntake->SetIntakePos(250.0);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetMotor(SwerveModule::STEER_MOTOR)->SetAllowableClosedLoopErr(20);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->GetMotor(SwerveModule::STEER_MOTOR)->SetAllowableClosedLoopErr(20);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetMotor(SwerveModule::STEER_MOTOR)->SetAllowableClosedLoopErr(20);
@@ -266,8 +288,8 @@ private:
 	void AutonomousPeriodic()
 	{
 		Scheduler::GetInstance()->Run();
-		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_superStructure->GetShooterSetpoint());
-		SmartDashboard::PutNumber("Loader Speed", CommandBase::m_superStructure->GetLoaderSpeed());
+//		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_superStructure->GetShooterSetpoint());
+//		SmartDashboard::PutNumber("Loader Speed", CommandBase::m_superStructure->GetLoaderSpeed());
 	}
 
 	void TeleopInit()
@@ -279,6 +301,11 @@ private:
 
 		if (autonomousCommand != NULL)
 			autonomousCommand->Cancel();
+
+		Command* colorChooserCommand = colorChooser.GetSelected();
+		if(colorChooserCommand != NULL){
+			colorChooserCommand->Start();
+		}
 		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetMotor(SwerveModule::STEER_MOTOR)->SetAllowableClosedLoopErr(40);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->GetMotor(SwerveModule::STEER_MOTOR)->SetAllowableClosedLoopErr(40);
 		CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetMotor(SwerveModule::STEER_MOTOR)->SetAllowableClosedLoopErr(40);
@@ -308,13 +335,17 @@ private:
 	void TeleopPeriodic()
 	{
 		Scheduler::GetInstance()->Run();
+		m_lockCommand->Start();
+		SmartDashboard::PutBoolean("GearLock", CommandBase::m_gearIntake->GetGearLock());
 //		SmartDashboard::PutNumber("Shooter Setpoint", CommandBase::m_shooter->GetShooterSetpoint());
 //		SmartDashboard::PutNumber("Feeder Speed", CommandBase::m_shooter->GetFeederSpeed());
-		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
-		SmartDashboard::PutNumber("Intake Power", CommandBase::m_gearIntake->GetIntakePower());
+//		SmartDashboard::PutNumber("Overall Power", pdp->GetTotalCurrent());
+//		SmartDashboard::PutNumber("Intake Power", CommandBase::m_gearIntakeRoller->GetIntakePower());
 		SmartDashboard::PutBoolean("Shifted", CommandBase::m_driveTrain->IsShifted());
 
 		SmartDashboard::PutNumber("Intake Pivot Pos", CommandBase::m_gearIntake->GetPivotPos());
+//		SmartDashboard::PutNumber("PivotEncoderVelocity", CommandBase::m_gearIntake->GetEncoderSpeed());
+//		SmartDashboard::PutNumber("Pivot Output Voltage", CommandBase::m_gearIntake->GetAppliedThrottle());
 //		SmartDashboard::PutBoolean("Encoder Present", CommandBase::m_gearIntake->IsEncoderPluggedIn());
 
 //		SmartDashboard::PutNumber("FLDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
@@ -325,7 +356,7 @@ private:
 //				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
 //		SmartDashboard::PutNumber("BRDriveCurrent", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->
 //				GetMotor(SwerveModule::DRIVE_MOTOR)->GetOutputCurrent());
-		SmartDashboard::PutNumber("DriveTrain Distance", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetDistance());
+//		SmartDashboard::PutNumber("DriveTrain Distance", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetDistance());
 //		SmartDashboard::PutNumber("Drive Velocity", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetSpeed());
 //		SmartDashboard::PutNumber("GetFLClosedLoopError", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->
 //				GetMotor(SwerveModule::STEER_MOTOR)->GetClosedLoopError());
@@ -347,16 +378,19 @@ private:
 //		SmartDashboard::PutNumber("MotionMagic Setpoint", CommandBase::m_driveTrain->GetMotionMagicSetpoint());
 //		SmartDashboard::PutNumber("BRSteerValue", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->GetMotor(SwerveModule::STEER_MOTOR)->GetPulseWidthPosition());
 		SmartDashboard::PutBoolean("Shooter Hood", CommandBase::m_superStructure->IsRaised());
-		SmartDashboard::PutNumber("Hopper Current", CommandBase::m_superStructure->GetHopperCurrent());
+//		SmartDashboard::PutNumber("Hopper Current", CommandBase::m_superStructure->GetHopperCurrent());
 //		SmartDashboard::PutNumber("AimingParams Angle", RobotChains::getInstance()->getGearAimingParameters(frc::GetFPGATime()).begin()->getRobotAngle());
 //		SmartDashboard::PutNumber("BL Steer Angle", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetAngle());
 //		SmartDashboard::PutNumber("BR Steer Angle", CommandBase::m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->GetAngle());
 //		SmartDashboard::PutNumber("FL Steer Angle", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetAngle());
 //		SmartDashboard::PutNumber("FR Steer Angle", CommandBase::m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->GetAngle());
 
-		SmartDashboard::PutNumber("Intake Roller Current", CommandBase::m_gearIntake->GetIntakeCurrent());
-		SmartDashboard::PutNumber("Intake Pivot Current", CommandBase::m_gearIntake->GetPivotCurrent());
-		SmartDashboard::PutNumber("Intake Output Voltage", CommandBase::m_gearIntake->GetPivotAppliedThrottle());
+//		SmartDashboard::PutNumber("Intake Roller Current", CommandBase::m_gearIntakeRoller->GetIntakeCurrent());
+//		SmartDashboard::PutNumber("Intake Pivot Current", CommandBase::m_gearIntake->GetPivotCurrent());
+//		SmartDashboard::PutNumber("Intake Output Voltage", CommandBase::m_gearIntake->GetPivotAppliedThrottle());
+		SmartDashboard::PutBoolean("HPBeam", CommandBase::m_gearIntake->IsHPBeamBroken());
+		SmartDashboard::PutBoolean("IntakeBeam", CommandBase::m_gearIntake->GetHasGear());
+//		SmartDashboard::PutNumber("Intake Closed Loop Error", CommandBase::m_gearIntake->PivotClosedLoopError());
 	}
 
 	void TestPeriodic()

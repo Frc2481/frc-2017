@@ -20,6 +20,7 @@ private:
 	Solenoid *m_gearLidSolenoid2;
 	int m_ourGearCounter;
 	int m_theirGearCounter;
+	bool m_isOpen;
 public:
 GearFlicker();
 ~GearFlicker();

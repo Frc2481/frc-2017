@@ -10,7 +10,6 @@
 #include "Commands/SetDriveTalonToSlaveCommand.h"
 #include "Commands/ToggleCoastToBrakeCommand.h"
 #include "Commands/GearFlickCommandGroup.h"
-#include "Commands/DriveToDistanceEncoderCommand.h"
 #include "Commands/DriveTrainDisableGyroCorrectionCommand.h"
 
 class AutoDriveToGearCommandGroup : public CommandGroup {
@@ -26,7 +25,6 @@ public:
 		//AddSequential(new SwerveModuleRotateToAngleCommand(270,false));
 		//AddSequential(new SetDriveTalonToSlaveCommand(true));
 		//AddSequential(new GeneratePathToTargetCommand());
-		AddSequential(new DriveToDistanceEncoderCommand());
 		AddSequential(new GearFlickCommandGroup());
 		AddSequential(new AutoDriveCommand(0,0.5,0,.5));
 		AddSequential(new ToggleCoastToBrakeCommand(true));
