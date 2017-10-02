@@ -54,8 +54,10 @@ public:
 	void SetShooterSpeedOpenLoop(double speed);
 	void SetShooterControlMode(CANTalon::ControlMode mode);
 	double GetHopperCurrent();
+	double GetShooterCurrent();
 	void IncShooterSpeed();
 	void DecShooterSpeed();
+	bool IsShooterEncoderPresent() const;
 };
 
 #endif /* SRC_SUBSYSTEMS_SUPERSTRUCTURE_H_ */

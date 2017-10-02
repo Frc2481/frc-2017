@@ -73,6 +73,9 @@
 #include "Commands/SetShooterForRedCommandGroup.h"
 #include "Commands/RedBackHopperCommandGroup.h"
 #include "CameraServer.h"
+#include "Commands/ClimberTestCommandGroup.h"
+#include "Commands/ShooterTestCommandGroup.h"
+#include "Commands/PitTestCommandGroup.h"
 
 class Robot: public IterativeRobot
 {
@@ -166,6 +169,10 @@ private:
 //		SmartDashboard::PutData(new RotateToAngleMotionMagicCommandGroup(90.0));
 		SmartDashboard::PutData(new CalibrateMotionMagicRotationCommand());
 //		SmartDashboard::PutData(new RotateToCameraAngleCommandGroup());
+
+		SmartDashboard::PutData(new ClimberTestCommandGroup());
+		SmartDashboard::PutData(new ShooterTestCommandGroup());
+		SmartDashboard::PutData(new PitTestCommandGroup());
 
 		SmartDashboard::PutData("Autonomous Chooser", &chooser);
 		SmartDashboard::PutData("Color Chooser", &colorChooser);

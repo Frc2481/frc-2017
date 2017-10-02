@@ -21,6 +21,7 @@ Climber();
 ~Climber();
 void StartClimbing();
 void StopClimbing();
+double GetCurrent() const;
 };
 
 

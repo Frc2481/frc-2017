@@ -23,3 +23,7 @@ void Climber::StopClimbing() {
 	m_climberMotor->Set(0);
 }
 
+double Climber::GetCurrent() const {
+	return m_climberMotor->GetOutputCurrent();
+}
+

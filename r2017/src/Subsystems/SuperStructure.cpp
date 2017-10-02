@@ -183,7 +183,21 @@ void SuperStructure::ReverseHopper() {
 	m_hopperMotor->Set(-m_speed);
 }
 
+double SuperStructure::GetShooterCurrent() {
+	return m_shooterMotor->GetOutputCurrent();
+}
+
 void SuperStructure::DecShooterSpeed() {
 	m_shooterSpeed -= 25;
 	SetShooterSpeed(m_shooterSpeed);
+}
+
+bool SuperStructure::IsShooterEncoderPresent() const {
+	CANTalon::FeedbackDeviceStatus shooterSensorPresent =
+			m_shooterMotor->IsSensorPresent((CANTalon::CtreMagEncoder_Relative));
+	bool sensorPresent = true;
+	if(shooterSensorPresent != CANTalon::FeedbackStatusPresent) {
+		sensorPresent = false;
+	}
+	return sensorPresent;
 }
